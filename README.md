@@ -23,5 +23,18 @@ The goal is to assess **LLM performance and limitations** in **automated code qu
 - A **functional and locally runnable tool** capable of detecting **SOLID principle violations**.
 - **Comparative analysis** of different **prompt strategies** and **small LLMs**.
 
-## Evaluation Metrics
-- The tool’s **input and output** will be evaluated using **ChatGPT-4o**, assessing the **degree of improvement achieved**.
+## Evaluation Methodology
+- We will generate synthetic Java, C#, C++ and Python code snippets as evaluation data. These code snippets will be labeled with corresponding SOLI violations. These will serve as ground truth for classification.
+- Initially, the detection will be checked against the ground truth. If the detection is true positive, original code snippet and refactored code will be provided to **ChatGPT-4o** with appropriate prompts, to assess the correctness of detection and quality of refactoring.
+- We will conduct a user survey on the accuracy of the refactoring tool, if time permits.
+
+## Team Work Distribution
+- Backend development will be done by: M. Buğra Kurnaz & Rafi Çoktalaş
+- Frontend development will be done by: Arçin Ülkü Ergüzen & Fatih Pehlivan
+- We will split SOLI principles as follows: 
+    - **Single Responsibility Principle (SRP)**: Rafi Çoktalaş
+    - **Open-Closed Principle (OCP)**: Fatih Pehlivan
+    - **Liskov Substitution Principle (LSP)**: M. Buğra Kurnaz
+    - **Interface Segregation Principle (ISP)**: Arçin Ülkü Ergüzen
+- Each member will be responsible for creating code snippets for their assigned principle.
+- Research of prompt engineering will be a collaborative effort. 
