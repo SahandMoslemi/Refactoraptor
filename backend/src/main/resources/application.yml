@@ -1,4 +1,7 @@
 spring:
   application:
-    name:
-      backend
+    name: backend
+
+ollama:
+  url: http://localhost:11434/api
+
