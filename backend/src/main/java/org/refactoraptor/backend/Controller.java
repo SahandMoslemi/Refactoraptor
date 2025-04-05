@@ -1,8 +1,9 @@
 package org.refactoraptor.backend;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import javax.xml.transform.Source;
 import java.util.Map;
 
 
@@ -27,5 +28,14 @@ public class Controller {
         return promptEngineeringService.getStrategies();
     }
 
-    
+    @PostMapping("/source/{session_id}/{strategy}")
+    public ResponseEntity postSource(
+            @RequestBody SourceModel sourceModel,
+            @PathVariable("session_id") Long sessionId,
+            @PathVariable("strategy") String strategy) {
+        sourceModel.getFiles().forEach(file ->
+                System.out.println("Received file: " + file.getFileName())
+        );
+        return ResponseEntity.ok("Received " + sourceModel.getFiles().size() + " files for user " + sessionId);
+    }
 }
