@@ -61,14 +61,14 @@ export default function Home() {
       );
 
       setFiles(filePropArray);
-      
+
       // Update active file and editor content
       const firstFile = filePropArray[0];
       setActiveFile(firstFile);
       setCurrentCode(firstFile.content);
       setFileName(firstFile.name);
       setLanguage(firstFile.language);
-      
+
       setShowIcons(false); // Hide icons after uploading
     }
   };
@@ -166,6 +166,7 @@ export default function Home() {
           originalFileName={fileName}
           modelSelected={model || ""}
           promptType={promptType}
+          language={language}
         />
       )}
 
@@ -230,16 +231,17 @@ export default function Home() {
                 className="bg-[#1e1e1e] rounded-t-md md:rounded-l-md md:rounded-tr-none min-h-[60vh] md:min-h-0"
               >
                 {files.length > 0 ? (
-                  <CodeEditorTabs 
-                    files={files} 
-                    activeFile={activeFile} 
+                  <CodeEditorTabs
+                    files={files}
+                    activeFile={activeFile}
                     onTabChange={handleTabChange}
                   />
                 ) : (
-                  <CodeEditor
-                    value={currentCode}
-                    onChange={(value) => setCurrentCode(value || "")}
+
+                  <CodeEditorTabs
+                    currentCode={currentCode}
                     language={language || "java"}
+                    onChange={setCurrentCode}
                   />
                 )}
               </div>

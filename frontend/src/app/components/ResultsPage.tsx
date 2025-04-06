@@ -1,3 +1,4 @@
+// ResultsPage.tsx
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -19,13 +20,33 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
     const monacoRef = useRef<any>(null);
 
     // Extract data from refactoredData
-    const { originalCode, refactoredCode, codeChanges, executionTime, modelUsed } = refactoredData;
+    const { originalCode, refactoredCode, codeChanges, executionTime, modelUsed, originalFileName, language } = refactoredData;
+    const languageExtensions: {[key: string]: string} = {
+        'java': 'java',
+        'python': 'py',
+        'kotlin': 'kt',
+        'c#': 'cs',
+        'csharp': 'cs',
+        'javascript': 'js',
+        'typescript': 'ts'
+    };
 
-    // Generate refactored file name
-    const originalFileName = refactoredData.originalCode.split('/').pop() || "original.java";
-    const refactoredFileName = originalFileName.includes(".")
-        ? `Refactored.${originalFileName.split(".").pop()}`
-        : "Refactored.java";
+    // Generate refactored file name based on the selected language
+    const getRefactoredFileName = () => {
+        // Try to get the extension from the original file name first
+        if (originalFileName.includes(".")) {
+            return `Refactored.${originalFileName.split(".").pop()}`;
+        }
+
+        // If no extension in the file name, use the selected language
+        if (language && languageExtensions[language.toLowerCase()]) {
+            return `Refactored.${languageExtensions[language.toLowerCase()]}`;
+        }
+
+        // Default extension if nothing else works
+        return "Refactored.txt";
+    };
+    const refactoredFileName = getRefactoredFileName();
 
     // Function to highlight specific lines in the code
     const highlightLines = (editorRef: React.MutableRefObject<any>, lineNumbers: number[]) => {
@@ -74,9 +95,10 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
             // Add custom CSS for highlighting
             const style = document.createElement('style');
             style.textContent = `
-        .highlight-line { background-color: rgba(255, 255, 100, 0.2); }
-        .highlight-glyph { background-color: rgba(255, 255, 0, 0.5); width: 5px !important; margin-left: 3px; }
-      `;
+                .highlight-line { background-color: rgba(255, 255, 100, 0.2); }
+                .highlight-glyph { background-color: rgba(255, 255, 0, 0.5); width: 5px !important; margin-left: 3px; }
+                body { overflow: hidden; }
+            `;
             document.head.appendChild(style);
         }
 
@@ -94,23 +116,32 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#606b50] font-[family-name:var(--font-geist-sans)]">
+        <div className="h-screen flex flex-col bg-[#606b50] font-[family-name:var(--font-geist-sans)] overflow-hidden">
             {/* Header */}
             <header className="p-4 flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl text-white font-medium">Refactoraptor</h1>
-                    {executionTime && modelUsed && (
-                        <div className="text-white/70 text-sm">
-                            Refactored in {executionTime} using {modelUsed}
-                        </div>
-                    )}
+                <div className="py-2 px-6">
+                    <img
+                        src="/icons/refactoraptor-logo.svg"
+                        alt="Refactoraptor Logo"
+                        className="w-50 h-auto cursor-pointer transition-transform hover:scale-110 active:scale-95 rounded-2xl px-2 py-2"
+                        onClick={() => window.location.href = "/"}
+                    />
                 </div>
-                <button
-                    onClick={onClose}
-                    className="bg-[#4c5944] hover:bg-[#3d4937] text-white px-4 py-2 rounded-md transition-colors"
-                >
-                    Back to Editor
-                </button>
+                <div className="flex items-center">
+                    <div className="mr-4">
+                        {executionTime && modelUsed && (
+                            <div className="text-white/70 text-sm text-right">
+                                Refactored in {executionTime} using {modelUsed}
+                            </div>
+                        )}
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="bg-[#4c5944] hover:bg-[#3d4937] text-white px-4 py-2 rounded-md transition-colors"
+                    >
+                        Back to Editor
+                    </button>
+                </div>
             </header>
 
             {/* Main Content - Code Comparison */}
@@ -123,7 +154,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                         <div className="bg-[#4d5c44] text-white px-4 py-2 font-medium">
                             {originalFileName}
                         </div>
-                        <div style={{ height: "calc(100vh - 140px)" }}>
+                        <div style={{ height: "calc(100vh - 160px)" }}>
                             <Editor
                                 height="100%"
                                 width="100%"
@@ -144,16 +175,16 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                         </div>
 
                         {/* Circular button in bottom right */}
-                        {/*<div className="absolute bottom-4 right-4">*/}
-                        {/*    <button*/}
-                        {/*        className="bg-[#3d4937] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-70"*/}
-                        {/*        aria-label="Code info"*/}
-                        {/*    >*/}
-                        {/*        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">*/}
-                        {/*            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />*/}
-                        {/*        </svg>*/}
-                        {/*    </button>*/}
-                        {/*</div>*/}
+                        <div className="absolute bottom-4 right-4">
+                            <button
+                                className="bg-[#3d4937] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-70"
+                                aria-label="Code info"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Refactored Code */}
@@ -162,7 +193,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                         <div className="bg-[#4d5c44] text-white px-4 py-2 font-medium">
                             {refactoredFileName}
                         </div>
-                        <div style={{ height: "calc(100vh - 140px)" }}>
+                        <div style={{ height: "calc(100vh - 160px)" }}>
                             <Editor
                                 height="100%"
                                 width="100%"
@@ -236,8 +267,6 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                     </div>
                 </div>
             </main>
-
-
         </div>
     );
 };

@@ -1,7 +1,7 @@
+// LoadingScreen.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 
 interface CodeChange {
     lineNumber: number;
@@ -12,8 +12,10 @@ export interface RefactoredData {
     originalCode: string;
     refactoredCode: string;
     codeChanges: CodeChange[];
+    originalFileName: string; // Added file name field
     executionTime?: string;
     modelUsed?: string;
+    language: string;
 }
 
 interface LoadingScreenProps {
@@ -24,6 +26,7 @@ interface LoadingScreenProps {
     originalFileName: string;
     modelSelected: string;
     promptType: string;
+    language: string;
 }
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({
@@ -33,7 +36,8 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
                                                          originalCode,
                                                          originalFileName,
                                                          modelSelected,
-                                                         promptType
+                                                         promptType,
+                                                         language
                                                      }) => {
     const [dots, setDots] = useState("");
 
@@ -79,6 +83,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
                 // Mock response for development
                 const mockData: RefactoredData = {
                     originalCode: originalCode,
+                    language: language || "java",
                     refactoredCode: `interface Workable {
   void work();
 }
@@ -121,6 +126,7 @@ class Human implements Workable, Eatable, Sleepable {
                         { lineNumber: 13, explanation: "Modified 'Robot' class to only implement 'Workable' interface following Single Responsibility Principle" },
                         { lineNumber: 20, explanation: "Created new 'Human' class that implements all interfaces, properly separating concerns" }
                     ],
+                    originalFileName: originalFileName, // Pass the file name to the result
                     executionTime: "2.3s",
                     modelUsed: modelSelected
                 };
@@ -131,7 +137,7 @@ class Human implements Workable, Eatable, Sleepable {
                 setTimeout(() => {
                     clearInterval(dotsInterval);
                     onLoadingComplete(mockData);
-                }, 10000);
+                }, 3000);
 
             } catch (err) {
                 console.error("Error refactoring code:", err);
