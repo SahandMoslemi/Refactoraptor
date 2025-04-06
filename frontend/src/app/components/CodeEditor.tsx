@@ -1,16 +1,26 @@
 "use client";
 
-import { Editor } from "@monaco-editor/react";
+import { useRef } from "react";
+import Editor from "@monaco-editor/react";
+import type * as monaco from "monaco-editor";
 
-const CodeEditor = () => {
+interface CodeEditorProps {
+  language: string;
+  value: string;
+}
+
+export default function CodeEditor({ language, value }: CodeEditorProps) {
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+
   return (
     <Editor
-      height="50vh"
-      width="75vh"
+      height="66vh"
       theme="vs-dark"
-      defaultLanguage="javascript"
+      language={language}
+      value={value}
+      onMount={(editor) => {
+        editorRef.current = editor;
+      }}
     />
   );
-};
-
-export default CodeEditor;
+}
