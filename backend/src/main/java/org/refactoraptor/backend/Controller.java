@@ -1,7 +1,6 @@
 package org.refactoraptor.backend;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -18,5 +17,13 @@ public class Controller {
     @GetMapping("/models")
     public Map<String, Object> getModels() {
         return ollamaService.getModels();
+    }
+
+    @PostMapping("/refactor")
+    public Map<String, Object> refactor(
+            @RequestBody Map<String, String> params) {
+        return ollamaService.refactor(params.get("model"),
+                PromptEngineeringStrategy.valueOf(params.get("strategy")),
+                params.get("source"));
     }
 }
