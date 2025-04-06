@@ -35,4 +35,12 @@ public class Controller {
             @PathVariable("strategy") String strategy) {
         return ResponseEntity.ok("Received code snippet:");
     }
+
+    @PostMapping("/refactor")
+    public Map<String, Object> refactor(
+            @RequestBody Map<String, String> params) {
+        return ollamaService.refactor(params.get("model"),
+                PromptEngineeringStrategy.valueOf(params.get("strategy")),
+                params.get("source"));
+    }
 }
