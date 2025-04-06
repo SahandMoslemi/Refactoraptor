@@ -5,7 +5,6 @@ import java.util.List;
 public class SourceModel {
     private List<SourceFile> files;
 
-    // Getters and setters
     public List<SourceFile> getFiles() {
         return files;
     }

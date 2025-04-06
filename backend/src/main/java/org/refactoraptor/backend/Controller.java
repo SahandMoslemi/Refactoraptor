@@ -30,12 +30,9 @@ public class Controller {
 
     @PostMapping("/source/{session_id}/{strategy}")
     public ResponseEntity postSource(
-            @RequestBody SourceModel sourceModel,
+            @RequestBody String codeSnippet,
             @PathVariable("session_id") Long sessionId,
             @PathVariable("strategy") String strategy) {
-        sourceModel.getFiles().forEach(file ->
-                System.out.println("Received file: " + file.getFileName())
-        );
-        return ResponseEntity.ok("Received " + sourceModel.getFiles().size() + " files for user " + sessionId);
+        return ResponseEntity.ok("Received code snippet:");
     }
 }
