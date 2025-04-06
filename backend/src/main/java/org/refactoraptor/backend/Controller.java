@@ -28,14 +28,6 @@ public class Controller {
         return promptEngineeringService.getStrategies();
     }
 
-    @PostMapping("/source/{session_id}/{strategy}")
-    public ResponseEntity postSource(
-            @RequestBody String codeSnippet,
-            @PathVariable("session_id") Long sessionId,
-            @PathVariable("strategy") String strategy) {
-        return ResponseEntity.ok("Received code snippet:");
-    }
-
     @PostMapping("/refactor")
     public Map<String, Object> refactor(
             @RequestBody Map<String, String> params) {
