@@ -33,6 +33,7 @@ public class Controller {
             @RequestBody Map<String, String> params) {
         return ollamaService.refactor(params.get("model"),
                 PromptEngineeringStrategy.valueOf(params.get("strategy")),
+                Double.parseDouble(params.get("temperature")),
                 params.get("source"));
     }
 }
