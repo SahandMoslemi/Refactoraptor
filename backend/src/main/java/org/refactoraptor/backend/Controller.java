@@ -17,17 +17,19 @@ public class Controller {
         this.ollamaService = ollamaService;
         this.promptEngineeringService = promptEngineeringService;
     }
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/models")
     public Map<String, Object> getModels() {
         return ollamaService.getModels();
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/strategies")
     public Map<String, Object> getStrategies() {
         return promptEngineeringService.getStrategies();
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/refactor")
     public Map<String, Object> refactor(
             @RequestBody Map<String, String> params) {
