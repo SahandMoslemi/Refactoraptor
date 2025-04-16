@@ -2,8 +2,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Editor } from "@monaco-editor/react";
 import { RefactoredData } from "./LoadingScreen";
+import EditorWorkspace from "./EditorWorkspace";
+import { FileData } from "../page";
 
 interface ResultsPageProps {
   refactoredData: RefactoredData;
@@ -15,9 +16,17 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
   onClose,
 }) => {
   const [showExplanation, setShowExplanation] = useState(false);
-  const originalEditorRef = useRef<any>(null);
-  const refactoredEditorRef = useRef<any>(null);
   const monacoRef = useRef<any>(null);
+
+  // State for file management
+  const [originalFiles, setOriginalFiles] = useState<FileData[]>([]);
+  const [refactoredFiles, setRefactoredFiles] = useState<FileData[]>([]);
+  const [activeOriginalFileId, setActiveOriginalFileId] = useState<
+    string | null
+  >(null);
+  const [activeRefactoredFileId, setActiveRefactoredFileId] = useState<
+    string | null
+  >(null);
 
   // Extract data from refactoredData
   const {
@@ -29,6 +38,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
     originalFileName,
     language,
   } = refactoredData;
+
   const languageExtensions: { [key: string]: string } = {
     java: "java",
     python: "py",
@@ -54,37 +64,51 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
     // Default extension if nothing else works
     return "Refactored.txt";
   };
+
   const refactoredFileName = getRefactoredFileName();
 
-  // Function to highlight specific lines in the code
-  const highlightLines = (
-    editorRef: React.MutableRefObject<any>,
-    lineNumbers: number[]
-  ) => {
-    if (!editorRef.current || !monacoRef.current) return;
+  // Initialize files on component mount
+  useEffect(() => {
+    // Create file data objects for original and refactored code
+    const originalFileData: FileData = {
+      id: "original-1",
+      name: originalFileName,
+      content: originalCode,
+      language: language || "java",
+    };
 
-    const editor = editorRef.current;
-    const monaco = monacoRef.current;
+    const refactoredFileData: FileData = {
+      id: "refactored-1",
+      name: refactoredFileName,
+      content: refactoredCode,
+      language: language || "java",
+    };
 
-    const decorations = lineNumbers.map((lineNumber) => ({
-      range: new monaco.Range(lineNumber, 1, lineNumber, 1),
-      options: {
-        isWholeLine: true,
-        className: "highlight-line",
-        glyphMarginClassName: "highlight-glyph",
-      },
-    }));
-
-    editor.deltaDecorations([], decorations);
-  };
+    setOriginalFiles([originalFileData]);
+    setRefactoredFiles([refactoredFileData]);
+    setActiveOriginalFileId("original-1");
+    setActiveRefactoredFileId("refactored-1");
+  }, [
+    originalCode,
+    refactoredCode,
+    originalFileName,
+    refactoredFileName,
+    language,
+  ]);
 
   const handleSave = () => {
+    // Find the active refactored file
+    const activeFile = refactoredFiles.find(
+      (file) => file.id === activeRefactoredFileId
+    );
+    if (!activeFile) return;
+
     // Create a blob and trigger download
-    const blob = new Blob([refactoredCode], { type: "text/plain" });
+    const blob = new Blob([activeFile.content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = refactoredFileName;
+    a.download = activeFile.name;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -95,43 +119,80 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
     setShowExplanation(!showExplanation);
   };
 
-  // Function to handle editor mount
-  const handleEditorDidMount = (
-    editor: any,
-    monaco: any,
-    ref: React.MutableRefObject<any>
-  ) => {
-    ref.current = editor;
+  // Handlers for EditorWorkspace
+  const handleOriginalFileChange = (fileId: string) => {
+    setActiveOriginalFileId(fileId);
+  };
 
-    // Store monaco reference
-    if (!monacoRef.current) {
-      monacoRef.current = monaco;
+  const handleRefactoredFileChange = (fileId: string) => {
+    setActiveRefactoredFileId(fileId);
+  };
 
-      // Add custom CSS for highlighting
-      const style = document.createElement("style");
-      style.textContent = `
-                .highlight-line { background-color: rgba(255, 255, 100, 0.2); }
-                .highlight-glyph { background-color: rgba(255, 255, 0, 0.5); width: 5px !important; margin-left: 3px; }
-                body { overflow: hidden; }
-            `;
-      document.head.appendChild(style);
-    }
-
-    // Enable line numbers and glyph margin for highlighting
-    editor.updateOptions({
-      glyphMargin: true,
-    });
-
-    // If this is the refactored editor, highlight all code changes
-    if (ref === refactoredEditorRef && codeChanges) {
-      setTimeout(() => {
-        highlightLines(
-          refactoredEditorRef,
-          codeChanges.map((change) => change.lineNumber)
-        );
-      }, 500);
+  const handleOriginalCodeChange = (content: string) => {
+    // Update the content of the active original file
+    if (activeOriginalFileId) {
+      setOriginalFiles((prev) =>
+        prev.map((file) =>
+          file.id === activeOriginalFileId ? { ...file, content } : file
+        )
+      );
     }
   };
+
+  const handleRefactoredCodeChange = (content: string) => {
+    // Update the content of the active refactored file
+    if (activeRefactoredFileId) {
+      setRefactoredFiles((prev) =>
+        prev.map((file) =>
+          file.id === activeRefactoredFileId ? { ...file, content } : file
+        )
+      );
+    }
+  };
+
+  // Define action buttons for the refactored editor
+  const refactoredEditorButtons = [
+    {
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      ),
+      label: "Show explanation",
+      onClick: toggleExplanation,
+    },
+    {
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+          />
+        </svg>
+      ),
+      label: "Save refactored code",
+      onClick: handleSave,
+    },
+  ];
 
   return (
     <div className="h-screen flex flex-col bg-[#505a46] font-[family-name:var(--font-geist-sans)] overflow-hidden">
@@ -168,164 +229,60 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
         <div className="flex-1 flex flex-col md:flex-row gap-4">
           {/* Original Code */}
           <div className="w-full md:w-1/2 relative">
-            {/* File name header */}
-            <div className="bg-[#4d5c44] text-white px-4 py-2 font-medium">
-              {originalFileName}
-            </div>
-            <div style={{ height: "calc(100vh - 160px)" }}>
-              <Editor
-                height="100%"
-                width="100%"
-                theme="vs-dark"
-                defaultLanguage="java"
-                value={originalCode}
-                options={{
-                  readOnly: true,
-                  minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  fontSize: 14,
-                  lineNumbers: "on",
-                  roundedSelection: false,
-                  renderLineHighlight: "line",
-                }}
-                onMount={(editor, monaco) =>
-                  handleEditorDidMount(editor, monaco, originalEditorRef)
-                }
-              />
-            </div>
-
-            {/* Circular button in bottom right */}
-            <div className="absolute bottom-4 right-4">
-              <button
-                className="bg-[#3d4937] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-70"
-                aria-label="Code info"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </button>
-            </div>
+            <EditorWorkspace
+              files={originalFiles}
+              activeFileId={activeOriginalFileId}
+              onFileChange={handleOriginalFileChange}
+              onCodeChange={handleOriginalCodeChange}
+              mode="results"
+              showButtons={false} // No buttons for original code editor
+            />
           </div>
 
           {/* Refactored Code */}
           <div className="w-full md:w-1/2 mt-4 md:mt-0 relative">
-            {/* File name header */}
-            <div className="bg-[#4d5c44] text-white px-4 py-2 font-medium">
-              {refactoredFileName}
-            </div>
-            <div style={{ height: "calc(100vh - 160px)" }}>
-              <Editor
-                height="100%"
-                width="100%"
-                theme="vs-dark"
-                defaultLanguage="java"
-                value={refactoredCode}
-                options={{
-                  readOnly: true,
-                  minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  fontSize: 14,
-                  lineNumbers: "on",
-                  roundedSelection: false,
-                  renderLineHighlight: "line",
-                }}
-                onMount={(editor, monaco) =>
-                  handleEditorDidMount(editor, monaco, refactoredEditorRef)
-                }
-              />
+            <EditorWorkspace
+              files={refactoredFiles}
+              activeFileId={activeRefactoredFileId}
+              onFileChange={handleRefactoredFileChange}
+              onCodeChange={handleRefactoredCodeChange}
+              mode="results"
+              actionButtons={refactoredEditorButtons}
+            />
 
-              {/* Explanation overlay when showing */}
-              {showExplanation && (
-                <div className="absolute inset-0 bg-black/80 text-white p-6 overflow-auto">
-                  <h3 className="text-xl font-medium mb-4">
-                    Refactoring Explanation
-                  </h3>
+            {/* Explanation overlay when showing */}
+            {showExplanation && (
+              <div className="absolute inset-0 bg-black/80 text-white p-6 overflow-auto z-30">
+                <h3 className="text-xl font-medium mb-4">
+                  Refactoring Explanation
+                </h3>
 
-                  <div>
-                    <p className="mb-4">
-                      The following changes were made to improve the code:
-                    </p>
-                    <ul className="space-y-3">
-                      {codeChanges.map((change, index) => (
-                        <li key={index} className="p-2 rounded">
-                          <span className="text-yellow-300">
-                            Line {change.lineNumber}:
-                          </span>{" "}
-                          {change.explanation}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mt-4 flex gap-2">
-                    <button
-                      onClick={toggleExplanation}
-                      className="bg-[#4d5c44] hover:bg-[#5c6b51] px-4 py-2 rounded-md"
-                    >
-                      Close
-                    </button>
-                  </div>
+                <div>
+                  <p className="mb-4">
+                    The following changes were made to improve the code:
+                  </p>
+                  <ul className="space-y-3">
+                    {codeChanges.map((change, index) => (
+                      <li key={index} className="p-2 rounded">
+                        <span className="text-yellow-300">
+                          Line {change.lineNumber}:
+                        </span>{" "}
+                        {change.explanation}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              )}
-            </div>
 
-            {/* Bottom right buttons */}
-            <div className="absolute bottom-4 right-4 flex space-x-2">
-              {/* Explanation Button */}
-              <button
-                onClick={toggleExplanation}
-                className="bg-[#3d4937] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
-                aria-label="Show explanation"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </button>
-
-              {/* Save Button */}
-              <button
-                onClick={handleSave}
-                className="bg-[#3d4937] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
-                aria-label="Save refactored code"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                  />
-                </svg>
-              </button>
-            </div>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={toggleExplanation}
+                    className="bg-[#4d5c44] hover:bg-[#5c6b51] px-4 py-2 rounded-md"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>

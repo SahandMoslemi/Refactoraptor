@@ -319,12 +319,12 @@ export default function Home() {
   // Render error screen if there's an error
   if (processState.error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#606b50] text-white">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#505a46] text-white">
         <div className="text-2xl mb-4 text-red-300">Error</div>
         <div className="text-lg mb-8">{processState.error}</div>
         <button
           onClick={handleBackToEditor}
-          className="bg-[#4c5944] hover:bg-[#3d4937] text-white px-4 py-2 rounded-md transition-colors"
+          className="bg-[#3F4637] hover:bg-[#68765A] text-white px-4 py-2 rounded-md transition-colors"
         >
           Back to Editor
         </button>
@@ -355,6 +355,7 @@ export default function Home() {
           modelSelected={controlPanel.model || ""}
           promptType={controlPanel.promptType}
           language={controlPanel.language}
+          temperature={controlPanel.temperature}
         />
       )}
 

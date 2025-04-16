@@ -4,12 +4,21 @@ import { useState, useEffect } from "react";
 import { FileData } from "../page";
 import CodeEditor from "./CodeEditor";
 
+type EditorActionButton = {
+  icon: string | React.ReactNode;
+  label: string;
+  onClick: () => void;
+};
+
 type EditorWorkspaceProps = {
   files: FileData[];
   activeFileId: string | null;
   onFileChange: (fileId: string) => void;
   onCodeChange: (content: string) => void;
-  toggleControlPanel: () => void;
+  toggleControlPanel?: () => void;
+  mode?: "default" | "results";
+  actionButtons?: EditorActionButton[];
+  showButtons?: boolean;
 };
 
 export default function EditorWorkspace({
@@ -18,6 +27,9 @@ export default function EditorWorkspace({
   onFileChange,
   onCodeChange,
   toggleControlPanel,
+  mode = "default",
+  actionButtons = [],
+  showButtons = true,
 }: EditorWorkspaceProps) {
   // Animation state
   const [isExpanded, setIsExpanded] = useState(false);
@@ -38,7 +50,7 @@ export default function EditorWorkspace({
   return (
     <div
       className="flex-grow flex justify-center items-center overflow-hidden"
-      style={{ height: "66vh" }}
+      style={{ height: "80vh" }}
     >
       <div
         className={`bg-[#748569] rounded-l-md shadow-lg relative flex flex-col transition-all duration-500 ease-in-out ${
@@ -79,18 +91,45 @@ export default function EditorWorkspace({
             </div>
           )}
 
-          {/* Control panel toggle button */}
-          <button
-            className="absolute bottom-4 right-4 bg-[#3d4937] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity z-20 shadow-md"
-            aria-label="Toggle Control Panel"
-            onClick={toggleControlPanel}
-          >
-            <img
-              src="/icons/format-icon.svg"
-              alt="Format"
-              className="w-6 h-6 invert"
-            />
-          </button>
+          {/* Action buttons */}
+          {showButtons && (
+            <div className="absolute bottom-4 right-4 flex space-x-2 z-20">
+              {/* Custom action buttons */}
+              {actionButtons.map((button, index) => (
+                <button
+                  key={index}
+                  className="bg-[#3d4937] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity shadow-md"
+                  aria-label={button.label}
+                  onClick={button.onClick}
+                >
+                  {typeof button.icon === "string" ? (
+                    <img
+                      src={button.icon}
+                      alt={button.label}
+                      className="w-6 h-6 invert"
+                    />
+                  ) : (
+                    button.icon
+                  )}
+                </button>
+              ))}
+
+              {/* Default control panel toggle button (only in default mode) */}
+              {mode === "default" && toggleControlPanel && (
+                <button
+                  className="bg-[#3d4937] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity z-20 shadow-md"
+                  aria-label="Toggle Control Panel"
+                  onClick={toggleControlPanel}
+                >
+                  <img
+                    src="/icons/format-icon.svg"
+                    alt="Format"
+                    className="w-6 h-6 invert"
+                  />
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
