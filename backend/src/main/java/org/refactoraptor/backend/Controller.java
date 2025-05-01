@@ -1,9 +1,9 @@
 package org.refactoraptor.backend;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.transform.Source;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -13,14 +13,22 @@ public class Controller {
     private final OllamaService ollamaService;
     private final IPromptEngineeringService promptEngineeringService;
 
-    public Controller(OllamaService ollamaService, IPromptEngineeringService promptEngineeringService) {
+    private final OpenaiService openaiService;
+
+    public Controller(OllamaService ollamaService, OpenaiService openaiService, IPromptEngineeringService promptEngineeringService) {
         this.ollamaService = ollamaService;
+        this.openaiService = openaiService;
         this.promptEngineeringService = promptEngineeringService;
     }
 
     @GetMapping("/models")
-    public Map<String, Object> getModels() {
+    public Map<String, Object> getModels() throws IOException {
         return ollamaService.getModels();
+    }
+
+    @GetMapping("/online-models")
+    public Map<String, Object> getOnlineModels() throws IOException {
+        return openaiService.getModels();
     }
 
     @GetMapping("/strategies")
@@ -32,6 +40,15 @@ public class Controller {
     public Map<String, Object> refactor(
             @RequestBody Map<String, String> params) {
         return ollamaService.refactor(params.get("model"),
+                PromptEngineeringStrategy.valueOf(params.get("strategy")),
+                Double.parseDouble(params.get("temperature")),
+                params.get("source"));
+    }
+
+    @PostMapping("/refactor-online")
+    public Map<String, Object> refactorOnline(
+            @RequestBody Map<String, String> params) throws IOException {
+        return openaiService.refactor(params.get("model"),
                 PromptEngineeringStrategy.valueOf(params.get("strategy")),
                 Double.parseDouble(params.get("temperature")),
                 params.get("source"));

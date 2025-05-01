@@ -43,7 +43,7 @@ public class OllamaService {
         requestBody.put("format", structure);
 
         Map<String, Object> options = new HashMap<>();
-        options.put("temperature", temperature); // or any value like 0.7
+        options.put("temperature", temperature);
         requestBody.put("options", options);
 
         Map<String, Object> response = restTemplate.postForObject(ollamaUrl + "/generate", requestBody, Map.class);
