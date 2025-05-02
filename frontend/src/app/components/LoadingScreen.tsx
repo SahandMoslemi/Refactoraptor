@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { RefactorService, RefactoredData } from "../api/refactorService";
+import { refactorCode, RefactoredData } from "../api/refactorService";
 import { useLoadingDots, useProcessStatus } from "../utils/loadingUtils";
 
 interface LoadingScreenProps {
@@ -27,9 +27,9 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   language,
   temperature,
 }) => {
+  // Use custom hooks for loading state management
   const dots = useLoadingDots(500);
   const [status, setStatus] = useProcessStatus("Initializing...");
-  const refactorService = new RefactorService();
 
   useEffect(() => {
     if (!isLoading) return;
@@ -49,7 +49,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
       try {
         setStatus("Refactoring");
 
-        const refactoredData = await refactorService.refactorCode(
+        const refactoredData = await refactorCode(
           originalCode,
           modelSelected,
           promptType,
@@ -59,7 +59,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         );
 
         setStatus("Refactoring complete!");
-
+        // const refactoredData = "deneme";
         // Small delay to show completion status
         setTimeout(() => {
           onLoadingComplete(refactoredData);
@@ -86,7 +86,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
     onLoadingComplete,
     onError,
     setStatus,
-    refactorService,
   ]);
 
   // Don't render if not loading
