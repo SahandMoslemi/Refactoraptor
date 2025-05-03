@@ -26,7 +26,7 @@ public class Controller {
         return ollamaService.getModels();
     }
 
-    @GetMapping("/online-models")
+    @GetMapping("/models-online")
     public Map<String, Object> getOnlineModels() throws IOException {
         return openaiService.getModels();
     }
