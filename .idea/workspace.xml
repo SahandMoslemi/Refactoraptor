@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5c09d256-a29a-41bf-bd86-f82338157c5b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/org/refactoraptor/backend/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/org/refactoraptor/backend/Controller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/ControlPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/ControlPanel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/LoadingScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/LoadingScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/ModelDropdown.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/ModelDropdown.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/api/refactorService.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/api/refactorService.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,8 +56,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23339.11" />
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23339.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-WS-242.23339.15" />
       </set>
     </attachedChunks>
   </component>
@@ -77,6 +74,7 @@
       <workItem from="1743961787608" duration="3589000" />
       <workItem from="1743969142884" duration="5988000" />
       <workItem from="1744485008755" duration="222000" />
+      <workItem from="1746259325205" duration="2190000" />
     </task>
     <servers />
   </component>

@@ -45,7 +45,7 @@ export async function refactorCode(
     promptType: string,
     originalFileName: string,
     language: string | null,
-    temperature: number = 0.7
+    temperature: number = 0.0
 ): Promise<RefactoredData> {
     // Prepare request data
     const requestData: RefactorRequest = {

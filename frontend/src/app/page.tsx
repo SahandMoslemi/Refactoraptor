@@ -35,7 +35,7 @@ export default function Home() {
     language: null as string | null,
     model: null as string | null,
     promptType: "basic" as string,
-    temperature: 0.7,
+    temperature: 0.0,
   });
 
   // Process state
