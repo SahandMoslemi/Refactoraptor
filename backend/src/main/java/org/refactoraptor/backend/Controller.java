@@ -20,7 +20,7 @@ public class Controller {
         this.openaiService = openaiService;
         this.promptEngineeringService = promptEngineeringService;
     }
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/models")
     public Map<String, Object> getModels() throws IOException {
         return ollamaService.getModels();
@@ -30,12 +30,14 @@ public class Controller {
     public Map<String, Object> getOnlineModels() throws IOException {
         return openaiService.getModels();
     }
-
+  
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/strategies")
     public Map<String, Object> getStrategies() {
         return promptEngineeringService.getStrategies();
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/refactor")
     public Map<String, Object> refactor(
             @RequestBody Map<String, String> params) {
