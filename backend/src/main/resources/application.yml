@@ -7,3 +7,4 @@ ollama:
 
 openai:
   url: https://api.openai.com
+  api.key: OPENAI_API_KEY

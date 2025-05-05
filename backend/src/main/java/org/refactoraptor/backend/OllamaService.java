@@ -28,7 +28,7 @@ public class OllamaService {
         return restTemplate.getForObject(ollamaUrl + "/tags", Map.class);
     }
 
-    public Map<String, Object> refactor(String model, PromptEngineeringStrategy strategy, double temperature, String source) {
+    public Map<String, Object> refactor(String model, String strategy, double temperature, String source) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Construct the request body
