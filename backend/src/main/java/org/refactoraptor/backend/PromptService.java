@@ -1,17 +1,20 @@
 package org.refactoraptor.backend;
 
+import org.refactoraptor.backend.strategies.PromptEngineeringStrategy;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PromptService {
 
-    public String generatePrompt(PromptEngineeringStrategy strategy, String source) {
-        switch (strategy) { // TODO: clear violation of OCP, will fix
-            case DEFAULT:
-                return generateDefaultPrompt(source);
-            default:
-                throw new IllegalArgumentException("Unknown strategy: " + strategy);
-        }
+    private final PromptEngineeringService promptEngineeringService;
+
+    public PromptService(PromptEngineeringService promptEngineeringService) {
+        this.promptEngineeringService = promptEngineeringService;
+    }
+
+    public String generatePrompt(String strategy, String source) {
+        PromptEngineeringStrategy promptEngineeringStrategy = promptEngineeringService.getStrategy(strategy);
+        return promptEngineeringStrategy.engineerPrompt(promptEngineeringStrategy, source);
     }
 
     private String generateDefaultPrompt(String source) {

@@ -1,10 +1,12 @@
 package org.refactoraptor.backend;
 
-import org.springframework.web.client.RestTemplate;
+import org.refactoraptor.backend.strategies.PromptEngineeringStrategy;
 
-import java.util.Map;
+import java.util.List;
 
 public interface IPromptEngineeringService
 {
-    public Map<String, Object> getStrategies();
+    List<String> getStrategies();
+
+    PromptEngineeringStrategy getStrategy(String strategy);
 }

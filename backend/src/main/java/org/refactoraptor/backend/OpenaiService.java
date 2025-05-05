@@ -47,7 +47,7 @@ public class OpenaiService {
         }
     }
 
-    public Map<String, Object> refactor(String model, PromptEngineeringStrategy strategy, double temperature, String source)
+    public Map<String, Object> refactor(String model, String strategy, double temperature, String source)
             throws IOException {
         String userPrompt = promptService.generatePrompt(strategy, source);
 
