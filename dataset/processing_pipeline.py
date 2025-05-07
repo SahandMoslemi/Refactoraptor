@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 API_URL = "http://localhost:8080/refactor"
 
-MODELS = ["codellama:7b", "starcoder:7b", "codegemma:7b", "deepseek:6.7b"]
+MODELS = ["codegemma:7b", "deepseek-coder:6.7b", "codeqwen:7b"]
 STRATEGIES = ["DEFAULT", "ENSEMBLE", "TAGGING", "SMELL"]
 
 INPUT_DIR = Path(".")
@@ -53,8 +53,8 @@ def process_file(filepath):
             for example in tqdm(examples, desc=f"Examples ({model}/{strategy})", leave=False):
                 response = call_refactor_api(model, strategy, example["input"])
                 parsed = parse_response(response)
-                example["refactored_code"] = parsed["refactored_code"]
-                example["type"] = parsed["type"]
+                example["output"] = parsed["refactored_code"]
+                example["violation"] = parsed["type"]
                 example["explanation"] = parsed["explanation"]
                 updated_data["code_examples"].append(example)
 
