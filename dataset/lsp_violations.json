@@ -1,0 +1,340 @@
+{
+    "code_examples": [
+  {
+    "input": "class Bird {\n    public void fly() {\n        System.out.println(\"Bird is flying\");\n    }\n}\n\nclass Ostrich extends Bird {\n    @Override\n    public void fly() {\n        throw new UnsupportedOperationException();\n    }\n}\n\npublic class Main {\n    public static void makeBirdFly(Bird bird) {\n        bird.fly();\n    }\n    public static void main(String[] args) {\n        makeBirdFly(new Ostrich());\n    }\n}",
+    "output": "class Bird {\n    public void move() {\n        System.out.println(\"Bird is moving\");\n    }\n}\n\nclass Ostrich extends Bird {\n    @Override\n    public void move() {\n        System.out.println(\"Ostrich is running\");\n    }\n}\n\npublic class Main {\n    public static void makeBirdMove(Bird bird) {\n        bird.move();\n    }\n    public static void main(String[] args) {\n        makeBirdMove(new Ostrich());\n    }\n}",
+    "level": "EASY",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Rectangle {\n    protected int width;\n    protected int height;\n    public void setWidth(int width) { this.width = width; }\n    public void setHeight(int height) { this.height = height; }\n    public int getArea() { return width * height; }\n}\n\nclass Square extends Rectangle {\n    @Override\n    public void setWidth(int width) {\n        this.width = width;\n        this.height = width;\n    }\n    @Override\n    public void setHeight(int height) {\n        this.height = height;\n        this.width = height;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Rectangle r = new Square();\n        r.setWidth(5);\n        r.setHeight(10);\n        System.out.println(r.getArea());\n    }\n}",
+    "output": "abstract class Shape {\n    public abstract int getArea();\n}\n\nclass Rectangle extends Shape {\n    protected int width;\n    protected int height;\n    public Rectangle(int width, int height) {\n        this.width = width;\n        this.height = height;\n    }\n    @Override\n    public int getArea() { return width * height; }\n}\n\nclass Square extends Shape {\n    protected int side;\n    public Square(int side) {\n        this.side = side;\n    }\n    @Override\n    public int getArea() { return side * side; }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Shape s = new Square(5);\n        System.out.println(s.getArea());\n    }\n}",
+    "level": "EASY",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Animal {\n    public void makeSound() {\n        System.out.println(\"Some sound\");\n    }\n}\n\nclass Dog extends Animal {\n    @Override\n    public void makeSound() {\n        throw new RuntimeException();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Dog();\n        a.makeSound();\n    }\n}",
+    "output": "class Animal {\n    public void makeSound() {\n        System.out.println(\"Some sound\");\n    }\n}\n\nclass Dog extends Animal {\n    @Override\n    public void makeSound() {\n        System.out.println(\"Bark\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Dog();\n        a.makeSound();\n    }\n}",
+    "level": "EASY",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Payment {\n    public void pay() {\n        System.out.println(\"Payment processed\");\n    }\n}\n\nclass FreePayment extends Payment {\n    @Override\n    public void pay() {\n        throw new UnsupportedOperationException();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Payment p = new FreePayment();\n        p.pay();\n    }\n}",
+    "output": "abstract class Payment {\n    public abstract void pay();\n}\n\nclass PaidPayment extends Payment {\n    @Override\n    public void pay() {\n        System.out.println(\"Payment processed\");\n    }\n}\n\nclass FreePayment extends Payment {\n    @Override\n    public void pay() {\n        System.out.println(\"No payment needed\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Payment p = new FreePayment();\n        p.pay();\n    }\n}",
+    "level": "EASY",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Vehicle {\n    public void startEngine() {\n        System.out.println(\"Engine started\");\n    }\n}\n\nclass Bicycle extends Vehicle {\n    @Override\n    public void startEngine() {\n        throw new UnsupportedOperationException();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Vehicle v = new Bicycle();\n        v.startEngine();\n    }\n}",
+    "output": "abstract class Vehicle {\n    public abstract void move();\n}\n\nclass Car extends Vehicle {\n    @Override\n    public void move() {\n        System.out.println(\"Car is moving\");\n    }\n}\n\nclass Bicycle extends Vehicle {\n    @Override\n    public void move() {\n        System.out.println(\"Bicycle is moving\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Vehicle v = new Bicycle();\n        v.move();\n    }\n}",
+    "level": "MODERATE",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class FileReader {\n    public String read() {\n        return \"Reading from file\";\n    }\n}\n\nclass SecureFileReader extends FileReader {\n    @Override\n    public String read() {\n        throw new SecurityException();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        FileReader fr = new SecureFileReader();\n        System.out.println(fr.read());\n    }\n}",
+    "output": "abstract class Reader {\n    public abstract String read();\n}\n\nclass FileReader extends Reader {\n    @Override\n    public String read() {\n        return \"Reading from file\";\n    }\n}\n\nclass SecureFileReader extends Reader {\n    @Override\n    public String read() {\n        return \"Reading from secure file\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Reader fr = new SecureFileReader();\n        System.out.println(fr.read());\n    }\n}",
+    "level": "MODERATE",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Writer {\n    public void write(String data) {\n        System.out.println(\"Writing: \" + data);\n    }\n}\n\nclass ReadOnlyWriter extends Writer {\n    @Override\n    public void write(String data) {\n        throw new UnsupportedOperationException();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Writer w = new ReadOnlyWriter();\n        w.write(\"Hello\");\n    }\n}",
+    "output": "abstract class Writer {\n    public abstract void write(String data);\n}\n\nclass FileWriter extends Writer {\n    @Override\n    public void write(String data) {\n        System.out.println(\"Writing: \" + data);\n    }\n}\n\nclass ReadOnlyWriter extends Writer {\n    @Override\n    public void write(String data) {\n        System.out.println(\"Cannot write: Read only\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Writer w = new ReadOnlyWriter();\n        w.write(\"Hello\");\n    }\n}",
+    "level": "MODERATE",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Calculator {\n    public int divide(int a, int b) {\n        return a / b;\n    }\n}\n\nclass SafeCalculator extends Calculator {\n    @Override\n    public int divide(int a, int b) {\n        if (b == 0) {\n            throw new IllegalArgumentException();\n        }\n        return a / b;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Calculator c = new SafeCalculator();\n        System.out.println(c.divide(4, 0));\n    }\n}",
+    "output": "class Calculator {\n    public int divide(int a, int b) {\n        if (b == 0) {\n            throw new IllegalArgumentException();\n        }\n        return a / b;\n    }\n}\n\nclass SafeCalculator extends Calculator {\n    @Override\n    public int divide(int a, int b) {\n        return super.divide(a, b);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Calculator c = new SafeCalculator();\n        System.out.println(c.divide(4, 2));\n    }\n}",
+    "level": "MODERATE",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Notification {\n    public void send(String message) {\n        System.out.println(\"Sending: \" + message);\n    }\n}\n\nclass SilentNotification extends Notification {\n    @Override\n    public void send(String message) {\n        throw new UnsupportedOperationException();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Notification n = new SilentNotification();\n        n.send(\"Hello\");\n    }\n}",
+    "output": "abstract class Notification {\n    public abstract void send(String message);\n}\n\nclass EmailNotification extends Notification {\n    @Override\n    public void send(String message) {\n        System.out.println(\"Sending: \" + message);\n    }\n}\n\nclass SilentNotification extends Notification {\n    @Override\n    public void send(String message) {\n        System.out.println(\"No notification sent\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Notification n = new SilentNotification();\n        n.send(\"Hello\");\n    }\n}",
+    "level": "HARD",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Account {\n    public void withdraw(double amount) {\n        System.out.println(\"Withdraw: \" + amount);\n    }\n}\n\nclass FixedDepositAccount extends Account {\n    @Override\n    public void withdraw(double amount) {\n        throw new UnsupportedOperationException();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Account acc = new FixedDepositAccount();\n        acc.withdraw(100);\n    }\n}",
+    "output": "abstract class Account {\n    public abstract void withdraw(double amount);\n}\n\nclass SavingsAccount extends Account {\n    @Override\n    public void withdraw(double amount) {\n        System.out.println(\"Withdraw: \" + amount);\n    }\n}\n\nclass FixedDepositAccount extends Account {\n    @Override\n    public void withdraw(double amount) {\n        System.out.println(\"Withdrawal not allowed\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Account acc = new FixedDepositAccount();\n        acc.withdraw(100);\n    }\n}",
+    "level": "HARD",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Printer {\n    public void print(String text) {\n        System.out.println(text);\n    }\n}\n\nclass NullPrinter extends Printer {\n    @Override\n    public void print(String text) {\n        throw new UnsupportedOperationException();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Printer p = new NullPrinter();\n        p.print(\"Test\");\n    }\n}",
+    "output": "abstract class Printer {\n    public abstract void print(String text);\n}\n\nclass ConsolePrinter extends Printer {\n    @Override\n    public void print(String text) {\n        System.out.println(text);\n    }\n}\n\nclass NullPrinter extends Printer {\n    @Override\n    public void print(String text) {\n        System.out.println(\"No output\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Printer p = new NullPrinter();\n        p.print(\"Test\");\n    }\n}",
+    "level": "HARD",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Employee {\n    public double getBonus() {\n        return 1000;\n    }\n}\n\nclass Intern extends Employee {\n    @Override\n    public double getBonus() {\n        throw new UnsupportedOperationException();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Employee emp = new Intern();\n        System.out.println(emp.getBonus());\n    }\n}",
+    "output": "abstract class Employee {\n    public abstract double getBonus();\n}\n\nclass FullTimeEmployee extends Employee {\n    @Override\n    public double getBonus() {\n        return 1000;\n    }\n}\n\nclass Intern extends Employee {\n    @Override\n    public double getBonus() {\n        return 0;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Employee emp = new Intern();\n        System.out.println(emp.getBonus());\n    }\n}",
+    "level": "HARD",
+    "language": "JAVA",
+    "violation": "LSP"
+  },
+    {
+        "input": "class Bird:\n    def fly(self):\n        print('Flying')\n\nclass Ostrich(Bird):\n    def fly(self):\n        raise Exception('Ostriches cannot fly')\n",
+        "output": "class Bird:\n    def move(self):\n        print('Moving')\n\nclass Ostrich(Bird):\n    def move(self):\n        print('Running')\n",
+        "level": "EASY",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class Rectangle:\n    def set_width(self, width):\n        self.width = width\n    def set_height(self, height):\n        self.height = height\n    def area(self):\n        return self.width * self.height\n\nclass Square(Rectangle):\n    def set_width(self, width):\n        self.width = width\n        self.height = width\n    def set_height(self, height):\n        self.height = height\n        self.width = height\n",
+        "output": "class Shape:\n    def area(self):\n        pass\n\nclass Rectangle(Shape):\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n    def area(self):\n        return self.width * self.height\n\nclass Square(Shape):\n    def __init__(self, side):\n        self.side = side\n    def area(self):\n        return self.side * self.side\n",
+        "level": "EASY",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class Animal:\n    def make_sound(self):\n        print('Some sound')\n\nclass Fish(Animal):\n    def make_sound(self):\n        raise NotImplementedError('Fish cannot make sounds')\n",
+        "output": "class Animal:\n    def move(self):\n        print('Moving')\n\nclass Fish(Animal):\n    def move(self):\n        print('Swimming')\n",
+        "level": "EASY",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class Writer:\n    def write(self):\n        print('Writing to file')\n\nclass ReadOnlyWriter(Writer):\n    def write(self):\n        raise Exception('Cannot write in read-only mode')\n",
+        "output": "class FileHandler:\n    def read(self):\n        print('Reading file')\n\nclass Writer(FileHandler):\n    def write(self):\n        print('Writing to file')\n",
+        "level": "EASY",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class PaymentProcessor:\n    def process_payment(self, amount):\n        print(f'Processed payment of {amount}')\n\nclass FreePaymentProcessor(PaymentProcessor):\n    def process_payment(self, amount):\n        if amount > 0:\n            raise Exception('Cannot process payments for free accounts')\n",
+        "output": "class PaymentProcessor:\n    def process_payment(self, amount):\n        print(f'Processed payment of {amount}')\n\nclass FreePaymentProcessor:\n    def process_free(self):\n        print('Processed free payment')\n",
+        "level": "MODERATE",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class Document:\n    def print_document(self):\n        print('Printing document')\n\nclass SecureDocument(Document):\n    def print_document(self):\n        raise Exception('Printing not allowed for secure documents')\n",
+        "output": "class Document:\n    def show(self):\n        print('Showing document')\n\nclass SecureDocument(Document):\n    def show(self):\n        print('Showing secure document')\n",
+        "level": "MODERATE",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class Vehicle:\n    def start_engine(self):\n        print('Engine started')\n\nclass Bicycle(Vehicle):\n    def start_engine(self):\n        raise Exception('Bicycles do not have engines')\n",
+        "output": "class Vehicle:\n    def move(self):\n        print('Vehicle is moving')\n\nclass Bicycle(Vehicle):\n    def move(self):\n        print('Bicycle is moving')\n",
+        "level": "MODERATE",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class EmailSender:\n    def send_email(self, address):\n        print(f'Sending email to {address}')\n\nclass NullEmailSender(EmailSender):\n    def send_email(self, address):\n        raise Exception('Cannot send email')\n",
+        "output": "class EmailSender:\n    def send_email(self, address):\n        print(f'Sending email to {address}')\n\nclass Logger:\n    def log(self, message):\n        print(message)\n",
+        "level": "MODERATE",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class Order:\n    def cancel(self):\n        print('Order cancelled')\n\nclass NonCancellableOrder(Order):\n    def cancel(self):\n        raise Exception('This order cannot be cancelled')\n",
+        "output": "class Order:\n    def process(self):\n        print('Order processed')\n\nclass NonCancellableOrder(Order):\n    def process(self):\n        print('Non-cancellable order processed')\n",
+        "level": "HARD",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class Shape:\n    def draw(self):\n        print('Drawing shape')\n\nclass InvisibleShape(Shape):\n    def draw(self):\n        raise Exception('Cannot draw invisible shape')\n",
+        "output": "class Shape:\n    def render(self):\n        print('Rendering shape')\n\nclass InvisibleShape(Shape):\n    def render(self):\n        print('Invisible shape, nothing to render')\n",
+        "level": "HARD",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class Account:\n    def withdraw(self, amount):\n        print(f'Withdrew {amount}')\n\nclass LockedAccount(Account):\n    def withdraw(self, amount):\n        raise Exception('Account is locked')\n",
+        "output": "class Account:\n    def get_balance(self):\n        print('Getting balance')\n\nclass LockedAccount(Account):\n    def get_balance(self):\n        print('Account is locked, balance unavailable')\n",
+        "level": "HARD",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+    {
+        "input": "class Printer:\n    def print_page(self):\n        print('Printing page')\n\nclass BrokenPrinter(Printer):\n    def print_page(self):\n        raise Exception('Printer is broken')\n",
+        "output": "class Printer:\n    def status(self):\n        print('Printer is ready')\n\nclass BrokenPrinter(Printer):\n    def status(self):\n        print('Printer is broken')\n",
+        "level": "HARD",
+        "language": "PYTHON",
+        "violation": "LSP"
+    },
+  {
+    "input": "open class Bird {\n    open fun fly() {}\n}\n\nclass Ostrich : Bird() {\n    override fun fly() {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun makeBirdFly(bird: Bird) {\n    bird.fly()\n}\n\nfun main() {\n    val ostrich = Ostrich()\n    makeBirdFly(ostrich)\n}",
+    "output": "open class Bird {\n    open fun move() {}\n}\n\nclass Ostrich : Bird() {\n    override fun move() {\n        // Ostrich runs\n    }\n}\n\nclass Sparrow : Bird() {\n    override fun move() {\n        // Sparrow flies\n    }\n}\n\nfun makeBirdMove(bird: Bird) {\n    bird.move()\n}\n\nfun main() {\n    val ostrich = Ostrich()\n    makeBirdMove(ostrich)\n}",
+    "level": "EASY",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Rectangle(var width: Int, var height: Int) {\n    open fun setWidth(w: Int) { width = w }\n    open fun setHeight(h: Int) { height = h }\n}\n\nclass Square(size: Int) : Rectangle(size, size) {\n    override fun setWidth(w: Int) {\n        width = w\n        height = w\n    }\n    override fun setHeight(h: Int) {\n        width = h\n        height = h\n    }\n}\n\nfun resizeRectangle(rect: Rectangle) {\n    rect.setWidth(5)\n    rect.setHeight(10)\n}\n\nfun main() {\n    val square = Square(5)\n    resizeRectangle(square)\n}",
+    "output": "open class Shape {\n    open fun area(): Int = 0\n}\n\nclass Rectangle(var width: Int, var height: Int) : Shape() {\n    override fun area(): Int = width * height\n}\n\nclass Square(size: Int) : Shape() {\n    private val side = size\n    override fun area(): Int = side * side\n}\n\nfun printArea(shape: Shape) {\n    println(shape.area())\n}\n\nfun main() {\n    val square = Square(5)\n    printArea(square)\n}",
+    "level": "EASY",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Animal {\n    open fun makeSound() {}\n}\n\nclass Dog : Animal() {\n    override fun makeSound() {\n        println(\"Woof\")\n    }\n}\n\nclass Fish : Animal() {\n    override fun makeSound() {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun animalSound(animal: Animal) {\n    animal.makeSound()\n}\n\nfun main() {\n    val fish = Fish()\n    animalSound(fish)\n}",
+    "output": "open class Animal {\n    open fun move() {}\n}\n\nclass Dog : Animal() {\n    override fun move() {\n        println(\"Dog runs\")\n    }\n}\n\nclass Fish : Animal() {\n    override fun move() {\n        println(\"Fish swims\")\n    }\n}\n\nfun animalMove(animal: Animal) {\n    animal.move()\n}\n\nfun main() {\n    val fish = Fish()\n    animalMove(fish)\n}",
+    "level": "EASY",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Payment {\n    open fun pay(amount: Double) {}\n}\n\nclass CashPayment : Payment() {\n    override fun pay(amount: Double) {\n        println(\"Paid $amount in cash\")\n    }\n}\n\nclass CreditPayment : Payment() {\n    override fun pay(amount: Double) {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun processPayment(payment: Payment, amount: Double) {\n    payment.pay(amount)\n}\n\nfun main() {\n    val credit = CreditPayment()\n    processPayment(credit, 100.0)\n}",
+    "output": "interface Payment {\n    fun pay(amount: Double)\n}\n\nclass CashPayment : Payment {\n    override fun pay(amount: Double) {\n        println(\"Paid $amount in cash\")\n    }\n}\n\nclass CreditPayment : Payment {\n    override fun pay(amount: Double) {\n        println(\"Paid $amount by credit card\")\n    }\n}\n\nfun processPayment(payment: Payment, amount: Double) {\n    payment.pay(amount)\n}\n\nfun main() {\n    val credit = CreditPayment()\n    processPayment(credit, 100.0)\n}",
+    "level": "EASY",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Writer {\n    open fun write(data: String) {}\n}\n\nclass FileWriter : Writer() {\n    override fun write(data: String) {\n        println(\"Writing to file: $data\")\n    }\n}\n\nclass ReadOnlyFileWriter : Writer() {\n    override fun write(data: String) {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun save(writer: Writer, data: String) {\n    writer.write(data)\n}\n\nfun main() {\n    val readOnly = ReadOnlyFileWriter()\n    save(readOnly, \"Hello\")\n}",
+    "output": "interface Writer {\n    fun write(data: String)\n}\n\nclass FileWriter : Writer {\n    override fun write(data: String) {\n        println(\"Writing to file: $data\")\n    }\n}\n\nfun save(writer: Writer, data: String) {\n    writer.write(data)\n}\n\nfun main() {\n    val fileWriter = FileWriter()\n    save(fileWriter, \"Hello\")\n}",
+    "level": "MODERATE",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Vehicle {\n    open fun startEngine() {}\n}\n\nclass Bicycle : Vehicle() {\n    override fun startEngine() {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun startVehicle(vehicle: Vehicle) {\n    vehicle.startEngine()\n}\n\nfun main() {\n    val bike = Bicycle()\n    startVehicle(bike)\n}",
+    "output": "open class Vehicle {\n    open fun move() {}\n}\n\nclass Car : Vehicle() {\n    override fun move() {\n        println(\"Car drives\")\n    }\n}\n\nclass Bicycle : Vehicle() {\n    override fun move() {\n        println(\"Bicycle pedals\")\n    }\n}\n\nfun startVehicle(vehicle: Vehicle) {\n    vehicle.move()\n}\n\nfun main() {\n    val bike = Bicycle()\n    startVehicle(bike)\n}",
+    "level": "MODERATE",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Notification {\n    open fun send(message: String) {}\n}\n\nclass EmailNotification : Notification() {\n    override fun send(message: String) {\n        println(\"Email: $message\")\n    }\n}\n\nclass SilentNotification : Notification() {\n    override fun send(message: String) {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun notifyUser(notification: Notification, message: String) {\n    notification.send(message)\n}\n\nfun main() {\n    val silent = SilentNotification()\n    notifyUser(silent, \"Hello\")\n}",
+    "output": "interface Notification {\n    fun send(message: String)\n}\n\nclass EmailNotification : Notification {\n    override fun send(message: String) {\n        println(\"Email: $message\")\n    }\n}\n\nfun notifyUser(notification: Notification, message: String) {\n    notification.send(message)\n}\n\nfun main() {\n    val email = EmailNotification()\n    notifyUser(email, \"Hello\")\n}",
+    "level": "MODERATE",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Printer {\n    open fun printDocument(document: String) {}\n}\n\nclass NetworkPrinter : Printer() {\n    override fun printDocument(document: String) {\n        println(\"Printing over network: $document\")\n    }\n}\n\nclass DummyPrinter : Printer() {\n    override fun printDocument(document: String) {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun print(printer: Printer, document: String) {\n    printer.printDocument(document)\n}\n\nfun main() {\n    val dummy = DummyPrinter()\n    print(dummy, \"Test\")\n}",
+    "output": "interface Printer {\n    fun printDocument(document: String)\n}\n\nclass NetworkPrinter : Printer {\n    override fun printDocument(document: String) {\n        println(\"Printing over network: $document\")\n    }\n}\n\nfun print(printer: Printer, document: String) {\n    printer.printDocument(document)\n}\n\nfun main() {\n    val networkPrinter = NetworkPrinter()\n    print(networkPrinter, \"Test\")\n}",
+    "level": "MODERATE",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Shape {\n    open fun draw() {}\n}\n\nclass Circle : Shape() {\n    override fun draw() {\n        println(\"Drawing circle\")\n    }\n}\n\nclass NullShape : Shape() {\n    override fun draw() {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun render(shape: Shape) {\n    shape.draw()\n}\n\nfun main() {\n    val nullShape = NullShape()\n    render(nullShape)\n}",
+    "output": "open class Shape {\n    open fun draw() {}\n}\n\nclass Circle : Shape() {\n    override fun draw() {\n        println(\"Drawing circle\")\n    }\n}\n\nfun render(shape: Shape) {\n    shape.draw()\n}\n\nfun main() {\n    val circle = Circle()\n    render(circle)\n}",
+    "level": "HARD",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class DataSource {\n    open fun read(): String = \"\"\n}\n\nclass FileDataSource : DataSource() {\n    override fun read(): String = \"File data\"\n}\n\nclass WriteOnlyDataSource : DataSource() {\n    override fun read(): String {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun fetchData(source: DataSource) {\n    println(source.read())\n}\n\nfun main() {\n    val writeOnly = WriteOnlyDataSource()\n    fetchData(writeOnly)\n}",
+    "output": "interface Readable {\n    fun read(): String\n}\n\nclass FileDataSource : Readable {\n    override fun read(): String = \"File data\"\n}\n\nfun fetchData(source: Readable) {\n    println(source.read())\n}\n\nfun main() {\n    val fileSource = FileDataSource()\n    fetchData(fileSource)\n}",
+    "level": "HARD",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Account {\n    open fun withdraw(amount: Double) {}\n}\n\nclass SavingsAccount : Account() {\n    override fun withdraw(amount: Double) {\n        println(\"Withdraw $amount from savings\")\n    }\n}\n\nclass FixedDepositAccount : Account() {\n    override fun withdraw(amount: Double) {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun processWithdrawal(account: Account, amount: Double) {\n    account.withdraw(amount)\n}\n\nfun main() {\n    val fd = FixedDepositAccount()\n    processWithdrawal(fd, 100.0)\n}",
+    "output": "interface Withdrawable {\n    fun withdraw(amount: Double)\n}\n\nclass SavingsAccount : Withdrawable {\n    override fun withdraw(amount: Double) {\n        println(\"Withdraw $amount from savings\")\n    }\n}\n\nfun processWithdrawal(account: Withdrawable, amount: Double) {\n    account.withdraw(amount)\n}\n\nfun main() {\n    val savings = SavingsAccount()\n    processWithdrawal(savings, 100.0)\n}",
+    "level": "HARD",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "open class Logger {\n    open fun log(message: String) {}\n}\n\nclass ConsoleLogger : Logger() {\n    override fun log(message: String) {\n        println(message)\n    }\n}\n\nclass NullLogger : Logger() {\n    override fun log(message: String) {\n        throw UnsupportedOperationException()\n    }\n}\n\nfun logMessage(logger: Logger, message: String) {\n    logger.log(message)\n}\n\nfun main() {\n    val nullLogger = NullLogger()\n    logMessage(nullLogger, \"Test\")\n}",
+    "output": "interface Logger {\n    fun log(message: String)\n}\n\nclass ConsoleLogger : Logger {\n    override fun log(message: String) {\n        println(message)\n    }\n}\n\nfun logMessage(logger: Logger, message: String) {\n    logger.log(message)\n}\n\nfun main() {\n    val consoleLogger = ConsoleLogger()\n    logMessage(consoleLogger, \"Test\")\n}",
+    "level": "HARD",
+    "language": "KOTLIN",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Bird { public virtual void Fly() { } } class Ostrich : Bird { public override void Fly() { throw new Exception(); } }",
+    "output": "class Bird { public virtual void Move() { } } class Ostrich : Bird { public override void Move() { } }",
+    "level": "EASY",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Rectangle { public virtual int Width { get; set; } public virtual int Height { get; set; } public int Area() { return Width * Height; } } class Square : Rectangle { public override int Width { get => base.Width; set { base.Width = value; base.Height = value; } } public override int Height { get => base.Height; set { base.Width = value; base.Height = value; } } }",
+    "output": "abstract class Shape { public abstract int Area(); } class Rectangle : Shape { public int Width { get; set; } public int Height { get; set; } public override int Area() { return Width * Height; } } class Square : Shape { public int Side { get; set; } public override int Area() { return Side * Side; } }",
+    "level": "EASY",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Animal { public virtual void MakeSound() { } } class Fish : Animal { public override void MakeSound() { throw new NotImplementedException(); } }",
+    "output": "class Animal { public virtual void Move() { } } class Fish : Animal { public override void Move() { } }",
+    "level": "EASY",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Payment { public virtual void Pay() { } } class FreePayment : Payment { public override void Pay() { throw new NotSupportedException(); } }",
+    "output": "interface IPayment { void Pay(); } class PaidPayment : IPayment { public void Pay() { } } class FreePayment : IPayment { public void Pay() { } }",
+    "level": "EASY",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class FileWriter { public virtual void Write(string data) { } } class ReadOnlyFileWriter : FileWriter { public override void Write(string data) { throw new InvalidOperationException(); } }",
+    "output": "interface IFileWriter { void Write(string data); } class FileWriter : IFileWriter { public void Write(string data) { } } class ReadOnlyFileWriter : IFileWriter { public void Write(string data) { } }",
+    "level": "MODERATE",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Vehicle { public virtual void StartEngine() { } } class Bicycle : Vehicle { public override void StartEngine() { throw new NotImplementedException(); } }",
+    "output": "abstract class Vehicle { public abstract void Move(); } class Car : Vehicle { public override void Move() { } } class Bicycle : Vehicle { public override void Move() { } }",
+    "level": "MODERATE",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Document { public virtual void Print() { } } class DigitalDocument : Document { public override void Print() { throw new NotSupportedException(); } }",
+    "output": "interface IDocument { void Print(); } class PaperDocument : IDocument { public void Print() { } } class DigitalDocument : IDocument { public void Print() { } }",
+    "level": "MODERATE",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Timer { public virtual void Start() { } public virtual void Stop() { } } class OneShotTimer : Timer { public override void Stop() { throw new NotSupportedException(); } }",
+    "output": "interface ITimer { void Start(); void Stop(); } class RegularTimer : ITimer { public void Start() { } public void Stop() { } } class OneShotTimer : ITimer { public void Start() { } public void Stop() { } }",
+    "level": "MODERATE",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Shape { public virtual double Area() { return 0; } } class NullShape : Shape { public override double Area() { throw new NotImplementedException(); } }",
+    "output": "interface IShape { double Area(); } class Circle : IShape { public double Area() { return 3.14; } } class NullShape : IShape { public double Area() { return 0; } }",
+    "level": "HARD",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Account { public virtual void Withdraw(decimal amount) { } } class ReadOnlyAccount : Account { public override void Withdraw(decimal amount) { throw new InvalidOperationException(); } }",
+    "output": "interface IAccount { void Withdraw(decimal amount); } class ActiveAccount : IAccount { public void Withdraw(decimal amount) { } } class ReadOnlyAccount : IAccount { public void Withdraw(decimal amount) { } }",
+    "level": "HARD",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Logger { public virtual void Log(string message) { } } class NullLogger : Logger { public override void Log(string message) { throw new NotImplementedException(); } }",
+    "output": "interface ILogger { void Log(string message); } class ConsoleLogger : ILogger { public void Log(string message) { } } class NullLogger : ILogger { public void Log(string message) { } }",
+    "level": "HARD",
+    "language": "C#",
+    "violation": "LSP"
+  },
+  {
+    "input": "class Order { public virtual void Cancel() { } } class CompletedOrder : Order { public override void Cancel() { throw new InvalidOperationException(); } }",
+    "output": "interface IOrder { void Cancel(); } class ActiveOrder : IOrder { public void Cancel() { } } class CompletedOrder : IOrder { public void Cancel() { } }",
+    "level": "HARD",
+    "language": "C#",
+    "violation": "LSP"
+  }
+]
+}

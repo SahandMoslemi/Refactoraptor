@@ -1,0 +1,340 @@
+{
+    "code_examples": [
+  {
+    "input": "public class Employee {\n    private String name;\n    public void saveToDatabase() {\n        // save employee to database\n    }\n    public void generateReport() {\n        // generate employee report\n    }\n}",
+    "output": "public class Employee {\n    private String name;\n}\n\npublic class EmployeeRepository {\n    public void saveToDatabase(Employee employee) {\n        // save employee to database\n    }\n}\n\npublic class EmployeeReportGenerator {\n    public void generateReport(Employee employee) {\n        // generate employee report\n    }\n}",
+    "level": "EASY",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Book {\n    private String title;\n    public void print() {\n        // print book details\n    }\n    public void save() {\n        // save book to file\n    }\n}",
+    "output": "public class Book {\n    private String title;\n}\n\npublic class BookPrinter {\n    public void print(Book book) {\n        // print book details\n    }\n}\n\npublic class BookRepository {\n    public void save(Book book) {\n        // save book to file\n    }\n}",
+    "level": "EASY",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Invoice {\n    public void calculateTotal() {\n        // calculate total\n    }\n    public void printInvoice() {\n        // print invoice\n    }\n    public void saveToFile() {\n        // save invoice to file\n    }\n}",
+    "output": "public class Invoice {\n    public void calculateTotal() {\n        // calculate total\n    }\n}\n\npublic class InvoicePrinter {\n    public void printInvoice(Invoice invoice) {\n        // print invoice\n    }\n}\n\npublic class InvoiceRepository {\n    public void saveToFile(Invoice invoice) {\n        // save invoice to file\n    }\n}",
+    "level": "EASY",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class User {\n    private String username;\n    public void login() {\n        // login logic\n    }\n    public void sendEmail() {\n        // send email to user\n    }\n}",
+    "output": "public class User {\n    private String username;\n}\n\npublic class UserAuthenticator {\n    public void login(User user) {\n        // login logic\n    }\n}\n\npublic class EmailService {\n    public void sendEmail(User user) {\n        // send email to user\n    }\n}",
+    "level": "EASY",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Order {\n    public void addItem(String item) {\n        // add item\n    }\n    public void processPayment() {\n        // process payment\n    }\n    public void sendConfirmationEmail() {\n        // send confirmation email\n    }\n}",
+    "output": "public class Order {\n    public void addItem(String item) {\n        // add item\n    }\n}\n\npublic class PaymentProcessor {\n    public void processPayment(Order order) {\n        // process payment\n    }\n}\n\npublic class EmailSender {\n    public void sendConfirmationEmail(Order order) {\n        // send confirmation email\n    }\n}",
+    "level": "MODERATE",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Student {\n    private String name;\n    public void enrollInCourse(String course) {\n        // enroll logic\n    }\n    public void calculateGPA() {\n        // calculate GPA\n    }\n    public void printTranscript() {\n        // print transcript\n    }\n}",
+    "output": "public class Student {\n    private String name;\n}\n\npublic class EnrollmentService {\n    public void enrollInCourse(Student student, String course) {\n        // enroll logic\n    }\n}\n\npublic class GPACalculator {\n    public void calculateGPA(Student student) {\n        // calculate GPA\n    }\n}\n\npublic class TranscriptPrinter {\n    public void printTranscript(Student student) {\n        // print transcript\n    }\n}",
+    "level": "MODERATE",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Product {\n    private String name;\n    public void updateStock(int amount) {\n        // update stock\n    }\n    public void displayProduct() {\n        // display product\n    }\n    public void logChange() {\n        // log change\n    }\n}",
+    "output": "public class Product {\n    private String name;\n}\n\npublic class StockManager {\n    public void updateStock(Product product, int amount) {\n        // update stock\n    }\n}\n\npublic class ProductDisplayer {\n    public void displayProduct(Product product) {\n        // display product\n    }\n}\n\npublic class ChangeLogger {\n    public void logChange(Product product) {\n        // log change\n    }\n}",
+    "level": "MODERATE",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Vehicle {\n    private String type;\n    public void startEngine() {\n        // start engine\n    }\n    public void calculateFuelEfficiency() {\n        // calculate fuel efficiency\n    }\n    public void scheduleMaintenance() {\n        // schedule maintenance\n    }\n}",
+    "output": "public class Vehicle {\n    private String type;\n}\n\npublic class EngineStarter {\n    public void startEngine(Vehicle vehicle) {\n        // start engine\n    }\n}\n\npublic class FuelEfficiencyCalculator {\n    public void calculateFuelEfficiency(Vehicle vehicle) {\n        // calculate fuel efficiency\n    }\n}\n\npublic class MaintenanceScheduler {\n    public void scheduleMaintenance(Vehicle vehicle) {\n        // schedule maintenance\n    }\n}",
+    "level": "MODERATE",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class ShoppingCart {\n    public void addItem(String item) {\n        // add item\n    }\n    public void calculateDiscount() {\n        // calculate discount\n    }\n    public void checkout() {\n        // checkout logic\n    }\n    public void sendReceipt() {\n        // send receipt\n    }\n}",
+    "output": "public class ShoppingCart {\n    public void addItem(String item) {\n        // add item\n    }\n}\n\npublic class DiscountCalculator {\n    public void calculateDiscount(ShoppingCart cart) {\n        // calculate discount\n    }\n}\n\npublic class CheckoutProcessor {\n    public void checkout(ShoppingCart cart) {\n        // checkout logic\n    }\n}\n\npublic class ReceiptSender {\n    public void sendReceipt(ShoppingCart cart) {\n        // send receipt\n    }\n}",
+    "level": "HARD",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Customer {\n    private String name;\n    public void updateProfile(String newName) {\n        // update profile\n    }\n    public void calculateLoyaltyPoints() {\n        // calculate loyalty points\n    }\n    public void sendPromotionalEmail() {\n        // send promotional email\n    }\n    public void deactivateAccount() {\n        // deactivate account\n    }\n}",
+    "output": "public class Customer {\n    private String name;\n}\n\npublic class ProfileUpdater {\n    public void updateProfile(Customer customer, String newName) {\n        // update profile\n    }\n}\n\npublic class LoyaltyPointsCalculator {\n    public void calculateLoyaltyPoints(Customer customer) {\n        // calculate loyalty points\n    }\n}\n\npublic class PromotionalEmailSender {\n    public void sendPromotionalEmail(Customer customer) {\n        // send promotional email\n    }\n}\n\npublic class AccountDeactivator {\n    public void deactivateAccount(Customer customer) {\n        // deactivate account\n    }\n}",
+    "level": "HARD",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class BankAccount {\n    private double balance;\n    public void deposit(double amount) {\n        // deposit logic\n    }\n    public void withdraw(double amount) {\n        // withdraw logic\n    }\n    public void generateStatement() {\n        // generate statement\n    }\n    public void notifyOverdraft() {\n        // notify overdraft\n    }\n}",
+    "output": "public class BankAccount {\n    private double balance;\n    public void deposit(double amount) {\n        // deposit logic\n    }\n    public void withdraw(double amount) {\n        // withdraw logic\n    }\n}\n\npublic class StatementGenerator {\n    public void generateStatement(BankAccount account) {\n        // generate statement\n    }\n}\n\npublic class OverdraftNotifier {\n    public void notifyOverdraft(BankAccount account) {\n        // notify overdraft\n    }\n}",
+    "level": "HARD",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Library {\n    public void addBook(String book) {\n        // add book\n    }\n    public void lendBook(String book, String user) {\n        // lend book\n    }\n    public void collectFine(String user) {\n        // collect fine\n    }\n    public void sendOverdueNotice(String user) {\n        // send overdue notice\n    }\n}",
+    "output": "public class Library {\n    public void addBook(String book) {\n        // add book\n    }\n}\n\npublic class LendingService {\n    public void lendBook(String book, String user) {\n        // lend book\n    }\n}\n\npublic class FineCollector {\n    public void collectFine(String user) {\n        // collect fine\n    }\n}\n\npublic class OverdueNoticeSender {\n    public void sendOverdueNotice(String user) {\n        // send overdue notice\n    }\n}",
+    "level": "HARD",
+    "language": "JAVA",
+    "violation": "SRP"
+  },
+  {
+    "input": "class User:\n    def __init__(self, name, email):\n        self.name = name\n        self.email = email\n    def save_to_db(self):\n        print(f\"Saving {self.name} to database\")",
+    "output": "class User:\n    def __init__(self, name, email):\n        self.name = name\n        self.email = email\n\nclass UserRepository:\n    def save(self, user):\n        print(f\"Saving {user.name} to database\")",
+    "level": "EASY",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Report:\n    def __init__(self, data):\n        self.data = data\n    def calculate_statistics(self):\n        return sum(self.data)/len(self.data)\n    def print_report(self):\n        print(f\"Report: {self.data}\")",
+    "output": "class Report:\n    def __init__(self, data):\n        self.data = data\n    def calculate_statistics(self):\n        return sum(self.data)/len(self.data)\n\nclass ReportPrinter:\n    def print_report(self, report):\n        print(f\"Report: {report.data}\")",
+    "level": "EASY",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Order:\n    def __init__(self, items):\n        self.items = items\n    def calculate_total(self):\n        return sum(self.items)\n    def send_confirmation_email(self):\n        print(\"Email sent\")",
+    "output": "class Order:\n    def __init__(self, items):\n        self.items = items\n    def calculate_total(self):\n        return sum(self.items)\n\nclass EmailSender:\n    def send_confirmation(self, order):\n        print(\"Email sent\")",
+    "level": "EASY",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Book:\n    def __init__(self, title, author):\n        self.title = title\n        self.author = author\n    def display(self):\n        print(f\"{self.title} by {self.author}\")\n    def to_json(self):\n        return {'title': self.title, 'author': self.author}",
+    "output": "class Book:\n    def __init__(self, title, author):\n        self.title = title\n        self.author = author\n\nclass BookDisplayer:\n    def display(self, book):\n        print(f\"{book.title} by {book.author}\")\n\nclass BookSerializer:\n    def to_json(self, book):\n        return {'title': book.title, 'author': book.author}",
+    "level": "EASY",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Invoice:\n    def __init__(self, amount):\n        self.amount = amount\n    def calculate_tax(self):\n        return self.amount * 0.2\n    def save_to_file(self):\n        with open('invoice.txt', 'w') as f:\n            f.write(str(self.amount))",
+    "output": "class Invoice:\n    def __init__(self, amount):\n        self.amount = amount\n    def calculate_tax(self):\n        return self.amount * 0.2\n\nclass InvoiceSaver:\n    def save_to_file(self, invoice):\n        with open('invoice.txt', 'w') as f:\n            f.write(str(invoice.amount))",
+    "level": "MODERATE",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Product:\n    def __init__(self, name, price):\n        self.name = name\n        self.price = price\n    def apply_discount(self, percent):\n        self.price -= self.price * percent\n    def log_price_change(self):\n        print(f\"Price changed to {self.price}\")",
+    "output": "class Product:\n    def __init__(self, name, price):\n        self.name = name\n        self.price = price\n    def apply_discount(self, percent):\n        self.price -= self.price * percent\n\nclass PriceLogger:\n    def log_price_change(self, product):\n        print(f\"Price changed to {product.price}\")",
+    "level": "MODERATE",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Customer:\n    def __init__(self, name):\n        self.name = name\n    def get_discount(self):\n        return 0.1\n    def send_greeting(self):\n        print(f\"Hello, {self.name}\")",
+    "output": "class Customer:\n    def __init__(self, name):\n        self.name = name\n    def get_discount(self):\n        return 0.1\n\nclass CustomerGreeter:\n    def send_greeting(self, customer):\n        print(f\"Hello, {customer.name}\")",
+    "level": "MODERATE",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class FileManager:\n    def __init__(self, filename):\n        self.filename = filename\n    def read(self):\n        with open(self.filename) as f:\n            return f.read()\n    def encrypt(self, data):\n        return data[::-1]",
+    "output": "class FileManager:\n    def __init__(self, filename):\n        self.filename = filename\n    def read(self):\n        with open(self.filename) as f:\n            return f.read()\n\nclass Encryptor:\n    def encrypt(self, data):\n        return data[::-1]",
+    "level": "MODERATE",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Notification:\n    def __init__(self, message):\n        self.message = message\n    def send_email(self):\n        print(f\"Sending email: {self.message}\")\n    def send_sms(self):\n        print(f\"Sending SMS: {self.message}\")",
+    "output": "class Notification:\n    def __init__(self, message):\n        self.message = message\n\nclass EmailSender:\n    def send_email(self, notification):\n        print(f\"Sending email: {notification.message}\")\n\nclass SMSSender:\n    def send_sms(self, notification):\n        print(f\"Sending SMS: {notification.message}\")",
+    "level": "HARD",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Payment:\n    def __init__(self, amount):\n        self.amount = amount\n    def process(self):\n        print(f\"Processing payment of {self.amount}\")\n    def generate_receipt(self):\n        return f\"Receipt for {self.amount}\"",
+    "output": "class Payment:\n    def __init__(self, amount):\n        self.amount = amount\n    def process(self):\n        print(f\"Processing payment of {self.amount}\")\n\nclass ReceiptGenerator:\n    def generate(self, payment):\n        return f\"Receipt for {payment.amount}\"",
+    "level": "HARD",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Task:\n    def __init__(self, description):\n        self.description = description\n    def mark_complete(self):\n        print(\"Task completed\")\n    def archive(self):\n        print(\"Task archived\")",
+    "output": "class Task:\n    def __init__(self, description):\n        self.description = description\n    def mark_complete(self):\n        print(\"Task completed\")\n\nclass TaskArchiver:\n    def archive(self, task):\n        print(\"Task archived\")",
+    "level": "HARD",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class WeatherData:\n    def __init__(self, temperature):\n        self.temperature = temperature\n    def convert_to_fahrenheit(self):\n        return self.temperature * 9/5 + 32\n    def plot(self):\n        print(f\"Plotting {self.temperature}\")",
+    "output": "class WeatherData:\n    def __init__(self, temperature):\n        self.temperature = temperature\n    def convert_to_fahrenheit(self):\n        return self.temperature * 9/5 + 32\n\nclass WeatherPlotter:\n    def plot(self, data):\n        print(f\"Plotting {data.temperature}\")",
+    "level": "HARD",
+    "language": "PYTHON",
+    "violation": "SRP"
+  },
+  {
+    "input": "class User {\n    fun saveUser(user: User) {\n        // Save user to database\n    }\n    fun sendEmail(email: String, message: String) {\n        // Send email to user\n    }\n}",
+    "output": "class User {\n    // User properties\n}\nclass UserRepository {\n    fun saveUser(user: User) {\n        // Save user to database\n    }\n}\nclass EmailService {\n    fun sendEmail(email: String, message: String) {\n        // Send email to user\n    }\n}",
+    "level": "EASY",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Report {\n    fun generateReport() {\n        // Generate report\n    }\n    fun printReport() {\n        // Print report\n    }\n}",
+    "output": "class Report {\n    fun generateReport() {\n        // Generate report\n    }\n}\nclass ReportPrinter {\n    fun printReport(report: Report) {\n        // Print report\n    }\n}",
+    "level": "EASY",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Order {\n    fun calculateTotal() {\n        // Calculate total\n    }\n    fun saveToDatabase() {\n        // Save order to database\n    }\n}",
+    "output": "class Order {\n    fun calculateTotal() {\n        // Calculate total\n    }\n}\nclass OrderRepository {\n    fun saveToDatabase(order: Order) {\n        // Save order to database\n    }\n}",
+    "level": "EASY",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Invoice {\n    fun createInvoice() {\n        // Create invoice\n    }\n    fun sendInvoice() {\n        // Send invoice to customer\n    }\n}",
+    "output": "class Invoice {\n    fun createInvoice() {\n        // Create invoice\n    }\n}\nclass InvoiceSender {\n    fun sendInvoice(invoice: Invoice) {\n        // Send invoice to customer\n    }\n}",
+    "level": "EASY",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class Product {\n    fun getPriceWithTax() {\n        // Calculate price with tax\n    }\n    fun updateStock() {\n        // Update stock in database\n    }\n    fun displayProduct() {\n        // Display product details\n    }\n}",
+    "output": "class Product {\n    fun getPriceWithTax() {\n        // Calculate price with tax\n    }\n}\nclass StockManager {\n    fun updateStock(product: Product) {\n        // Update stock in database\n    }\n}\nclass ProductDisplayer {\n    fun displayProduct(product: Product) {\n        // Display product details\n    }\n}",
+    "level": "MODERATE",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class CustomerManager {\n    fun addCustomer(customer: Customer) {\n        // Add customer\n    }\n    fun removeCustomer(customer: Customer) {\n        // Remove customer\n    }\n    fun sendPromotionalEmail(customer: Customer) {\n        // Send promotional email\n    }\n}",
+    "output": "class CustomerManager {\n    fun addCustomer(customer: Customer) {\n        // Add customer\n    }\n    fun removeCustomer(customer: Customer) {\n        // Remove customer\n    }\n}\nclass PromotionalEmailSender {\n    fun sendPromotionalEmail(customer: Customer) {\n        // Send promotional email\n    }\n}",
+    "level": "MODERATE",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class FileHandler {\n    fun readFile(path: String) {\n        // Read file\n    }\n    fun writeFile(path: String, content: String) {\n        // Write file\n    }\n    fun logOperation(operation: String) {\n        // Log file operation\n    }\n}",
+    "output": "class FileHandler {\n    fun readFile(path: String) {\n        // Read file\n    }\n    fun writeFile(path: String, content: String) {\n        // Write file\n    }\n}\nclass FileLogger {\n    fun logOperation(operation: String) {\n        // Log file operation\n    }\n}",
+    "level": "MODERATE",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class AuthService {\n    fun login(username: String, password: String) {\n        // Login user\n    }\n    fun logout() {\n        // Logout user\n    }\n    fun sendLoginNotification(user: User) {\n        // Send notification\n    }\n}",
+    "output": "class AuthService {\n    fun login(username: String, password: String) {\n        // Login user\n    }\n    fun logout() {\n        // Logout user\n    }\n}\nclass NotificationService {\n    fun sendLoginNotification(user: User) {\n        // Send notification\n    }\n}",
+    "level": "MODERATE",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class ShoppingCart {\n    fun addItem(item: Item) {\n        // Add item\n    }\n    fun removeItem(item: Item) {\n        // Remove item\n    }\n    fun calculateDiscount() {\n        // Calculate discount\n    }\n    fun checkout() {\n        // Checkout process\n    }\n}",
+    "output": "class ShoppingCart {\n    fun addItem(item: Item) {\n        // Add item\n    }\n    fun removeItem(item: Item) {\n        // Remove item\n    }\n}\nclass DiscountCalculator {\n    fun calculateDiscount(cart: ShoppingCart) {\n        // Calculate discount\n    }\n}\nclass CheckoutProcessor {\n    fun checkout(cart: ShoppingCart) {\n        // Checkout process\n    }\n}",
+    "level": "HARD",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class WeatherStation {\n    fun getTemperature() {\n        // Get temperature\n    }\n    fun getHumidity() {\n        // Get humidity\n    }\n    fun displayWeather() {\n        // Display weather info\n    }\n    fun saveData() {\n        // Save data to database\n    }\n}",
+    "output": "class WeatherStation {\n    fun getTemperature() {\n        // Get temperature\n    }\n    fun getHumidity() {\n        // Get humidity\n    }\n}\nclass WeatherDisplay {\n    fun displayWeather(station: WeatherStation) {\n        // Display weather info\n    }\n}\nclass WeatherDataRepository {\n    fun saveData(station: WeatherStation) {\n        // Save data to database\n    }\n}",
+    "level": "HARD",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class PaymentProcessor {\n    fun processPayment(amount: Double) {\n        // Process payment\n    }\n    fun validateCard(cardNumber: String) {\n        // Validate card\n    }\n    fun generateReceipt() {\n        // Generate receipt\n    }\n    fun sendReceipt() {\n        // Send receipt to customer\n    }\n}",
+    "output": "class PaymentProcessor {\n    fun processPayment(amount: Double) {\n        // Process payment\n    }\n}\nclass CardValidator {\n    fun validateCard(cardNumber: String) {\n        // Validate card\n    }\n}\nclass ReceiptGenerator {\n    fun generateReceipt() {\n        // Generate receipt\n    }\n}\nclass ReceiptSender {\n    fun sendReceipt() {\n        // Send receipt to customer\n    }\n}",
+    "level": "HARD",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "class LibraryManager {\n    fun addBook(book: Book) {\n        // Add book\n    }\n    fun removeBook(book: Book) {\n        // Remove book\n    }\n    fun searchBook(title: String) {\n        // Search book\n    }\n    fun notifyUser(user: User, message: String) {\n        // Notify user\n    }\n    fun generateReport() {\n        // Generate report\n    }\n}",
+    "output": "class LibraryManager {\n    fun addBook(book: Book) {\n        // Add book\n    }\n    fun removeBook(book: Book) {\n        // Remove book\n    }\n    fun searchBook(title: String) {\n        // Search book\n    }\n}\nclass UserNotifier {\n    fun notifyUser(user: User, message: String) {\n        // Notify user\n    }\n}\nclass ReportGenerator {\n    fun generateReport() {\n        // Generate report\n    }\n}",
+    "level": "HARD",
+    "language": "KOTLIN",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Invoice {\n    public void CalculateTotal() {\n        // calculate total\n    }\n    public void SaveToDatabase() {\n        // save to db\n    }\n}",
+    "output": "public class Invoice {\n    public void CalculateTotal() {\n        // calculate total\n    }\n}\n\npublic class InvoiceRepository {\n    public void SaveToDatabase(Invoice invoice) {\n        // save to db\n    }\n}",
+    "level": "EASY",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Report {\n    public void GenerateReport() {\n        // generate report\n    }\n    public void PrintReport() {\n        // print report\n    }\n}",
+    "output": "public class Report {\n    public void GenerateReport() {\n        // generate report\n    }\n}\n\npublic class ReportPrinter {\n    public void PrintReport(Report report) {\n        // print report\n    }\n}",
+    "level": "EASY",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class User {\n    public void Register() {\n        // register user\n    }\n    public void SendEmail() {\n        // send email\n    }\n}",
+    "output": "public class User {\n    public void Register() {\n        // register user\n    }\n}\n\npublic class EmailService {\n    public void SendEmail(User user) {\n        // send email\n    }\n}",
+    "level": "EASY",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class FileManager {\n    public void ReadFile() {\n        // read file\n    }\n    public void LogError() {\n        // log error\n    }\n}",
+    "output": "public class FileManager {\n    public void ReadFile() {\n        // read file\n    }\n}\n\npublic class Logger {\n    public void LogError(string message) {\n        // log error\n    }\n}",
+    "level": "EASY",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Order {\n    public void PlaceOrder() {\n        // place order\n    }\n    public void SendConfirmationEmail() {\n        // send email\n    }\n    public void UpdateStock() {\n        // update stock\n    }\n}",
+    "output": "public class Order {\n    public void PlaceOrder() {\n        // place order\n    }\n}\n\npublic class EmailSender {\n    public void SendConfirmationEmail(Order order) {\n        // send email\n    }\n}\n\npublic class StockManager {\n    public void UpdateStock(Order order) {\n        // update stock\n    }\n}",
+    "level": "MODERATE",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Customer {\n    public void AddCustomer() {\n        // add customer\n    }\n    public void GenerateCustomerReport() {\n        // generate report\n    }\n    public void ArchiveCustomer() {\n        // archive customer\n    }\n}",
+    "output": "public class Customer {\n    public void AddCustomer() {\n        // add customer\n    }\n}\n\npublic class CustomerReportGenerator {\n    public void GenerateCustomerReport(Customer customer) {\n        // generate report\n    }\n}\n\npublic class CustomerArchiver {\n    public void ArchiveCustomer(Customer customer) {\n        // archive customer\n    }\n}",
+    "level": "MODERATE",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Product {\n    public void AddProduct() {\n        // add product\n    }\n    public void CalculateDiscount() {\n        // calculate discount\n    }\n    public void NotifyWarehouse() {\n        // notify warehouse\n    }\n}",
+    "output": "public class Product {\n    public void AddProduct() {\n        // add product\n    }\n}\n\npublic class DiscountCalculator {\n    public void CalculateDiscount(Product product) {\n        // calculate discount\n    }\n}\n\npublic class WarehouseNotifier {\n    public void NotifyWarehouse(Product product) {\n        // notify warehouse\n    }\n}",
+    "level": "MODERATE",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Employee {\n    public void CalculateSalary() {\n        // calculate salary\n    }\n    public void SaveEmployeeData() {\n        // save data\n    }\n    public void SendPayrollEmail() {\n        // send email\n    }\n}",
+    "output": "public class Employee {\n    public void CalculateSalary() {\n        // calculate salary\n    }\n}\n\npublic class EmployeeRepository {\n    public void SaveEmployeeData(Employee employee) {\n        // save data\n    }\n}\n\npublic class PayrollEmailSender {\n    public void SendPayrollEmail(Employee employee) {\n        // send email\n    }\n}",
+    "level": "MODERATE",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class ShoppingCart {\n    public void AddItem() {\n        // add item\n    }\n    public void RemoveItem() {\n        // remove item\n    }\n    public void Checkout() {\n        // checkout\n    }\n    public void PrintReceipt() {\n        // print receipt\n    }\n}",
+    "output": "public class ShoppingCart {\n    public void AddItem() {\n        // add item\n    }\n    public void RemoveItem() {\n        // remove item\n    }\n    public void Checkout() {\n        // checkout\n    }\n}\n\npublic class ReceiptPrinter {\n    public void PrintReceipt(ShoppingCart cart) {\n        // print receipt\n    }\n}",
+    "level": "HARD",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Reservation {\n    public void CreateReservation() {\n        // create reservation\n    }\n    public void CancelReservation() {\n        // cancel reservation\n    }\n    public void SendNotification() {\n        // send notification\n    }\n    public void LogReservation() {\n        // log reservation\n    }\n}",
+    "output": "public class Reservation {\n    public void CreateReservation() {\n        // create reservation\n    }\n    public void CancelReservation() {\n        // cancel reservation\n    }\n}\n\npublic class NotificationService {\n    public void SendNotification(Reservation reservation) {\n        // send notification\n    }\n}\n\npublic class ReservationLogger {\n    public void LogReservation(Reservation reservation) {\n        // log reservation\n    }\n}",
+    "level": "HARD",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Payment {\n    public void ProcessPayment() {\n        // process payment\n    }\n    public void GenerateInvoice() {\n        // generate invoice\n    }\n    public void SendReceipt() {\n        // send receipt\n    }\n    public void UpdateAccounting() {\n        // update accounting\n    }\n}",
+    "output": "public class Payment {\n    public void ProcessPayment() {\n        // process payment\n    }\n}\n\npublic class InvoiceGenerator {\n    public void GenerateInvoice(Payment payment) {\n        // generate invoice\n    }\n}\n\npublic class ReceiptSender {\n    public void SendReceipt(Payment payment) {\n        // send receipt\n    }\n}\n\npublic class AccountingUpdater {\n    public void UpdateAccounting(Payment payment) {\n        // update accounting\n    }\n}",
+    "level": "HARD",
+    "language": "C#",
+    "violation": "SRP"
+  },
+  {
+    "input": "public class Library {\n    public void AddBook() {\n        // add book\n    }\n    public void RemoveBook() {\n        // remove book\n    }\n    public void GenerateStatistics() {\n        // generate statistics\n    }\n    public void NotifyMembers() {\n        // notify members\n    }\n}",
+    "output": "public class Library {\n    public void AddBook() {\n        // add book\n    }\n    public void RemoveBook() {\n        // remove book\n    }\n}\n\npublic class StatisticsGenerator {\n    public void GenerateStatistics(Library library) {\n        // generate statistics\n    }\n}\n\npublic class MemberNotifier {\n    public void NotifyMembers(Library library) {\n        // notify members\n    }\n}",
+    "level": "HARD",
+    "language": "C#",
+    "violation": "SRP"
+  }
+    ]
+}
