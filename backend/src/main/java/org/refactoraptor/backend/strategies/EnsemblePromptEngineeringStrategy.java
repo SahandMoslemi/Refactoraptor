@@ -10,24 +10,14 @@ public class EnsemblePromptEngineeringStrategy implements PromptEngineeringStrat
                "ISP:\n" +
                "DIP:\n\n" +
                "Provide reasoning for each score.\n" +
-               "Then, pick the **single most violated** principle and refactor the code to fix it.\n\n" +
+               "Then, compare the severity of each violation and pick the **single most impactful** one in terms of maintainability. Refactor the code to address that principle.\n\n" +
+               "If multiple principles are equally violated, pick one arbitrarily, but do not always default to SRP.\n\n" +
                "⚠️ **Important:** Your output must follow *exactly* this format, with no additional commentary before or after.\n\n" +
                "**<VIOLATION TYPE>**\n" +
                "```java\n" +
                "<Refactored code>\n" +
                "```\n" +
                "<Explanation of the refactoring>\n\n" +
-               "Only output the text above. Do not include extra analysis or preamble.\n\n" +
-               "Example:\n" +
-               "**SRP**\n" +
-               "```java\n" +
-               "public class Example {\n" +
-               "    public void exampleMethod() {\n" +
-               "        // Example code\n" +
-               "    }\n" +
-               "}\n" +
-               "```\n" +
-               "This class violates the Single Responsibility Principle because it has multiple responsibilities.\n\n" +
                source;
     }
 }
