@@ -10,7 +10,7 @@ public class StructureService {
 
     public Map<String, Object> getStructure(){
         Map<String, Object> properties = Map.of(
-                "type", Map.of("type", "string"), // Type of SOLID violation
+                "violation_type", Map.of("type", "string"), // Type of SOLID violation
                 "refactored_code", Map.of("type", "string"), // Refactored code
                 "explanation", Map.of("type", "string") // Explanation of the refactoring
         );

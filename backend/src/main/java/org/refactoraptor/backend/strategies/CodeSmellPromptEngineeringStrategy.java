@@ -3,20 +3,28 @@ package org.refactoraptor.backend.strategies;
 public class CodeSmellPromptEngineeringStrategy implements PromptEngineeringStrategy {
     @Override
     public String engineerPrompt(PromptEngineeringStrategy strategy, String source) {
-        return "You are a code quality assistant trained to detect design problems in object-oriented code.\n\n" +
-               "Your task has two steps:\n\n" +
-               "---\n\n" +
-               "**Step 1: Identify any code smells present in the following code.**\n" +
-               "Use common smells like:\n" +
-               "- God Object (does too many things)\n" +
-               "- Feature Envy (method accesses other class's data)\n" +
-               "- Shotgun Surgery (small changes affect many places)\n" +
-               "- Concrete Dependency (relies on specific implementations)\n" +
-               "- Large Interface (methods unused by client classes)\n" +
-               "- Others you may observe\n" +
-               "List each smell with a one-sentence description.\n\n" +
-               "**Step 2: For each code smell, identify which SOLID principle it may violate.**\n" +
-               "List the principle (SRP, OCP, LSP, ISP, DIP), explain why it applies, and refactor the following code so to fix the most violated SOLID principle.\n\n" +
+        return "First, identify any code smells (e.g., God Object, Interface Bloat, Inappropriate Intimacy).\n" +
+               "Then, map each smell to a relevant SOLID principle.\n" +
+               "After that, rate the code from 0 (bad) to 5 (good) on:\n" +
+               "SRP, OCP, LSP, ISP, DIP.\n\n" +
+               "Then, pick the **single most violated** principle and refactor the code to fix it.\n\n" +
+               "⚠️ **Important:** Your output must follow *exactly* this format, with no additional commentary before or after.\n\n" +
+               "**<VIOLATION TYPE>**\n" +
+               "```java\n" +
+               "<Refactored code>\n" +
+               "```\n" +
+               "<Explanation of the refactoring>\n\n" +
+               "Only output the text above. Do not include extra analysis or preamble.\n\n" +
+               "Example:\n" +
+               "**SRP**\n" +
+               "```java\n" +
+               "public class Example {\n" +
+               "    public void exampleMethod() {\n" +
+               "        // Example code\n" +
+               "    }\n" +
+               "}\n" +
+               "```\n" +
+               "This class violates the Single Responsibility Principle because it has multiple responsibilities.\n\n" +
                source;
     }
 }

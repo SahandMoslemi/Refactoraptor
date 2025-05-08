@@ -5,11 +5,26 @@ public class FunctionTaggingPromptEngineeringStrategy implements PromptEngineeri
     @Override
     public String engineerPrompt(PromptEngineeringStrategy strategy, String source) {
         return "You are a software design assistant.\n\n" +
-               "Your task is to:\n" +
-               "1. Summarize the responsibility of each method in the code below.\n" +
-               "2. Identify whether any methods or the class as a whole violate any SOLID principles.\n" +
-               "3. Specify which principles are violated, and explain why.\n" +
-               "4. Suggest improvements or a refactored version if a violation is detected.\n\n" +
+               "Summarize the responsibility of each method in the code below.\n" +
+               "Identify whether any methods or the class as a whole violate any SOLID principles.\n" +
+               "Then, pick the **single most violated** principle and refactor the code to fix it.\n\n" +
+               "⚠️ **Important:** Your output must follow *exactly* this format, with no additional commentary before or after.\n\n" +
+               "**<VIOLATION TYPE>**\n" +
+               "```java\n" +
+               "<Refactored code>\n" +
+               "```\n" +
+               "<Explanation of the refactoring>\n\n" +
+               "Only output the text above. Do not include extra analysis or preamble.\n\n" +
+               "Example:\n" +
+               "**SRP**\n" +
+               "```java\n" +
+               "public class Example {\n" +
+               "    public void exampleMethod() {\n" +
+               "        // Example code\n" +
+               "    }\n" +
+               "}\n" +
+               "```\n" +
+               "This class violates the Single Responsibility Principle because it has multiple responsibilities.\n\n" +
                source;
     }
 }
