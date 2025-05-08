@@ -45,7 +45,8 @@ public class Controller {
         return ollamaService.refactor(params.get("model"),
                 params.get("strategy"),
                 Double.parseDouble(params.get("temperature")),
-                params.get("source"));
+                params.get("source"),
+                Integer.parseInt(params.getOrDefault("try_count", "1")));
     }
 
     @PostMapping("/refactor-online")
