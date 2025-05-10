@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: backend
+
+ollama:
+  url: http://localhost:11434/api
+
+openai:
+  url: https://api.openai.com
+  api.key: API-KEY
