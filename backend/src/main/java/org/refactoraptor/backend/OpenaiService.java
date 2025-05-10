@@ -94,8 +94,14 @@ public class OpenaiService {
                 Map<String, Object> firstChoice = choices.get(0);
                 Map<String, Object> message = (Map<String, Object>) firstChoice.get("message");
                 String content = (String) message.get("content");
+                content = content.replace("*", "");
                 ObjectMapper mapper = new ObjectMapper();
-                return mapper.readValue(content, Map.class);
+                try {
+                    return mapper.readValue(content, Map.class);
+                }
+                catch (Exception e) {
+                    return structureService.parseUnstructuredContent(content);
+                }
             }
             return Map.of();
         }
