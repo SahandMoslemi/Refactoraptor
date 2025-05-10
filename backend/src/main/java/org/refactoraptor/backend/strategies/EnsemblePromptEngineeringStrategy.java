@@ -2,22 +2,53 @@ package org.refactoraptor.backend.strategies;
 
 public class EnsemblePromptEngineeringStrategy implements PromptEngineeringStrategy {
     @Override
-    public String engineerPrompt(PromptEngineeringStrategy strategy, String source) {
-        return "Rate this class on a scale from 0 (severe violation) to 5 (perfect compliance) for each SOLID principle:\n\n" +
-               "SRP:\n" +
-               "OCP:\n" +
-               "LSP:\n" +
-               "ISP:\n" +
-               "DIP:\n\n" +
-               "Provide reasoning for each score.\n" +
-               "Then, compare the severity of each violation and pick the **single most impactful** one in terms of maintainability. Refactor the code to address that principle.\n\n" +
-               "If multiple principles are equally violated, pick one arbitrarily, but do not always default to SRP. If there is no violation, you can give NONE.\n\n" +
-               "⚠️ **Important:** Your output must follow *exactly* this format, with no additional commentary before or after.\n\n" +
-               "**<VIOLATION TYPE>**\n" +
-               "```java\n" +
-               "<Refactored code>\n" +
-               "```\n" +
-               "<Explanation of the refactoring>\n\n" +
-               source;
+    public String engineerPrompt(PromptEngineeringStrategy strategy, String source, String language) {
+        return String.format("""
+            Analyze the following %s code for SOLID principle violations:
+            
+            ```%s
+            %s
+            ```
+            
+            INSTRUCTIONS:
+            1. Rate each SOLID principle (0-5 scale)
+            2. Select the most impactful violation
+            3. GENERATE COMPLETE REFACTORED CODE
+            
+            SOLID RATINGS:
+            - SRP: [score] - [reasoning]
+            - OCP: [score] - [reasoning]
+            - LSP: [score] - [reasoning]
+            - ISP: [score] - [reasoning]
+            - DIP: [score] - [reasoning]
+            
+            MOST IMPACTFUL VIOLATION: [principle]
+            
+            REFACTORED CODE REQUIREMENT:
+            You MUST provide a complete, compilable refactored version of the code.
+            The refactored code must be at least as long as the original code.
+            Do not use placeholders, comments, or ellipsis (...) to skip parts.
+            
+            FORMAT YOUR RESPONSE EXACTLY LIKE THIS:
+            [SOLID ratings above]
+            
+            **[VIOLATION TYPE]**
+            
+            ```%s
+            [YOUR COMPLETE REFACTORED CODE GOES HERE]
+            [DO NOT SKIP ANY PARTS]
+            [MUST BE COMPLETE AND COMPILABLE]
+            ```
+            
+            [Explanation of changes]
+            
+            REMEMBER: Incomplete code blocks will be considered invalid. You must write every line of the refactored code.
+            """,
+                language,
+                language.toLowerCase(),
+                source,
+                language.toLowerCase()
+        );
+
     }
 }

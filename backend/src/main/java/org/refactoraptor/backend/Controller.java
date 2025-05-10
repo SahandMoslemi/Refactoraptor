@@ -46,7 +46,8 @@ public class Controller {
                 params.get("strategy"),
                 Double.parseDouble(params.get("temperature")),
                 params.get("source"),
-                Integer.parseInt(params.getOrDefault("try_count", "1")));
+                Integer.parseInt(params.getOrDefault("try_count", "1")),
+                params.get("language"));
     }
 
     @PostMapping("/refactor-online")
@@ -55,6 +56,7 @@ public class Controller {
         return openaiService.refactor(params.get("model"),
                 params.get("strategy"),
                 Double.parseDouble(params.get("temperature")),
-                params.get("source"));
+                params.get("source"),
+                params.get("language"));
     }
 }
