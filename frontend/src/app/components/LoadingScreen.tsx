@@ -63,7 +63,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         // Small delay to show completion status
         setTimeout(() => {
           onLoadingComplete(refactoredData);
-        }, 1000);
+        }, 300);
       } catch (err) {
         console.error("Error refactoring code:", err);
         onError(

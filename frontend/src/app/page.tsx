@@ -34,7 +34,7 @@ export default function Home() {
     fileName: "New File",
     language: null as string | null,
     model: null as string | null,
-    promptType: "basic" as string,
+    promptStrategy: "DEFAULT" as string ,
     temperature: 0.0,
   });
 
@@ -353,7 +353,7 @@ export default function Home() {
           originalCode={getCurrentCode()}
           originalFileName={controlPanel.fileName}
           modelSelected={controlPanel.model || ""}
-          promptType={controlPanel.promptType}
+          promptType={controlPanel.promptStrategy || ""}
           language={controlPanel.language}
           temperature={controlPanel.temperature}
         />
@@ -403,9 +403,9 @@ export default function Home() {
                   setModel={(model) =>
                     setControlPanel((prev) => ({ ...prev, model }))
                   }
-                  promptType={controlPanel.promptType}
-                  setPromptType={(promptType) =>
-                    setControlPanel((prev) => ({ ...prev, promptType }))
+                  promptStrategy={controlPanel.promptStrategy}
+                  setPromptStrategy={(promptStrategy) =>
+                    setControlPanel((prev) => ({ ...prev, promptStrategy }))
                   }
                   temperature={controlPanel.temperature}
                   setTemperature={(temperature) =>

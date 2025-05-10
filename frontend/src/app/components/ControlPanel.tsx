@@ -1,14 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import ModelDropdown from "./ModelDropdown";
 import { fetchModels } from "../api/modelService";
+
+import { fetchPromptStrategies } from "../api/PromptStrategyService";
+// import PromptStratDropdown from "./PromptStrategiesDropdown";
+
 import {
   LANGUAGES,
-  PROMPT_TYPES,
   getFileExtension,
   getPromptTypeLabel,
 } from "../utils/languageUtils";
+
 
 interface ControlPanelProps {
   fileName: string;
@@ -17,8 +22,8 @@ interface ControlPanelProps {
   setLanguage: (lang: string | null) => void;
   model: string | null;
   setModel: (model: string | null) => void;
-  promptType: string;
-  setPromptType: (type: string) => void;
+  promptStrategy: string;
+  setPromptStrategy: (promptStrategy: string) => void;
   temperature: number;
   setTemperature: (temp: number) => void;
   onRefactor: () => void;
@@ -32,8 +37,8 @@ const ControlPanel = ({
   setLanguage,
   model,
   setModel,
-  promptType,
-  setPromptType,
+  promptStrategy,
+  setPromptStrategy,
   temperature,
   setTemperature,
   onRefactor,
@@ -41,6 +46,7 @@ const ControlPanel = ({
 }: ControlPanelProps) => {
   // Model fetching state
   const [models, setModels] = useState<string[]>([]);
+  const [promptStrats, setPromptStrats] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,6 +68,25 @@ const ControlPanel = ({
     };
 
     loadModels();
+  }, []);
+
+  // Fetch available prompt engineering techniques
+  useEffect(() => {
+    const loadPromptStrategies = async () => {
+      setIsLoading(true);
+      try {
+        const promptEngTechniques = await fetchPromptStrategies();
+        setPromptStrats(promptEngTechniques)
+        setError(null)
+      } catch (error) {
+        console.error("Error fetching models:", error);
+        setError("Failed to load prompt strategies...");
+        setPromptStrats(["DEFAULT"]); // Fallback prompt
+      } finally {
+        setIsLoading(false);
+      }
+    };
+      loadPromptStrategies();
   }, []);
 
   return (
@@ -177,19 +202,18 @@ const ControlPanel = ({
         </p>
       </div>
 
-      {/* Prompt Type Selection */}
       <div className="mb-6">
         <label className="block text-sm font-medium mb-1">Prompt Type</label>
         <div className="space-y-1">
-          {PROMPT_TYPES.map((type) => (
+          {promptStrats.map((type) => (
             <div key={type} className="flex items-center">
               <input
                 type="radio"
                 id={`prompt-${type}`}
                 name="prompt-type"
                 className="mr-2 accent-[#8ea382]"
-                checked={promptType === type}
-                onChange={() => setPromptType(type)}
+                checked={promptStrategy === type}
+                onChange={() => setPromptStrategy(type)}  // Fixed function name here
               />
               <label
                 htmlFor={`prompt-${type}`}
