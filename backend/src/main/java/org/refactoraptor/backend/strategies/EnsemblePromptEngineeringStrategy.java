@@ -11,7 +11,7 @@ public class EnsemblePromptEngineeringStrategy implements PromptEngineeringStrat
                "DIP:\n\n" +
                "Provide reasoning for each score.\n" +
                "Then, compare the severity of each violation and pick the **single most impactful** one in terms of maintainability. Refactor the code to address that principle.\n\n" +
-               "If multiple principles are equally violated, pick one arbitrarily, but do not always default to SRP.\n\n" +
+               "If multiple principles are equally violated, pick one arbitrarily, but do not always default to SRP. If there is no violation, you can give NONE.\n\n" +
                "⚠️ **Important:** Your output must follow *exactly* this format, with no additional commentary before or after.\n\n" +
                "**<VIOLATION TYPE>**\n" +
                "```java\n" +
