@@ -80,6 +80,7 @@ public class OpenaiService {
         }
     }
 
+
     // Helper methods to "guess" metadata
     private String guessFamily(String id) {
         if (id.contains("llama")) return "llama";
