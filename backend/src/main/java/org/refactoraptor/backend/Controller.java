@@ -27,6 +27,7 @@ public class Controller {
         return ollamaService.getModels();
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/models-online")
     public Map<String, Object> getOnlineModels() throws IOException {
         return openaiService.getModels();
@@ -50,6 +51,7 @@ public class Controller {
                 params.get("language"));
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/refactor-online")
     public Map<String, Object> refactorOnline(
             @RequestBody Map<String, String> params) throws IOException {
