@@ -34,6 +34,11 @@ public class StructureService {
         String explanation = extractExplanation(content);
         result.put("explanation", explanation);
 
+        if (explanation.isEmpty()) {
+            Map<String, Object> unparsedResponse = Map.of();
+            unparsedResponse.put("explanation", content);
+            return unparsedResponse;
+        }
         return result;
     }
 
@@ -48,7 +53,7 @@ public class StructureService {
         if (start != -1 && end != -1) {
             return content.substring(start + 7, end).trim();
         }
-        return "No code found";
+        return "";
     }
 
     private String extractExplanation(String content) {
@@ -56,6 +61,6 @@ public class StructureService {
         if (lastBacktick != -1 && lastBacktick + 3 < content.length()) {
             return content.substring(lastBacktick + 3).trim();
         }
-        return "No explanation found";
+        return "";
     }
 }
