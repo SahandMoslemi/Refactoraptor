@@ -1,5 +1,6 @@
 package org.refactoraptor.backend;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OpenaiService {
@@ -34,6 +36,8 @@ public class OpenaiService {
 
         connection.setRequestProperty("Authorization", "Bearer " + apiKey);
         connection.setRequestProperty("Content-Type", "application/json");
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
 
         int responseCode = connection.getResponseCode();
         InputStream inputStream = (responseCode >= 200 && responseCode < 300)
@@ -41,15 +45,59 @@ public class OpenaiService {
                 : connection.getErrorStream();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            return objectMapper.readValue(reader, Map.class);
+            Map<String, Object> rawResponse = objectMapper.readValue(reader, new TypeReference<>() {});
+            List<Map<String, Object>> data = (List<Map<String, Object>>) rawResponse.get("data");
+
+            List<Map<String, Object>> transformedModels = data.stream()
+                    .map(model -> {
+                        String id = (String) model.get("id");
+                        long created = (model.get("created") instanceof Number) ? ((Number) model.get("created")).longValue() : System.currentTimeMillis() / 1000;
+
+                        return Map.of(
+                                "name", id,
+                                "model", id,
+                                "modified_at", "",
+                                "size", 0L, // Placeholder
+                                "digest", UUID.randomUUID().toString().replace("-", ""), // Placeholder
+                                "details", Map.of(
+                                        "parent_model", "",
+                                        "format", "gguf",
+                                        "family", guessFamily(id),
+                                        "families", List.of(guessFamily(id)),
+                                        "parameter_size", guessSize(id),
+                                        "quantization_level", "Q4_0"
+                                )
+                        );
+                    })
+                    .collect(Collectors.toList());
+
+            return Map.of("models", transformedModels);
         } catch (IOException e) {
-            return Map.of();
+            e.printStackTrace(); // Optional: log properly in production
+            return Map.of("error", "Failed to parse response");
+        } finally {
+            connection.disconnect();
         }
     }
 
-    public Map<String, Object> refactor(String model, String strategy, double temperature, String source)
+    // Helper methods to "guess" metadata
+    private String guessFamily(String id) {
+        if (id.contains("llama")) return "llama";
+        if (id.contains("qwen")) return "qwen2";
+        if (id.contains("dall-e")) return "dalle";
+        if (id.contains("gpt")) return "gpt";
+        return "unknown";
+    }
+
+    private String guessSize(String id) {
+        if (id.contains("7b")) return "7.3B";
+        if (id.contains("12b")) return "12.2B";
+        return "unknown";
+    }
+
+    public Map<String, Object> refactor(String model, String strategy, double temperature, String source, String language)
             throws IOException {
-        String userPrompt = promptService.generatePrompt(strategy, source);
+        String userPrompt = promptService.generatePrompt(strategy, source, language);
 
         List<Map<String, String>> messages = new ArrayList<>();
 
@@ -89,7 +137,21 @@ public class OpenaiService {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             Map<String, Object> response = objectMapper.readValue(reader, Map.class);
-            return response;
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
+            if (choices != null && !choices.isEmpty()) {
+                Map<String, Object> firstChoice = choices.get(0);
+                Map<String, Object> message = (Map<String, Object>) firstChoice.get("message");
+                String content = (String) message.get("content");
+                content = content.replace("*", "");
+                ObjectMapper mapper = new ObjectMapper();
+                try {
+                    return mapper.readValue(content, Map.class);
+                }
+                catch (Exception e) {
+                    return structureService.parseUnstructuredContent(content);
+                }
+            }
+            return Map.of();
         }
         catch (IOException e) {
             return Map.of();

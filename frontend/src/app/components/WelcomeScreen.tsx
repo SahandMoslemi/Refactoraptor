@@ -23,7 +23,7 @@ export default function WelcomeScreen({
         <input
           id="file-input"
           type="file"
-          multiple
+          accept=".py,.kt,.java,.cs"
           onChange={onUploadFiles}
           className="hidden"
         />

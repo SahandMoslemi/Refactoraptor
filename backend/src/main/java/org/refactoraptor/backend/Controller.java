@@ -27,6 +27,7 @@ public class Controller {
         return ollamaService.getModels();
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/models-online")
     public Map<String, Object> getOnlineModels() throws IOException {
         return openaiService.getModels();
@@ -46,15 +47,18 @@ public class Controller {
                 params.get("strategy"),
                 Double.parseDouble(params.get("temperature")),
                 params.get("source"),
-                Integer.parseInt(params.getOrDefault("try_count", "1")));
+                Integer.parseInt(params.getOrDefault("try_count", "1")),
+                params.get("language"));
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/refactor-online")
     public Map<String, Object> refactorOnline(
             @RequestBody Map<String, String> params) throws IOException {
         return openaiService.refactor(params.get("model"),
                 params.get("strategy"),
                 Double.parseDouble(params.get("temperature")),
-                params.get("source"));
+                params.get("source"),
+                params.get("language"));
     }
 }

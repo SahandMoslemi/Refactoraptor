@@ -21,12 +21,13 @@ interface RefactorRequest {
     strategy: string;
     source: string;
     temperature?: number;
+    language?: string;
 }
 
 interface RefactorResponse {
-    response: string;
-    total_duration?: number;
-    [key: string]: unknown;
+    violation_type: string;
+    refactored_code: string;
+    explanation: string;
 }
 
 /**
@@ -37,6 +38,7 @@ interface RefactorResponse {
  * @param originalFileName The name of the file
  * @param language The programming language
  * @param temperature The temperature setting for generation
+ * @param isOnline Whether to use online or local models
  * @returns Promise with the refactored data
  */
 export async function refactorCode(
@@ -44,23 +46,31 @@ export async function refactorCode(
     modelSelected: string,
     promptType: string,
     originalFileName: string,
-    language: string | null,
-    temperature: number = 0.0
+    language: string,
+    temperature: number = 0.0,
+    isOnline: boolean = false
 ): Promise<RefactoredData> {
+
     // Prepare request data
     const requestData: RefactorRequest = {
         model: modelSelected,
-        strategy: 'DEFAULT', //promptType.toUpperCase(),
+        strategy: promptType,
         source: originalCode,
-        temperature: temperature
+        temperature: temperature,
+        language: language
     };
 
+    // Choose the appropriate endpoint based on the isOnline flag
+    const endpoint = isOnline ? 'http://localhost:8080/refactor-online' : 'http://localhost:8080/refactor';
+
     // Make API request
-    const response = await fetch('http://localhost:8080/refactor', {
+    const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)
     });
+
+    console.log(response);
 
     // Handle errors
     if (!response.ok) {
@@ -70,18 +80,21 @@ export async function refactorCode(
 
     // Parse response
     const data = await response.json() as RefactorResponse;
-    const refactoredCode = data.response || '';
+    console.log(data);
+
+    const refactoredCode = data.refactored_code || '';
+
 
     // Format execution time
     let executionTime = "N/A";
-    if (data.total_duration) {
-        const totalSeconds = Math.floor(data.total_duration as number / 1000000000);
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        executionTime = minutes > 0
-            ? `${minutes} min ${seconds} sec`
-            : `${seconds} sec`;
-    }
+    // if (data.total_duration) {
+    //     const totalSeconds = Math.floor(data.total_duration as number / 1000000000);
+    //     const minutes = Math.floor(totalSeconds / 60);
+    //     const seconds = totalSeconds % 60;
+    //     executionTime = minutes > 0
+    //         ? `${minutes} min ${seconds} sec`
+    //         : `${seconds} sec`;
+    // }
 
     // Create code changes
     const codeChanges: CodeChange[] = [

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import EditorWorkspace from "./components/EditorWorkspace";
 import ControlPanel from "./components/ControlPanel";
 import LoadingScreen, { RefactoredData } from "./components/LoadingScreen";
@@ -15,6 +15,9 @@ export type FileData = {
 };
 
 export default function Home() {
+  // Ref to prevent multiple refactor operations
+  const isRefactoringInProgress = useRef(false);
+
   // Application state
   const [workspace, setWorkspace] = useState<{
     files: FileData[];
@@ -32,10 +35,11 @@ export default function Home() {
   const [controlPanel, setControlPanel] = useState({
     visible: false,
     fileName: "New File",
-    language: null as string | null,
+    language: "Java" as string | null,
     model: null as string | null,
-    promptStrategy: "DEFAULT" as string ,
+    promptStrategy: "Default" as string,
     temperature: 0.0,
+    isOnline: true  // Changed default to true to match our implementation
   });
 
   // Process state
@@ -56,12 +60,7 @@ export default function Home() {
       java: ".java",
       kotlin: ".kt",
       "c#": ".cs",
-      python: ".py",
-      javascript: ".js",
-      typescript: ".ts",
-      html: ".html",
-      css: ".css",
-      plaintext: ".txt",
+      python: ".py"
     };
     return extensions[lang] || "";
   };
@@ -262,8 +261,24 @@ export default function Home() {
     }));
   };
 
+  // Handle isOnline change
+  const handleIsOnlineChange = (isOnline: boolean) => {
+    setControlPanel((prev) => ({
+      ...prev,
+      isOnline,
+      // Reset the model since the available models might change
+      model: null
+    }));
+  };
+
   // Handle refactor button click
   const handleRefactor = () => {
+    // Prevent multiple refactors
+    if (isRefactoringInProgress.current) {
+      console.log("Refactoring already in progress, ignoring request");
+      return;
+    }
+
     const currentCode = getCurrentCode();
 
     if (!currentCode.trim()) {
@@ -281,6 +296,9 @@ export default function Home() {
       return;
     }
 
+    // Set flag to prevent multiple calls
+    isRefactoringInProgress.current = true;
+
     // Show loading screen
     setProcessState({
       isLoading: true,
@@ -291,6 +309,9 @@ export default function Home() {
 
   // Handle loading complete
   const handleLoadingComplete = (data: RefactoredData) => {
+    // Reset the flag
+    isRefactoringInProgress.current = false;
+    
     setProcessState({
       isLoading: false,
       error: null,
@@ -300,6 +321,9 @@ export default function Home() {
 
   // Handle loading error
   const handleLoadingError = (errorMessage: string) => {
+    // Reset the flag
+    isRefactoringInProgress.current = false;
+    
     setProcessState({
       isLoading: false,
       error: errorMessage,
@@ -309,6 +333,9 @@ export default function Home() {
 
   // Handle going back to editor
   const handleBackToEditor = () => {
+    // Reset the flag just in case
+    isRefactoringInProgress.current = false;
+    
     setProcessState({
       isLoading: false,
       error: null,
@@ -356,6 +383,7 @@ export default function Home() {
           promptType={controlPanel.promptStrategy || ""}
           language={controlPanel.language}
           temperature={controlPanel.temperature}
+          isOnline={controlPanel.isOnline}
         />
       )}
 
@@ -413,6 +441,8 @@ export default function Home() {
                   }
                   onRefactor={handleRefactor}
                   filesUploaded={workspace.filesUploaded}
+                  isOnline={controlPanel.isOnline}
+                  setIsOnline={handleIsOnlineChange}
                 />
               )}
             </div>

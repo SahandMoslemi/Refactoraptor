@@ -29,7 +29,7 @@ public class OllamaService {
         return restTemplate.getForObject(ollamaUrl + "/tags", Map.class);
     }
 
-    public Map<String, Object> refactor(String model, String strategy, double temperature, String source, int tryCount) {
+    public Map<String, Object> refactor(String model, String strategy, double temperature, String source, int tryCount, String language) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Construct the request body
@@ -38,7 +38,7 @@ public class OllamaService {
         requestBody.put("model", model);
         requestBody.put("stream", false);
 
-        String prompt = promptService.generatePrompt(strategy, source);
+        String prompt = promptService.generatePrompt(strategy, source, language);
         requestBody.put("prompt", prompt);
 
 //        Map<String, Object> structure = structureService.getStructure();

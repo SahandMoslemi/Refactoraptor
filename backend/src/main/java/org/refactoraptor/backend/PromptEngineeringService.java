@@ -12,7 +12,7 @@ public class PromptEngineeringService implements IPromptEngineeringService {
     private static final Map<String, PromptEngineeringStrategy> STRATEGIES = Map.of(
             "DEFAULT", new DefaultPromptEngineeringStrategy(),
             "ENSEMBLE", new EnsemblePromptEngineeringStrategy(),
-            "TAGGING", new FunctionTaggingPromptEngineeringStrategy(),
+            "EXAMPLE", new ExampleBasedPromptEngineeringStrategy(),
             "SMELL", new CodeSmellPromptEngineeringStrategy()
     );
 

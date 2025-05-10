@@ -12,9 +12,9 @@ public class PromptService {
         this.promptEngineeringService = promptEngineeringService;
     }
 
-    public String generatePrompt(String strategy, String source) {
+    public String generatePrompt(String strategy, String source, String language) {
         PromptEngineeringStrategy promptEngineeringStrategy = promptEngineeringService.getStrategy(strategy);
-        return promptEngineeringStrategy.engineerPrompt(promptEngineeringStrategy, source);
+        return promptEngineeringStrategy.engineerPrompt(promptEngineeringStrategy, source, language);
     }
 
     private String generateDefaultPrompt(String source) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { refactorCode, RefactoredData } from "../api/refactorService";
 import { useLoadingDots, useProcessStatus } from "../utils/loadingUtils";
 
@@ -12,8 +12,9 @@ interface LoadingScreenProps {
   originalFileName: string;
   modelSelected: string;
   promptType: string;
-  language: string | null;
+  language: string;
   temperature: number;
+  isOnline: boolean
 }
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({
@@ -26,13 +27,20 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   promptType,
   language,
   temperature,
+  isOnline,
 }) => {
   // Use custom hooks for loading state management
   const dots = useLoadingDots(500);
   const [status, setStatus] = useProcessStatus("Initializing...");
+  
+  // Use a ref to track if the refactoring API call is in progress
+  const refactoringInProgress = useRef(false);
+  // Use a ref to track if this effect has already run
+  const effectHasRun = useRef(false);
 
   useEffect(() => {
-    if (!isLoading) return;
+    // Skip if not loading or if either flag is set
+    if (!isLoading || refactoringInProgress.current || effectHasRun.current) return;
 
     // Log request parameters
     console.log("Sending request to backend with:", {
@@ -42,8 +50,13 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
       promptType,
       language,
       temperature,
+      isOnline,
     });
 
+    // Set both flags to prevent duplicate calls
+    refactoringInProgress.current = true;
+    effectHasRun.current = true;
+    
     // Perform refactoring
     const performRefactoring = async () => {
       try {
@@ -52,17 +65,20 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         const refactoredData = await refactorCode(
           originalCode,
           modelSelected,
-          promptType,
+          promptType.toUpperCase(),
           originalFileName,
           language,
-          temperature
+          temperature,
+          isOnline,
         );
 
         setStatus("Refactoring complete!");
-        // const refactoredData = "deneme";
+        
         // Small delay to show completion status
         setTimeout(() => {
           onLoadingComplete(refactoredData);
+          // Reset flags after completion
+          refactoringInProgress.current = false;
         }, 300);
       } catch (err) {
         console.error("Error refactoring code:", err);
@@ -71,10 +87,21 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
             ? err.message
             : "Failed to refactor code. Please try again."
         );
+        // Reset flags after error
+        refactoringInProgress.current = false;
       }
     };
 
     performRefactoring();
+    
+    // Cleanup function to handle component unmount during operation
+    return () => {
+      // If the component unmounts during operation, we should reset the flags
+      if (refactoringInProgress.current) {
+        console.log("Component unmounted during refactoring operation");
+        refactoringInProgress.current = false;
+      }
+    };
   }, [
     isLoading,
     originalCode,

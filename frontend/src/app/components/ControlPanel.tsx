@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import ModelDropdown from "./ModelDropdown";
 import { fetchModels } from "../api/modelService";
 
 import { fetchPromptStrategies } from "../api/PromptStrategyService";
-// import PromptStratDropdown from "./PromptStrategiesDropdown";
 
 import {
   LANGUAGES,
@@ -28,6 +27,8 @@ interface ControlPanelProps {
   setTemperature: (temp: number) => void;
   onRefactor: () => void;
   filesUploaded?: boolean;
+  isOnline: boolean;
+  setIsOnline: (isOnline: boolean) => void;
 }
 
 const ControlPanel = ({
@@ -43,19 +44,24 @@ const ControlPanel = ({
   setTemperature,
   onRefactor,
   filesUploaded = false,
+  isOnline,
+  setIsOnline,
 }: ControlPanelProps) => {
   // Model fetching state
   const [models, setModels] = useState<string[]>([]);
   const [promptStrats, setPromptStrats] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Add a ref to track button clicks and prevent double execution
+  const isRefactoring = useRef(false);
 
   // Fetch available models from backend
   useEffect(() => {
     const loadModels = async () => {
       setIsLoading(true);
       try {
-        const modelNames = await fetchModels();
+        const modelNames = await fetchModels(isOnline);
         setModels(modelNames);
         setError(null);
       } catch (error) {
@@ -68,7 +74,7 @@ const ControlPanel = ({
     };
 
     loadModels();
-  }, []);
+  }, [isOnline]); // Re-fetch models when isOnline changes
 
   // Fetch available prompt engineering techniques
   useEffect(() => {
@@ -88,6 +94,21 @@ const ControlPanel = ({
     };
       loadPromptStrategies();
   }, []);
+
+  // Create a debounced version of onRefactor to prevent double calls
+  const handleRefactorClick = () => {
+    if (isRefactoring.current) return;
+    
+    isRefactoring.current = true;
+    
+    // Call the provided onRefactor function
+    onRefactor();
+    
+    // Reset the flag after a short delay
+    setTimeout(() => {
+      isRefactoring.current = false;
+    }, 500); // 500ms should be enough to prevent accidental double clicks
+  };
 
   return (
     <div
@@ -159,6 +180,42 @@ const ControlPanel = ({
         )}
       </div>
 
+      {/* Model Type Selection (Online/Local) */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Model Type</label>
+        <div className="flex gap-4">
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="online-models"
+              name="model-type"
+              className="mr-2 accent-[#8ea382]"
+              checked={isOnline}
+              onChange={() => setIsOnline(true)}
+            />
+            <label htmlFor="online-models" className="text-sm cursor-pointer">
+              Online
+            </label>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="local-models"
+              name="model-type"
+              className="mr-2 accent-[#8ea382]"
+              checked={!isOnline}
+              onChange={() => setIsOnline(false)}
+            />
+            <label htmlFor="local-models" className="text-sm cursor-pointer">
+              Local
+            </label>
+          </div>
+        </div>
+        <p className="text-xs text-gray-300/70 mt-1">
+          {isOnline ? "Using online models via API" : "Using locally installed models"}
+        </p>
+      </div>
+
       {/* Model Selection */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">Model</label>
@@ -203,7 +260,7 @@ const ControlPanel = ({
       </div>
 
       <div className="mb-6">
-        <label className="block text-sm font-medium mb-1">Prompt Type</label>
+        <label className="block text-sm font-medium mb-1">Prompt Engineering Strategy</label>
         <div className="space-y-1">
           {promptStrats.map((type) => (
             <div key={type} className="flex items-center">
@@ -213,7 +270,7 @@ const ControlPanel = ({
                 name="prompt-type"
                 className="mr-2 accent-[#8ea382]"
                 checked={promptStrategy === type}
-                onChange={() => setPromptStrategy(type)}  // Fixed function name here
+                onChange={() => setPromptStrategy(type)}
               />
               <label
                 htmlFor={`prompt-${type}`}
@@ -228,13 +285,13 @@ const ControlPanel = ({
 
       {/* Refactor Button */}
       <button
-        onClick={onRefactor}
+        onClick={handleRefactorClick} // Using the debounced handler
         className={`w-full py-3 rounded-md transition-colors font-medium ${
           language && model
             ? "bg-[#3d4937] hover:bg-[#4c5944]"
             : "bg-[#3d4937]/50 cursor-not-allowed"
         }`}
-        disabled={!language || !model}
+        disabled={!language || !model || isRefactoring.current}
       >
         Refactor
       </button>
