@@ -89,7 +89,15 @@ public class OpenaiService {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             Map<String, Object> response = objectMapper.readValue(reader, Map.class);
-            return response;
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
+            if (choices != null && !choices.isEmpty()) {
+                Map<String, Object> firstChoice = choices.get(0);
+                Map<String, Object> message = (Map<String, Object>) firstChoice.get("message");
+                String content = (String) message.get("content");
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.readValue(content, Map.class);
+            }
+            return Map.of();
         }
         catch (IOException e) {
             return Map.of();

@@ -14,7 +14,7 @@ public class StructureService {
                 "refactored_code", Map.of("type", "string"), // Refactored code
                 "explanation", Map.of("type", "string") // Explanation of the refactoring
         );
-        List<String> required = List.of("type", "refactored_code", "explanation");
+        List<String> required = List.of("violation_type", "refactored_code", "explanation");
         return Map.of("type", "object", "properties", properties, "required", required);
     }
 }
