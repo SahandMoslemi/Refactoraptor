@@ -35,7 +35,7 @@ public class StructureService {
         result.put("explanation", explanation);
 
         if (explanation.isEmpty()) {
-            Map<String, Object> unparsedResponse = Map.of();
+            Map<String, Object> unparsedResponse = new HashMap<>();
             unparsedResponse.put("explanation", content);
             return unparsedResponse;
         }
