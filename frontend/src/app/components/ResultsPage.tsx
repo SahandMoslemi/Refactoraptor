@@ -216,7 +216,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="bg-[#4c5944] hover:bg-[#3d4937] text-white px-4 py-2 rounded-md transition-colors"
+            className="bg-[#748569] hover:bg-[#3d4937] text-white px-4 py-2 rounded-md transition-colors"
           >
             Back to Editor
           </button>

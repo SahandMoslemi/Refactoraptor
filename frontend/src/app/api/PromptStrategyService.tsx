@@ -7,9 +7,18 @@ export async function fetchPromptStrategies(): Promise<string[]> {
         }
 
         const data = await response.json();
-        return data;
+        return processStrategies(data)
     } catch (error) {
         console.error("Error fetching models:", error);
         throw error;
     }
+}
+
+function processStrategies(strategies: string[]): string[] {
+    return strategies
+        .map(strategy => {
+            if (strategy.length === 0) return strategy;
+            return strategy.charAt(0).toUpperCase() + strategy.slice(1).toLowerCase();
+        })
+        .sort((a, b) => a.localeCompare(b));
 }

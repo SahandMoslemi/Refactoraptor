@@ -14,11 +14,14 @@ export interface ModelsResponse {
 
 /**
  * Fetches available models from the API
+ * @param isOnline Whether to fetch online or local models
  * @returns Promise with an array of model names
  */
-export async function fetchModels(): Promise<string[]> {
+export async function fetchModels(isOnline: boolean = true): Promise<string[]> {
     try {
-        const response = await fetch('http://localhost:8080/models');
+        // Use the appropriate endpoint based on the isOnline flag
+        const endpoint = isOnline ? 'http://localhost:8080/models-online' : 'http://localhost:8080/models';
+        const response = await fetch(endpoint);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
