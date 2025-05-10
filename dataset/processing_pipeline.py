@@ -4,26 +4,29 @@ import requests
 from pathlib import Path
 from tqdm import tqdm
 
-API_URL = "http://localhost:8080/refactor"
+API_URL = "http://localhost:8080/refactor-online"
 
 #MODELS = ["codeqwen:7b", "deepseek-coder:6.7b",  "codegemma:7b"]
-MODELS = ["codeqwen:7b"]
-#STRATEGIES = ["ENSEMBLE","DEFAULT","SMELL", "TAGGING" ]
-STRATEGIES = ["ENSEMBLE"]
-#INPUT_FILES = ["srp_violations.json", "ocp_violations.json", "lsp_violations.json", "isp_violations.json"]
-INPUT_FILES = ["lsp_violations_small.json"]
+#MODELS = ["codeqwen:7b"]
+MODELS = ["gpt-4o-mini"]
+STRATEGIES = ["EXAMPLE", "ENSEMBLE","DEFAULT","SMELL"]
+#STRATEGIES = ["TAGGING"]
+#INPUT_FILES = ["isp_violations.json"]
+INPUT_FILES = ["srp_violations.json", "ocp_violations.json", "lsp_violations.json", "isp_violations.json"]
+#INPUT_FILES = ["mixed.json"]
 
 INPUT_DIR = Path(".")
 OUTPUT_DIR = Path("outputs")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-def call_refactor_api(model, strategy, source_code):
+def call_refactor_api(model, strategy, source_code, language):
     payload = {
         "model": model,
         "strategy": strategy,
         "temperature": 0,
         "source": source_code,
-        "try_count": 1
+        "try_count": 1,
+        "language": language
     }
     response = requests.post(API_URL, json=payload)
     response.raise_for_status()
@@ -35,14 +38,15 @@ def parse_response(response_str):
         return {
             "type": response_data.get("violation_type", ""),
             "refactored_code": response_data.get("refactored_code", ""),
-            "explanation": response_data.get("explanation", "")
+            "explanation": response_data.get("explanation", response_str)
         }
     except json.JSONDecodeError:
         print("Failed to decode JSON from response")
         return {
             "type": "",
             "refactored_code": "",
-            "explanation": ""
+
+            "explanation": response_str
         }
 
 def process_file(filepath):
@@ -56,7 +60,7 @@ def process_file(filepath):
             updated_data = {"code_examples": []}
             examples = data.get("code_examples", [])
             for example in tqdm(examples, desc=f"Examples ({model}/{strategy})", leave=False):
-                response = call_refactor_api(model, strategy, example["input"])
+                response = call_refactor_api(model, strategy, example["input"], example["language"])
                 parsed = parse_response(response)
                 example["output"] = parsed["refactored_code"]
                 example["violation"] = parsed["type"]
