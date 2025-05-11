@@ -1,5 +1,8 @@
-package org.refactoraptor.backend;
+package org.refactoraptor.backend.llmServices;
 
+import org.refactoraptor.backend.StructureService;
+import org.refactoraptor.backend.promptServices.PromptService;
+import org.refactoraptor.backend.timer.DurationTimer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -48,7 +51,10 @@ public class OllamaService {
         options.put("temperature", temperature);
         requestBody.put("options", options);
         for (int i = 0; i < tryCount; i++) {
+            var durationTimer = new DurationTimer();
+            durationTimer.start();
             Map<String, Object> response = restTemplate.postForObject(ollamaUrl + "/generate", requestBody, Map.class);
+            durationTimer.stop();
             ParsedOutput po = parse(response.get("response").toString());
             Map<String, Object> parsedResponse = new HashMap<>();
             parsedResponse.put("violation_type", po.violationType);
@@ -56,6 +62,7 @@ public class OllamaService {
             parsedResponse.put("explanation", po.explanation);
             System.out.println(parse(response.get("response").toString()));
             if (po.isValid() || i == tryCount - 1) {
+                parsedResponse.put("total_duration", durationTimer.getElapsedTimeNanos());
                 return parsedResponse;
             }
         }

@@ -1,4 +1,4 @@
-package org.refactoraptor.backend;
+package org.refactoraptor.backend.promptServices;
 
 import org.refactoraptor.backend.strategies.*;
 import org.springframework.stereotype.Service;
