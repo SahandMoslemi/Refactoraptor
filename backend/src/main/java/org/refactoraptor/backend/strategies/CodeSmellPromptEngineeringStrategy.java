@@ -11,7 +11,7 @@ public class CodeSmellPromptEngineeringStrategy implements PromptEngineeringStra
                 "If there is no violation, you can return NONE." +
                "**Important:** Your output must follow *exactly* this format, with no additional commentary before or after.\n\n" +
                "**<VIOLATION TYPE>**\n" +
-               "```java\n" +
+               "```" + language.toLowerCase() + "\n" +
                "<Refactored code>\n" +
                "```\n" +
                "<Explanation of the refactoring>\n\n" +

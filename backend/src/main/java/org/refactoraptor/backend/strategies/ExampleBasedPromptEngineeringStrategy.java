@@ -4,7 +4,7 @@ public class ExampleBasedPromptEngineeringStrategy implements PromptEngineeringS
 
     @Override
     public String engineerPrompt(PromptEngineeringStrategy strategy, String source, String language) {
-        return "You are an expert in identifying and refactoring SOLID principle violations in Java code. Your task is to analyze the code provided and respond in the exact format below, without any additional text or commentary.\n\n" +
+        return "You are an expert in identifying and refactoring SOLID principle violations in " + language + " code. Your task is to analyze the code provided and respond in the exact format below, without any additional text or commentary.\n\n" +
                 "You must provide the following three parts in your response:\n" +
                 "1. The violated SOLID principle (e.g., SRP, OCP, LSP, ISP, DIP). If no violation exists, respond with **NONE**.\n" +
                 "2. A complete refactored version of the code that removes the violation. YOU MUST RETURN ONLY THE CODE BLOCK.\n" +
@@ -18,7 +18,7 @@ public class ExampleBasedPromptEngineeringStrategy implements PromptEngineeringS
                 "If more than one violation is present, report only the most prominent one.\n\n" +
                 "**IMPORTANT:** Follow this output format *exactly*. Do not include greetings, summaries, or comments before or after the output:\n\n" +
                 "**<VIOLATION TYPE>**\n" +
-                "```java\n" +
+                "```" + language.toLowerCase() + "\n" +
                 "<Refactored code>\n" +
                 "```\n" +
                 "<Explanation of the refactoring>\n\n" +

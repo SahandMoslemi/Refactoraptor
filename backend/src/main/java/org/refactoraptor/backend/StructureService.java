@@ -24,11 +24,10 @@ public class StructureService {
 
         // Extract violation
         String violation = extractViolation(content);
-        result.put("violation", violation);
+        result.put("violation_type", violation);
 
         // Extract code block
         String code = extractCode(content);
-        result.put("refactoredCode", code);
 
         // Extract explanation at the end.
         String explanation = extractExplanation(content);
@@ -36,7 +35,7 @@ public class StructureService {
 
         if (explanation.isEmpty()) {
             Map<String, Object> unparsedResponse = new HashMap<>();
-            unparsedResponse.put("refactoredCode", content);
+            unparsedResponse.put("refactored_code", content);
             return unparsedResponse;
         }
         return result;
