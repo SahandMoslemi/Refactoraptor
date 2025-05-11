@@ -9,7 +9,7 @@ API_URL = "http://localhost:8080/refactor-online"
 #MODELS = ["codeqwen:7b", "deepseek-coder:6.7b",  "codegemma:7b"]
 #MODELS = ["codeqwen:7b"]
 MODELS = ["gpt-4o-mini"]
-STRATEGIES = ["EXAMPLE", "ENSEMBLE","DEFAULT","SMELL"]
+STRATEGIES = ["ENSEMBLE", "EXAMPLE","DEFAULT","SMELL"]
 #STRATEGIES = ["TAGGING"]
 #INPUT_FILES = ["isp_violations.json"]
 INPUT_FILES = ["srp_violations.json", "ocp_violations.json", "lsp_violations.json", "isp_violations.json"]
@@ -37,8 +37,8 @@ def parse_response(response_str):
         response_data = json.loads(response_str)
         return {
             "type": response_data.get("violation_type", ""),
-            "refactored_code": response_data.get("refactored_code", ""),
-            "explanation": response_data.get("explanation", response_str)
+            "refactored_code": response_data.get("refactored_code", response_str),
+            "explanation": response_data.get("explanation", "")
         }
     except json.JSONDecodeError:
         print("Failed to decode JSON from response")

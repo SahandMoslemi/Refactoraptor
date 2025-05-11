@@ -28,6 +28,7 @@ interface RefactorResponse {
     violation_type: string;
     refactored_code: string;
     explanation: string;
+    total_duration: number
 }
 
 /**
@@ -87,14 +88,14 @@ export async function refactorCode(
 
     // Format execution time
     let executionTime = "N/A";
-    // if (data.total_duration) {
-    //     const totalSeconds = Math.floor(data.total_duration as number / 1000000000);
-    //     const minutes = Math.floor(totalSeconds / 60);
-    //     const seconds = totalSeconds % 60;
-    //     executionTime = minutes > 0
-    //         ? `${minutes} min ${seconds} sec`
-    //         : `${seconds} sec`;
-    // }
+    if (data.total_duration) {
+        const totalSeconds = Math.floor(data.total_duration as number / 1000000000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        executionTime = minutes > 0
+            ? `${minutes} min ${seconds} sec`
+            : `${seconds} sec`;
+     }
 
     // Create code changes
     const codeChanges: CodeChange[] = [

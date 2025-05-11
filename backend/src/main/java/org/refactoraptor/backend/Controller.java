@@ -1,9 +1,11 @@
 package org.refactoraptor.backend;
 
+import org.refactoraptor.backend.llmServices.OllamaService;
+import org.refactoraptor.backend.llmServices.OpenaiService;
+import org.refactoraptor.backend.promptServices.IPromptEngineeringService;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +15,6 @@ public class Controller {
 
     private final OllamaService ollamaService;
     private final IPromptEngineeringService promptEngineeringService;
-
     private final OpenaiService openaiService;
 
     public Controller(OllamaService ollamaService, OpenaiService openaiService, IPromptEngineeringService promptEngineeringService) {

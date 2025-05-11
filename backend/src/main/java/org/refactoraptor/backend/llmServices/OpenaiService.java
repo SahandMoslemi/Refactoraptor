@@ -1,7 +1,11 @@
-package org.refactoraptor.backend;
+package org.refactoraptor.backend.llmServices;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.refactoraptor.backend.StructureService;
+import org.refactoraptor.backend.filtering.FilteringService;
+import org.refactoraptor.backend.promptServices.PromptService;
+import org.refactoraptor.backend.timer.DurationTimer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +26,30 @@ public class OpenaiService {
 
     private final PromptService promptService;
     private final StructureService structureService;
+
+    private final FilteringService openaiModelFilteringService;
+
+    private final List<String> availableModelKeysForRefactoring = List.of(
+            "gpt-4o-mini",
+            "gpt-4o",
+            "gpt-4.1-mini",
+            "gpt-4.1",
+            "o4-mini",
+            "o3-mini"
+    );
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON serializer
 
-    public OpenaiService(PromptService promptService, StructureService structureService) {
+    public OpenaiService(PromptService promptService, StructureService structureService, FilteringService openaiModelFilteringService) {
         this.promptService = promptService;
         this.structureService = structureService;
+        this.openaiModelFilteringService = openaiModelFilteringService;
+        AddDefaultKeysToFilteringService();
+    }
+
+    private void AddDefaultKeysToFilteringService() {
+        for (String key : availableModelKeysForRefactoring) {
+            openaiModelFilteringService.registerKey(key, true);
+        }
     }
 
     public Map<String, Object> getModels() throws IOException {
@@ -48,29 +71,23 @@ public class OpenaiService {
             Map<String, Object> rawResponse = objectMapper.readValue(reader, new TypeReference<>() {});
             List<Map<String, Object>> data = (List<Map<String, Object>>) rawResponse.get("data");
 
-            List<Map<String, Object>> transformedModels = data.stream()
+            List<Map<String, String>> transformedModels = data.stream()
                     .map(model -> {
                         String id = (String) model.get("id");
-                        long created = (model.get("created") instanceof Number) ? ((Number) model.get("created")).longValue() : System.currentTimeMillis() / 1000;
 
                         return Map.of(
                                 "name", id,
-                                "model", id,
-                                "modified_at", "",
-                                "size", 0L, // Placeholder
-                                "digest", UUID.randomUUID().toString().replace("-", ""), // Placeholder
-                                "details", Map.of(
-                                        "parent_model", "",
-                                        "format", "gguf",
-                                        "family", guessFamily(id),
-                                        "families", List.of(guessFamily(id)),
-                                        "parameter_size", guessSize(id),
-                                        "quantization_level", "Q4_0"
-                                )
-                        );
+                                "model", id);
                     })
                     .collect(Collectors.toList());
 
+            for (int i = 0; i < transformedModels.size(); i++) {
+                String modelKey = (String) transformedModels.get(i).get("name");
+                if (!openaiModelFilteringService.filter(modelKey)) {
+                    transformedModels.remove(i);
+                    i--;
+                }
+            }
             return Map.of("models", transformedModels);
         } catch (IOException e) {
             e.printStackTrace(); // Optional: log properly in production
@@ -78,22 +95,6 @@ public class OpenaiService {
         } finally {
             connection.disconnect();
         }
-    }
-
-
-    // Helper methods to "guess" metadata
-    private String guessFamily(String id) {
-        if (id.contains("llama")) return "llama";
-        if (id.contains("qwen")) return "qwen2";
-        if (id.contains("dall-e")) return "dalle";
-        if (id.contains("gpt")) return "gpt";
-        return "unknown";
-    }
-
-    private String guessSize(String id) {
-        if (id.contains("7b")) return "7.3B";
-        if (id.contains("12b")) return "12.2B";
-        return "unknown";
     }
 
     public Map<String, Object> refactor(String model, String strategy, double temperature, String source, String language)
@@ -132,10 +133,12 @@ public class OpenaiService {
             return Map.of();
         }
 
+        var durationTimer = new DurationTimer();
+        durationTimer.start();
         int responseCode = connection.getResponseCode();
         InputStream inputStream = (responseCode >= 200 && responseCode < 300) ?
                 connection.getInputStream() : connection.getErrorStream();
-
+        durationTimer.stop();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             Map<String, Object> response = objectMapper.readValue(reader, Map.class);
             List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
@@ -145,12 +148,17 @@ public class OpenaiService {
                 String content = (String) message.get("content");
                 content = content.replace("*", "");
                 ObjectMapper mapper = new ObjectMapper();
+
+                Map<String, Object> userResponse = new HashMap<>();
                 try {
-                    return mapper.readValue(content, Map.class);
+                    userResponse = mapper.readValue(content, Map.class);
                 }
                 catch (Exception e) {
-                    return structureService.parseUnstructuredContent(content);
+                    userResponse = structureService.parseUnstructuredContent(content);
                 }
+
+                userResponse.put("total_duration", durationTimer.getElapsedTimeNanos());
+                return userResponse;
             }
             return Map.of();
         }
