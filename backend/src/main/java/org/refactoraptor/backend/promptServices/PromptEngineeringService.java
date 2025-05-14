@@ -13,7 +13,8 @@ public class PromptEngineeringService implements IPromptEngineeringService {
             "DEFAULT", new DefaultPromptEngineeringStrategy(),
             "ENSEMBLE", new EnsemblePromptEngineeringStrategy(),
             "EXAMPLE", new ExampleBasedPromptEngineeringStrategy(),
-            "SMELL", new CodeSmellPromptEngineeringStrategy()
+            "SMELL", new CodeSmellPromptEngineeringStrategy(),
+            "KNOWN", new KnownViolationPromptEngineeringStrategy()
     );
 
     @Override

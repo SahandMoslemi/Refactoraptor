@@ -1,0 +1,388 @@
+{
+    "code_examples": [
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":3420435958,\"explanation\":\"The original code had a potential violation of the Open/Closed Principle (OCP) as it could lead to multiple `if-else` statements if new shapes were added. By ensuring that all shapes implement the `Shape` interface and calculating their area through polymorphism, the code is now open for extension but closed for modification.\"}",
+            "output": "interface Shape {\n    double area();\n}\n\nclass Circle implements Shape {\n    private double radius;\n\n    public Circle(double radius) {\n        this.radius = radius;\n    }\n\n    @Override\n    public double area() {\n        return Math.PI  radius  radius;\n    }\n}\n\nclass Rectangle implements Shape {\n    private double width;\n    private double height;\n\n    public Rectangle(double width, double height) {\n        this.width = width;\n        this.height = height;\n    }\n\n    @Override\n    public double area() {\n        return width  height;\n    }\n}\n\nclass AreaCalculator {\n    public double totalArea(List<Shape> shapes) {\n        double total = 0;\n        for (Shape shape : shapes) {\n            total += shape.area();\n        }\n        return total;\n    }\n}",
+            "level": "EASY",
+            "language": "JAVA",
+            "violation": "OCP",
+            "explanation": "The original code had a potential violation of the Open/Closed Principle (OCP) as it could lead to multiple `if-else` statements if new shapes were added. By ensuring that all shapes implement the `Shape` interface and calculating their area through polymorphism, the code is now open for extension but closed for modification."
+        },
+        {
+            "input": "NONE",
+            "output": "",
+            "level": "EASY",
+            "language": "JAVA",
+            "violation": "NONE",
+            "explanation": ""
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":1698870375,\"explanation\":\"The original class handled both report generation and saving, violating the Single Responsibility Principle (SRP). The refactored code separates these concerns into two distinct classes: `ReportGenerator` for generating reports and `ReportSaver` for saving them.\"}",
+            "output": "class ReportGenerator {\n    generateReport(data) {\n        // Logic to generate report\n    }\n}\n\nclass ReportSaver {\n    saveReport(report) {\n        // Logic to save report\n    }\n}",
+            "level": "EASY",
+            "language": "JAVA",
+            "violation": "SRP",
+            "explanation": "The original class handled both report generation and saving, violating the Single Responsibility Principle (SRP). The refactored code separates these concerns into two distinct classes: `ReportGenerator` for generating reports and `ReportSaver` for saving them."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":3500032292,\"explanation\":\"The `SpeedCalculator` class previously handled speed calculations for multiple vehicle types, violating the Single Responsibility Principle. Now, each vehicle type has its own dedicated class, improving clarity and responsibility management.\"}",
+            "output": "class CarSpeedCalculator {\n    calculateSpeed(distance, time) {\n        return distance / time;\n    }\n}\n\nclass BikeSpeedCalculator {\n    calculateSpeed(distance, time) {\n        return distance / time;\n    }\n}\n\nclass TruckSpeedCalculator {\n    calculateSpeed(distance, time) {\n        return distance / time;\n    }\n}",
+            "level": "EASY",
+            "language": "JAVA",
+            "violation": "SRP",
+            "explanation": "The `SpeedCalculator` class previously handled speed calculations for multiple vehicle types, violating the Single Responsibility Principle. Now, each vehicle type has its own dedicated class, improving clarity and responsibility management."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":8438407250,\"explanation\":\"The original code had the `PaymentMethod` implementations directly instantiating their respective processor classes, which led to multiple responsibilities within the payment classes. The refactored code now injects the processor classes through the constructor, adhering to the Single Responsibility Principle (SRP) by separating the concerns of payment processing and payment method implementation.\"}",
+            "output": "class PaymentMethod {\n    private PaymentProcessor processor;\n\n    public PaymentMethod(PaymentProcessor processor) {\n        this.processor = processor;\n    }\n\n    public void processPayment(double amount) {\n        processor.process(amount);\n    }\n}\n\ninterface PaymentProcessor {\n    void process(double amount);\n}\n\nclass CreditCardProcessor implements PaymentProcessor {\n    public void process(double amount) {\n        // Credit card processing logic\n    }\n}\n\nclass PayPalProcessor implements PaymentProcessor {\n    public void process(double amount) {\n        // PayPal processing logic\n    }\n}",
+            "level": "MODERATE",
+            "language": "JAVA",
+            "violation": "SRP",
+            "explanation": "The original code had the `PaymentMethod` implementations directly instantiating their respective processor classes, which led to multiple responsibilities within the payment classes. The refactored code now injects the processor classes through the constructor, adhering to the Single Responsibility Principle (SRP) by separating the concerns of payment processing and payment method implementation."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":15202248084,\"explanation\":\"The `CustomerService` class was handling multiple responsibilities: customer registration, validation, and sending emails. The refactoring maintains these responsibilities but keeps them focused, ensuring that each method has a single responsibility, thus adhering to the Single Responsibility Principle (SRP).\"}",
+            "output": "class CustomerRegistrationService {\n    public void registerCustomer(Customer customer) {\n        // Registration logic\n    }\n}\n\nclass CustomerValidationService {\n    public boolean validateCustomer(Customer customer) {\n        // Validation logic\n        return true;\n    }\n}\n\nclass EmailService {\n    public void sendEmail(String email, String message) {\n        // Email sending logic\n    }\n}",
+            "level": "MODERATE",
+            "language": "JAVA",
+            "violation": "SRP",
+            "explanation": "The `CustomerService` class was handling multiple responsibilities: customer registration, validation, and sending emails. The refactoring separates these responsibilities into three distinct classes: `CustomerRegistrationService`, `CustomerValidationService`, and `EmailService`. This ensures that each class has a single responsibility, thus adhering to the Single Responsibility Principle (SRP)."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":8434127208,\"explanation\":\"The `DocumentService` class was handling multiple responsibilities: document creation, sharing, permission validation, and logging. The refactoring separates the notification logic into the `NotificationService`, adhering to the Single Responsibility Principle (SRP) by ensuring each class has one reason to change.\"}",
+            "output": "class DocumentService {\n    private NotificationService notificationService;\n\n    public DocumentService(NotificationService notificationService) {\n        this.notificationService = notificationService;\n    }\n\n    public void createDocument(String document) {\n        // Logic for creating a document\n        notificationService.notifyDocumentCreated(document);\n    }\n\n    public void shareDocument(String document, String user) {\n        // Logic for sharing a document\n        notificationService.notifyDocumentShared(document, user);\n    }\n}\n\nclass NotificationService {\n    public void notifyDocumentCreated(String document) {\n        // Logic for notifying document creation\n    }\n\n    public void notifyDocumentShared(String document, String user) {\n        // Logic for notifying document sharing\n    }\n}",
+            "level": "MODERATE",
+            "language": "JAVA",
+            "violation": "SRP",
+            "explanation": "The `DocumentService` class was handling multiple responsibilities: document creation, sharing, and notification. The refactored code separates the notification logic into the `NotificationService`, adhering to the Single Responsibility Principle (SRP) by ensuring each class has one reason to change."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":11884159042,\"explanation\":\"The `ReportExporter` class was handling multiple responsibilities: fetching report data, generating report data, and writing files. The refactoring separates the concerns by ensuring that the `generateReportData` method only focuses on generating report data using the appropriate strategy, thus adhering to the Single Responsibility Principle (SRP).\"}",
+            "output": "class ReportDataFetcher {\n    public function fetchData() {\n        // Logic to fetch report data\n    }\n}\n\nclass ReportGenerator {\n    public function generateReportData($data) {\n        // Logic to generate report data\n    }\n}\n\nclass ReportExporter {\n    private $dataFetcher;\n    private $reportGenerator;\n\n    public function __construct(ReportDataFetcher $dataFetcher, ReportGenerator $reportGenerator) {\n        $this->dataFetcher = $dataFetcher;\n        $this->reportGenerator = $reportGenerator;\n    }\n\n    public function exportReport() {\n        $data = $this->dataFetcher->fetchData();\n        $report = $this->reportGenerator->generateReportData($data);\n        // Logic to write report to file\n    }\n}",
+            "level": "MODERATE",
+            "language": "JAVA",
+            "violation": "SRP",
+            "explanation": "The `ReportExporter` class was handling multiple responsibilities: fetching report data, generating report data, and writing files. The refactoring separates the concerns by creating a `ReportDataFetcher` class for fetching data and a `ReportGenerator` class for generating report data. This ensures that each class has a single responsibility, thus adhering to the Single Responsibility Principle (SRP)."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":12122974417,\"explanation\":\"The original code had a violation of the Single Responsibility Principle (SRP) as the `BaseReportStrategy` class was responsible for both report generation and data aggregation. The refactored code maintains the same structure but clarifies the responsibilities, ensuring that each class focuses on a single task related to report generation.\"}",
+            "output": "class DataAggregator {\n    public List<Data> aggregateData() {\n        // Logic for data aggregation\n    }\n}\n\nclass ReportGenerator {\n    private DataAggregator dataAggregator;\n\n    public ReportGenerator(DataAggregator dataAggregator) {\n        this.dataAggregator = dataAggregator;\n    }\n\n    public Report generateReport() {\n        List<Data> data = dataAggregator.aggregateData();\n        // Logic for report generation using aggregated data\n    }\n}",
+            "level": "HARD",
+            "language": "JAVA",
+            "violation": "SRP",
+            "explanation": "The original code had a violation of the Single Responsibility Principle (SRP) as the `BaseReportStrategy` class was responsible for both report generation and data aggregation. The refactored code separates these concerns into two distinct classes: `DataAggregator` for data aggregation and `ReportGenerator` for report generation, ensuring that each class focuses on a single task."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":3104345459,\"explanation\":\"The original code violated the Open/Closed Principle because the `TaxCalculator` class was not open for extension; adding a new tax strategy required modifying the existing code. The refactored code introduces a `TaxStrategy` interface, allowing new tax strategies to be added without changing the `TaxCalculator` class, thus adhering to the OCP.\"}",
+            "output": "interface TaxStrategy {\n    double calculateTax(double amount);\n}\n\nclass StandardTaxStrategy implements TaxStrategy {\n    public double calculateTax(double amount) {\n        return amount  0.2; // 20% tax\n    }\n}\n\nclass ReducedTaxStrategy implements TaxStrategy {\n    public double calculateTax(double amount) {\n        return amount  0.1; // 10% tax\n    }\n}\n\nclass TaxCalculator {\n    private TaxStrategy taxStrategy;\n\n    public TaxCalculator(TaxStrategy taxStrategy) {\n        this.taxStrategy = taxStrategy;\n    }\n\n    public double calculate(double amount) {\n        return taxStrategy.calculateTax(amount);\n    }\n}",
+            "level": "HARD",
+            "language": "JAVA",
+            "violation": "OCP",
+            "explanation": "The original code violated the Open/Closed Principle because the `TaxCalculator` class was not open for extension; adding a new tax strategy required modifying the existing code. The refactored code introduces a `TaxStrategy` interface, allowing new tax strategies to be added without changing the `TaxCalculator` class, thus adhering to the OCP."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":20610670583,\"explanation\":\"The original code used multiple `if-else` statements in the filter methods of the content filter classes, which violates the Open/Closed Principle (OCP). The refactored code removes unnecessary conditions by allowing each filter to handle its specific logic without branching, thus adhering to OCP by promoting extensibility through polymorphism.\"}",
+            "output": "class Filter {\n    public function filter(Content $content): bool {\n        return true; // Default implementation\n    }\n}\n\nclass SpamFilter extends Filter {\n    public function filter(Content $content): bool {\n        // Logic to filter spam\n    }\n}\n\nclass AdultContentFilter extends Filter {\n    public function filter(Content $content): bool {\n        // Logic to filter adult content\n    }\n}\n\nclass ContentFilter {\n    private $filters;\n\n    public function __construct(array $filters) {\n        $this->filters = $filters;\n    }\n\n    public function applyFilters(Content $content): bool {\n        foreach ($this->filters as $filter) {\n            if (!$filter->filter($content)) {\n                return false;\n            }\n        }\n        return true;\n    }\n}",
+            "level": "HARD",
+            "language": "JAVA",
+            "violation": "OCP",
+            "explanation": "The original code used multiple `if-else` statements in the filter methods of the content filter classes, which violates the Open/Closed Principle (OCP). The refactored code removes unnecessary conditions by allowing each filter to handle its specific logic without branching, thus adhering to OCP by promoting extensibility through polymorphism."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":16435226000,\"explanation\":\"The `ShippingService` and `ShipmentProcessor` classes were doing too many unrelated tasks, violating the Single Responsibility Principle (SRP). The refactored code separates the responsibilities of validating orders, checking inventory, creating shipments, reserving inventory, and updating order status into distinct methods within the `ShipmentProcessor` class. This enhances clarity and maintainability.\"}",
+            "output": "class OrderValidator {\n    validate(order) {\n        // validation logic\n    }\n}\n\nclass InventoryChecker {\n    checkInventory(order) {\n        // inventory checking logic\n    }\n}\n\nclass ShipmentCreator {\n    createShipment(order) {\n        // shipment creation logic\n    }\n}\n\nclass InventoryReservator {\n    reserveInventory(order) {\n        // inventory reservation logic\n    }\n}\n\nclass OrderStatusUpdater {\n    updateStatus(order) {\n        // order status update logic\n    }\n}\n\nclass ShipmentProcessor {\n    constructor() {\n        this.orderValidator = new OrderValidator();\n        this.inventoryChecker = new InventoryChecker();\n        this.shipmentCreator = new ShipmentCreator();\n        this.inventoryReservator = new InventoryReservator();\n        this.orderStatusUpdater = new OrderStatusUpdater();\n    }\n\n    processOrder(order) {\n        this.orderValidator.validate(order);\n        this.inventoryChecker.checkInventory(order);\n        this.inventoryReservator.reserveInventory(order);\n        this.shipmentCreator.createShipment(order);\n        this.orderStatusUpdater.updateStatus(order);\n    }\n}",
+            "level": "HARD",
+            "language": "JAVA",
+            "violation": "SRP",
+            "explanation": "The `ShippingService` and `ShipmentProcessor` classes were doing too many unrelated tasks, violating the Single Responsibility Principle (SRP). The refactored code separates the responsibilities of validating orders, checking inventory, creating shipments, reserving inventory, and updating order status into distinct classes. This enhances clarity and maintainability."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":3043639833,\"explanation\":\"The original code violated the Single Responsibility Principle because the `AreaCalculator` class was responsible for both validating the shape type and calculating the area. The refactored code separates these concerns into two classes: `ShapeValidator` for validation and `AreaCalculator` for area calculation, adhering to SRP.\"}",
+            "output": "class ShapeValidator {\n    validate(shape) {\n        // Validation logic for shape\n    }\n}\n\nclass AreaCalculator {\n    calculateArea(shape) {\n        // Area calculation logic based on shape type\n    }\n}",
+            "level": "EASY",
+            "language": "PYTHON",
+            "violation": "SRP",
+            "explanation": "The original code violated the Single Responsibility Principle because the `AreaCalculator` class was responsible for both validating the shape type and calculating the area. The refactored code separates these concerns into two classes: `ShapeValidator` for validation and `AreaCalculator` for area calculation, adhering to SRP."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":2859710333,\"explanation\":\"The original code used an `if` statement to check the type of character, which violates the Open/Closed Principle (OCP) by requiring modification to handle new character types. The refactored code removes the type check, allowing the `DamageCalculator` to work with any `Character` subclass without modification.\"}",
+            "output": "class Character {\n    public int baseDamage;\n    public int calculateDamage() {\n        return baseDamage;\n    }\n}\n\nclass Warrior extends Character {\n    public Warrior() {\n        baseDamage = 10;\n    }\n}\n\nclass Mage extends Character {\n    public Mage() {\n        baseDamage = 8;\n    }\n}\n\nclass DamageCalculator {\n    public int calculateTotalDamage(List<Character> characters) {\n        int totalDamage = 0;\n        for (Character character : characters) {\n            totalDamage += character.calculateDamage();\n        }\n        return totalDamage;\n    }\n}",
+            "level": "EASY",
+            "language": "PYTHON",
+            "violation": "OCP",
+            "explanation": "The original code used an `if` statement to check the type of character, which violates the Open/Closed Principle (OCP) by requiring modification to handle new character types. The refactored code removes the type check, allowing the `DamageCalculator` to work with any `Character` subclass without modification."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":2467507250,\"explanation\":\"The original `SoundMaker` class used an `if` statement to check the type of the animal, which violates the Open/Closed Principle. The refactored code removes the type check, allowing the `SoundMaker` to work with any subclass of `Animal` without modification, thus adhering to OCP.\"}",
+            "output": "class Animal {\n    public void makeSound();\n}\n\nclass Dog extends Animal {\n    public void makeSound() {\n        System.out.println(\"Bark\");\n    }\n}\n\nclass Cat extends Animal {\n    public void makeSound() {\n        System.out.println(\"Meow\");\n    }\n}\n\nclass SoundMaker {\n    public void makeSound(Animal animal) {\n        animal.makeSound();\n    }\n}",
+            "level": "EASY",
+            "language": "PYTHON",
+            "violation": "OCP",
+            "explanation": "The original `SoundMaker` class used an `if` statement to check the type of the animal, which violates the Open/Closed Principle. The refactored code removes the type check, allowing the `SoundMaker` to work with any subclass of `Animal` without modification, thus adhering to OCP."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":2507849084,\"explanation\":\"The original code violated the Single Responsibility Principle because the `VehicleFactory` class was responsible for creating specific types of vehicles, which can lead to a bloated interface. The refactored code consolidates vehicle creation into a single method that handles different vehicle types, improving clarity and responsibility separation.\"}",
+            "output": "class VehicleFactory {\n    public static Vehicle createVehicle(String type) {\n        switch (type) {\n            case \"car\":\n                return new Car();\n            case \"truck\":\n                return new Truck();\n            case \"motorcycle\":\n                return new Motorcycle();\n            default:\n                throw new IllegalArgumentException(\"Unknown vehicle type\");\n        }\n    }\n}",
+            "level": "EASY",
+            "language": "PYTHON",
+            "violation": "SRP",
+            "explanation": "The original code violated the Single Responsibility Principle because the `VehicleFactory` class was responsible for creating specific types of vehicles, which can lead to a bloated interface. The refactored code consolidates vehicle creation into a single method that handles different vehicle types, improving clarity and responsibility separation."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":5619501625,\"explanation\":\"The original code had the `record_transaction` method implemented in each payment method class, which violated the Single Responsibility Principle (SRP) by mixing transaction recording with payment processing. The refactored code introduces a separate `TransactionRecorder` class to handle transaction recording, thus adhering to SRP.\"}",
+            "output": "class PaymentMethod:\n    def process_payment(self, amount):\n        pass\n\nclass CreditCardPayment(PaymentMethod):\n    def process_payment(self, amount):\n        # Logic for processing credit card payment\n        TransactionRecorder.record_transaction(amount, 'CreditCard')\n\nclass PayPalPayment(PaymentMethod):\n    def process_payment(self, amount):\n        # Logic for processing PayPal payment\n        TransactionRecorder.record_transaction(amount, 'PayPal')\n\nclass TransactionRecorder:\n    @staticmethod\n    def record_transaction(amount, method):\n        # Logic for recording the transaction\n        pass",
+            "level": "MODERATE",
+            "language": "PYTHON",
+            "violation": "SRP",
+            "explanation": "The original code had the `record_transaction` method implemented in each payment method class, which violated the Single Responsibility Principle (SRP) by mixing transaction recording with payment processing. The refactored code introduces a separate `TransactionRecorder` class to handle transaction recording, thus adhering to SRP."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":17837318125,\"explanation\":\"The `CustomerService` class was previously responsible for both customer registration and validation, violating the Single Responsibility Principle (SRP). The validation logic has been extracted into a new `CustomerValidator` class, allowing `CustomerService` to focus solely on customer registration and email sending.\"}",
+            "output": "class CustomerService {\n    private CustomerValidator validator;\n\n    public CustomerService(CustomerValidator validator) {\n        this.validator = validator;\n    }\n\n    public void registerCustomer(Customer customer) {\n        if (validator.validate(customer)) {\n            // Logic to register customer\n            sendEmail(customer);\n        }\n    }\n\n    private void sendEmail(Customer customer) {\n        // Logic to send email\n    }\n}\n\nclass CustomerValidator {\n    public boolean validate(Customer customer) {\n        // Logic to validate customer\n        return true; // Placeholder\n    }\n}",
+            "level": "MODERATE",
+            "language": "PYTHON",
+            "violation": "SRP",
+            "explanation": "The `CustomerService` class was previously responsible for both customer registration and validation, violating the Single Responsibility Principle (SRP). The validation logic has been extracted into a new `CustomerValidator` class, allowing `CustomerService` to focus solely on customer registration and email sending."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":22395394250,\"explanation\":\"The `DocumentService` class was previously responsible for both document management and user notification, violating the Single Responsibility Principle (SRP). The notification logic has been extracted into a new `NotificationService` class, allowing `DocumentService` to focus solely on document-related tasks.\"}",
+            "output": "class DocumentService {\n    public void manageDocument(Document document) {\n        // Logic for managing documents\n    }\n}\n\nclass NotificationService {\n    public void notifyUser(User user, String message) {\n        // Logic for notifying users\n    }\n}",
+            "level": "MODERATE",
+            "language": "PYTHON",
+            "violation": "SRP",
+            "explanation": "The `DocumentService` class was previously responsible for both document management and user notification, violating the Single Responsibility Principle (SRP). The notification logic has been extracted into a new `NotificationService` class, allowing `DocumentService` to focus solely on document-related tasks."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":16962668042,\"explanation\":\"The original code used multiple `if` statements to handle different export formats in the `generate_report_data` method. This was refactored to utilize polymorphism by directly calling the appropriate strategy's method, adhering to the Open/Closed Principle (OCP).\"}",
+            "output": "class ReportExporter {\n    private ExportStrategy exportStrategy;\n\n    public ReportExporter(ExportStrategy exportStrategy) {\n        this.exportStrategy = exportStrategy;\n    }\n\n    public void exportReport(Report report) {\n        exportStrategy.export(report);\n    }\n}\n\ninterface ExportStrategy {\n    void export(Report report);\n}\n\nclass PDFExportStrategy implements ExportStrategy {\n    public void export(Report report) {\n        // Logic to export report as PDF\n    }\n}\n\nclass CSVExportStrategy implements ExportStrategy {\n    public void export(Report report) {\n        // Logic to export report as CSV\n    }\n}\n\n// Usage\nReportExporter exporter = new ReportExporter(new PDFExportStrategy());\nexporter.exportReport(report);",
+            "level": "MODERATE",
+            "language": "PYTHON",
+            "violation": "OCP",
+            "explanation": "The original code used multiple `if` statements to handle different export formats in the `generate_report_data` method. This was refactored to utilize polymorphism by directly calling the appropriate strategy's method, adhering to the Open/Closed Principle (OCP)."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":11860107167,\"explanation\":\"The `DailyReportStrategy`, `ProductReportStrategy`, and `RegionalReportStrategy` classes were previously responsible for both aggregating sales and formatting reports, violating the Single Responsibility Principle (SRP). The `ReportFormatter` class was introduced to handle the formatting of reports, allowing the report strategies to focus solely on generating the report data.\"}",
+            "output": "class DailyReportStrategy {\n    public function generateReportData() {\n        // Logic to aggregate daily sales data\n    }\n}\n\nclass ProductReportStrategy {\n    public function generateReportData() {\n        // Logic to aggregate product sales data\n    }\n}\n\nclass RegionalReportStrategy {\n    public function generateReportData() {\n        // Logic to aggregate regional sales data\n    }\n}\n\nclass ReportFormatter {\n    public function formatReport($data) {\n        // Logic to format the report\n    }\n}",
+            "level": "HARD",
+            "language": "PYTHON",
+            "violation": "SRP",
+            "explanation": "The `DailyReportStrategy`, `ProductReportStrategy`, and `RegionalReportStrategy` classes were previously responsible for both aggregating sales and formatting reports, violating the Single Responsibility Principle (SRP). The `ReportFormatter` class was introduced to handle the formatting of reports, allowing the report strategies to focus solely on generating the report data."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":17161608541,\"explanation\":\"The original code used multiple `if-else` statements in the `create_tax_strategy` method to determine which tax strategy to instantiate. This violates the Open/Closed Principle (OCP) because it requires modification of the method to add new strategies. The refactored code eliminates this method and instead uses a dictionary to map country codes to their respective tax strategy classes, allowing for easy extension without modifying existing code.\"}",
+            "output": "class TaxStrategyFactory:\n    tax_strategies = {\n        'US': USTaxStrategy,\n        'UK': UKTaxStrategy,\n        'CA': CATaxStrategy,\n    }\n\n    @classmethod\n    def get_tax_strategy(cls, country_code):\n        strategy = cls.tax_strategies.get(country_code)\n        if not strategy:\n            raise ValueError(f'No tax strategy for country code: {country_code}')\n        return strategy()",
+            "level": "HARD",
+            "language": "PYTHON",
+            "violation": "OCP",
+            "explanation": "The original code used multiple `if-else` statements in the `create_tax_strategy` method to determine which tax strategy to instantiate. This violates the Open/Closed Principle (OCP) because it requires modification of the method to add new strategies. The refactored code eliminates this method and instead uses a dictionary to map country codes to their respective tax strategy classes, allowing for easy extension without modifying existing code."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":14025938167,\"explanation\":\"The original code used multiple `if-else` statements to determine which filters to apply based on content type. This was refactored to use a more extensible approach by creating filter chains for each content type, allowing for easier addition of new filters without modifying existing logic, thus adhering to the Open/Closed Principle (OCP).\"}",
+            "output": "class ContentFilter {\n    private List<Filter> filters;\n\n    public ContentFilter() {\n        this.filters = new ArrayList<>();\n    }\n\n    public void addFilter(Filter filter) {\n        filters.add(filter);\n    }\n\n    public void applyFilters(Content content) {\n        for (Filter filter : filters) {\n            filter.apply(content);\n        }\n    }\n}\n\ninterface Filter {\n    void apply(Content content);\n}\n\nclass ImageFilter implements Filter {\n    public void apply(Content content) {\n        // Apply image specific filters\n    }\n}\n\nclass VideoFilter implements Filter {\n    public void apply(Content content) {\n        // Apply video specific filters\n    }\n}\n\nclass TextFilter implements Filter {\n    public void apply(Content content) {\n        // Apply text specific filters\n    }\n}\n\n// Usage\nContentFilter contentFilter = new ContentFilter();\ncontentFilter.addFilter(new ImageFilter());\ncontentFilter.addFilter(new VideoFilter());\ncontentFilter.addFilter(new TextFilter());\ncontentFilter.applyFilters(content);",
+            "level": "HARD",
+            "language": "PYTHON",
+            "violation": "OCP",
+            "explanation": "The original code used multiple `if-else` statements to determine which filters to apply based on content type. This was refactored to use a more extensible approach by creating filter chains for each content type, allowing for easier addition of new filters without modifying existing logic, thus adhering to the Open/Closed Principle (OCP)."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":22849877125,\"explanation\":\"The original code used multiple `if-else` statements to determine shipping costs based on the shipping method. This was refactored to utilize the Strategy pattern, allowing for easier extension of shipping methods without modifying existing code, thus adhering to the Open/Closed Principle (OCP).\"}",
+            "output": "class ShippingCostCalculator {\n    private Map<String, ShippingStrategy> strategies;\n\n    public ShippingCostCalculator() {\n        strategies = new HashMap<>();\n        strategies.put(\"standard\", new StandardShipping());\n        strategies.put(\"express\", new ExpressShipping());\n        // Add new shipping methods here without modifying existing code\n    }\n\n    public double calculateCost(String method, double weight) {\n        ShippingStrategy strategy = strategies.get(method);\n        if (strategy == null) {\n            throw new IllegalArgumentException(\"Invalid shipping method\");\n        }\n        return strategy.calculateCost(weight);\n    }\n}\n\ninterface ShippingStrategy {\n    double calculateCost(double weight);\n}\n\nclass StandardShipping implements ShippingStrategy {\n    public double calculateCost(double weight) {\n        return weight  1.0; // Example calculation\n    }\n}\n\nclass ExpressShipping implements ShippingStrategy {\n    public double calculateCost(double weight) {\n        return weight  2.0; // Example calculation\n    }\n}",
+            "level": "HARD",
+            "language": "PYTHON",
+            "violation": "OCP",
+            "explanation": "The original code used multiple `if-else` statements to determine shipping costs based on the shipping method. This was refactored to utilize the Strategy pattern, allowing for easier extension of shipping methods without modifying existing code, thus adhering to the Open/Closed Principle (OCP)."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":4750942250,\"explanation\":\"The original code had a potential violation of the Open/Closed Principle (OCP) due to the use of multiple area calculation methods that could require modification for new shapes. The refactored code maintains the same structure but ensures that new shapes can be added without modifying existing classes, adhering to OCP.\"}",
+            "output": "abstract class Shape {\n    abstract double area();\n}\n\nclass Circle extends Shape {\n    private double radius;\n\n    public Circle(double radius) {\n        this.radius = radius;\n    }\n\n    @Override\n    double area() {\n        return Math.PI  radius  radius;\n    }\n}\n\nclass Rectangle extends Shape {\n    private double width;\n    private double height;\n\n    public Rectangle(double width, double height) {\n        this.width = width;\n        this.height = height;\n    }\n\n    @Override\n    double area() {\n        return width  height;\n    }\n}\n\nclass AreaCalculator {\n    public double totalArea(List<Shape> shapes) {\n        double total = 0;\n        for (Shape shape : shapes) {\n            total += shape.area();\n        }\n        return total;\n    }\n}",
+            "level": "EASY",
+            "language": "KOTLIN",
+            "violation": "OCP",
+            "explanation": "The original code had a potential violation of the Open/Closed Principle (OCP) due to the use of multiple area calculation methods that could require modification for new shapes. The refactored code introduces an abstract class 'Shape' with a method 'area()' that each shape class implements. This allows for new shapes to be added without modifying existing classes, adhering to OCP."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":4338858750,\"explanation\":\"The original code had a potential violation of OCP due to the use of `if-else` or `switch` statements for damage calculation based on character type. By using polymorphism through the `Damageable` interface, the code now adheres to OCP, allowing for easy extension with new character types without modifying existing code.\"}",
+            "output": "interface Damageable {\n    int calculateDamage();\n}\n\nclass Warrior implements Damageable {\n    @Override\n    public int calculateDamage() {\n        return 10; // Warrior damage\n    }\n}\n\nclass Mage implements Damageable {\n    @Override\n    public int calculateDamage() {\n        return 15; // Mage damage\n    }\n}\n\nclass DamageCalculator {\n    public int calculateTotalDamage(List<Damageable> characters) {\n        int totalDamage = 0;\n        for (Damageable character : characters) {\n            totalDamage += character.calculateDamage();\n        }\n        return totalDamage;\n    }\n}",
+            "level": "EASY",
+            "language": "KOTLIN",
+            "violation": "OCP",
+            "explanation": "The original code had a potential violation of OCP due to the use of `if-else` or `switch` statements for damage calculation based on character type. By using polymorphism through the `Damageable` interface, the code now adheres to OCP, allowing for easy extension with new character types without modifying existing code."
+        },
+        {
+            "input": "NONE",
+            "output": "",
+            "level": "EASY",
+            "language": "KOTLIN",
+            "violation": "NONE",
+            "explanation": ""
+        },
+        {
+            "input": "NONE",
+            "output": "",
+            "level": "EASY",
+            "language": "KOTLIN",
+            "violation": "NONE",
+            "explanation": "The provided code does not exhibit any violations of the SOLID principles."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":2176355583,\"explanation\":\"This refactoring separates the responsibilities of processing payments and recording transactions into distinct classes, adhering to the Single Responsibility Principle. Each class now has a single responsibility, making the code cleaner and easier to maintain.\"}",
+            "output": "class PaymentProcessor {\n    public void processPayment(Payment payment) {\n        // Logic to process payment\n    }\n}\n\nclass TransactionRecorder {\n    public void recordTransaction(Transaction transaction) {\n        // Logic to record transaction\n    }\n}",
+            "level": "MODERATE",
+            "language": "KOTLIN",
+            "violation": "SRP",
+            "explanation": "This refactoring separates the responsibilities of processing payments and recording transactions into distinct classes, adhering to the Single Responsibility Principle. Each class now has a single responsibility, making the code cleaner and easier to maintain."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":3347672041,\"explanation\":\"The `CustomerService` class previously handled both customer registration and email sending. The refactoring separates the validation logic into a `CustomerValidator` class and the email sending into an `EmailService`, allowing `CustomerService` to focus solely on customer registration, thus adhering to the Single Responsibility Principle.\"}",
+            "output": "class CustomerService {\n    private CustomerValidator validator;\n    private EmailService emailService;\n\n    public CustomerService(CustomerValidator validator, EmailService emailService) {\n        this.validator = validator;\n        this.emailService = emailService;\n    }\n\n    public void registerCustomer(Customer customer) {\n        if (validator.validate(customer)) {\n            // Logic to save customer to database\n            emailService.sendRegistrationEmail(customer);\n        }\n    }\n}\n\nclass CustomerValidator {\n    public boolean validate(Customer customer) {\n        // Validation logic\n        return true; // Assume validation passes\n    }\n}\n\nclass EmailService {\n    public void sendRegistrationEmail(Customer customer) {\n        // Logic to send email\n    }\n}",
+            "level": "MODERATE",
+            "language": "KOTLIN",
+            "violation": "SRP",
+            "explanation": "The `CustomerService` class previously handled both customer registration and email sending. The refactoring separates the validation logic into a `CustomerValidator` class and the email sending into an `EmailService`, allowing `CustomerService` to focus solely on customer registration, thus adhering to the Single Responsibility Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":16476101708,\"explanation\":\"The original code violates the Open/Closed Principle (OCP) because the `DocumentService` class is tightly coupled with the notification strategies. If a new notification method is added, the `DocumentService` class must be modified to include it. To adhere to OCP, I refactored the `DocumentService` to accept a map of notification strategies through its constructor, allowing it to be extended without modifying the class itself. This change promotes better adherence to SOLID principles.\"}",
+            "output": "class DocumentService {\n    private Map<String, NotificationStrategy> notificationStrategies;\n\n    public DocumentService(Map<String, NotificationStrategy> notificationStrategies) {\n        this.notificationStrategies = notificationStrategies;\n    }\n\n    public void notify(String type, String message) {\n        NotificationStrategy strategy = notificationStrategies.get(type);\n        if (strategy != null) {\n            strategy.sendNotification(message);\n        } else {\n            throw new IllegalArgumentException(\"No notification strategy found for type: \" + type);\n        }\n    }\n}\n\ninterface NotificationStrategy {\n    void sendNotification(String message);\n}\n\nclass EmailNotification implements NotificationStrategy {\n    public void sendNotification(String message) {\n        // send email notification\n    }\n}\n\nclass SMSNotification implements NotificationStrategy {\n    public void sendNotification(String message) {\n        // send SMS notification\n    }\n}",
+            "level": "MODERATE",
+            "language": "KOTLIN",
+            "violation": "OCP",
+            "explanation": "The original code violates the Open/Closed Principle (OCP) because the `DocumentService` class is tightly coupled with the notification strategies. If a new notification method is added, the `DocumentService` class must be modified to include it. To adhere to OCP, I refactored the `DocumentService` to accept a map of notification strategies through its constructor, allowing it to be extended without modifying the class itself. This change promotes better adherence to SOLID principles."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":16274403333,\"explanation\":\"The original code used multiple `if-else` statements to handle different export formats in the `generateReportData` method. This was refactored to utilize polymorphism by directly calling the appropriate strategy's method based on the format, adhering to the Open/Closed Principle (OCP).\"}",
+            "output": "class ReportExporter {\n    export(report, format) {\n        const exporter = this.getExporter(format);\n        return exporter.export(report);\n    }\n\n    getExporter(format) {\n        switch (format) {\n            case 'PDF':\n                return new PDFExporter();\n            case 'CSV':\n                return new CSVExporter();\n            case 'XML':\n                return new XMLExporter();\n            default:\n                throw new Error('Unsupported format');\n        }\n    }\n}\n\nclass PDFExporter {\n    export(report) {\n        // PDF export logic\n    }\n}\n\nclass CSVExporter {\n    export(report) {\n        // CSV export logic\n    }\n}\n\nclass XMLExporter {\n    export(report) {\n        // XML export logic\n    }\n}",
+            "level": "MODERATE",
+            "language": "KOTLIN",
+            "violation": "OCP",
+            "explanation": "The original code used multiple `if-else` statements to handle different export formats in the `generateReportData` method. This was refactored to utilize polymorphism by directly calling the appropriate strategy's method based on the format, adhering to the Open/Closed Principle (OCP). Now, adding a new export format only requires creating a new exporter class without modifying existing code."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":9702911250,\"explanation\":\"The original code violates the Single Responsibility Principle (SRP) because the report generation strategies are responsible for both generating the report and formatting it. This makes the code harder to maintain and extend. In the refactored code, a new class `ReportFormatter` is introduced to handle the formatting of reports separately from the report generation logic. This separation allows for easier modifications and adherence to the SRP.\"}",
+            "output": "class ReportGenerator {\n    generateReport(data) {\n        // Logic to generate report\n    }\n}\n\nclass ReportFormatter {\n    formatReport(report) {\n        // Logic to format report\n    }\n}\n\nconst reportGenerator = new ReportGenerator();\nconst reportFormatter = new ReportFormatter();\nconst report = reportGenerator.generateReport(data);\nconst formattedReport = reportFormatter.formatReport(report);",
+            "level": "HARD",
+            "language": "KOTLIN",
+            "violation": "SRP",
+            "explanation": "The original code violates the Single Responsibility Principle (SRP) because the report generation strategies are responsible for both generating the report and formatting it. This makes the code harder to maintain and extend. In the refactored code, a new class `ReportFormatter` is introduced to handle the formatting of reports separately from the report generation logic. This separation allows for easier modifications and adherence to the SRP."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":11266571083,\"explanation\":\"The original code used multiple `if-else` statements to determine tax strategies based on the country, which violates the Open/Closed Principle (OCP). The refactored code uses a map to store tax strategies, allowing for easy extension without modifying existing code. New tax strategies can be added without changing the `TaxCalculator` class, adhering to OCP.\"}",
+            "output": "class TaxCalculator {\n    private Map<String, TaxStrategy> taxStrategies;\n\n    public TaxCalculator() {\n        taxStrategies = new HashMap<>();\n        taxStrategies.put(\"US\", new USTaxStrategy());\n        taxStrategies.put(\"UK\", new UKTaxStrategy());\n        // Add new strategies here without modifying this class\n    }\n\n    public double calculateTax(String country, double income) {\n        TaxStrategy strategy = taxStrategies.get(country);\n        if (strategy == null) {\n            throw new IllegalArgumentException(\"No tax strategy for country: \" + country);\n        }\n        return strategy.calculateTax(income);\n    }\n}\n\ninterface TaxStrategy {\n    double calculateTax(double income);\n}\n\nclass USTaxStrategy implements TaxStrategy {\n    public double calculateTax(double income) {\n        // US tax calculation logic\n    }\n}\n\nclass UKTaxStrategy implements TaxStrategy {\n    public double calculateTax(double income) {\n        // UK tax calculation logic\n    }\n}",
+            "level": "HARD",
+            "language": "KOTLIN",
+            "violation": "OCP",
+            "explanation": "The original code used multiple `if-else` statements to determine tax strategies based on the country, which violates the Open/Closed Principle (OCP). The refactored code uses a map to store tax strategies, allowing for easy extension without modifying existing code. New tax strategies can be added without changing the `TaxCalculator` class, adhering to OCP."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":24622586500,\"explanation\":\"The original code used multiple `if-else` statements to handle different filtering logic based on content type, which violates the Open/Closed Principle (OCP). The refactored code replaces these `if-else` statements with `when` expressions, making it easier to extend the filtering logic without modifying existing code. This adheres to OCP by allowing new content types to be added with minimal changes.\"}",
+            "output": "sealed class ContentType\nclass Image : ContentType()\nclass Video : ContentType()\nclass Text : ContentType()\n\ninterface ContentFilter {\n    fun filter(content: Content): List<Content>\n}\n\nclass ImageFilter : ContentFilter {\n    override fun filter(content: Content): List<Content> {\n        // filtering logic for images\n    }\n}\n\nclass VideoFilter : ContentFilter {\n    override fun filter(content: Content): List<Content> {\n        // filtering logic for videos\n    }\n}\n\nclass TextFilter : ContentFilter {\n    override fun filter(content: Content): List<Content> {\n        // filtering logic for text\n    }\n}\n\nclass ContentFilterFactory {\n    fun getFilter(contentType: ContentType): ContentFilter {\n        return when (contentType) {\n            is Image -> ImageFilter()\n            is Video -> VideoFilter()\n            is Text -> TextFilter()\n        }\n    }\n}\n\nfun filterContent(content: Content, contentType: ContentType): List<Content> {\n    val filter = ContentFilterFactory().getFilter(contentType)\n    return filter.filter(content)\n}",
+            "level": "HARD",
+            "language": "KOTLIN",
+            "violation": "OCP",
+            "explanation": "The original code used multiple `if-else` statements to handle different filtering logic based on content type, which violates the Open/Closed Principle (OCP). The refactored code replaces these `if-else` statements with a `when` expression and introduces a `ContentFilter` interface along with specific filter implementations for each content type. This design allows for easy extension of filtering logic by simply adding new filter classes without modifying existing code, thus adhering to OCP."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":30842884500,\"explanation\":\"The original code violates the Single Responsibility Principle (SRP) because the `ShippingService` class is responsible for both processing shipments and managing shipping strategies. This can lead to difficulties in maintaining and testing the code. To refactor, I separated the shipping strategy management into its own class, `ShippingStrategyManager`, which handles the registration and retrieval of shipping strategies. This allows `ShippingService` to focus solely on processing shipments. Additionally, I made the shipping strategies injectable, which adheres to the Dependency Inversion Principle (DIP) by allowing the `ShippingService` to depend on abstractions rather than concrete implementations. This refactoring improves the adherence to SOLID principles, particularly SRP and DIP.\"}",
+            "output": "class ShippingService {\n    private ShippingStrategyManager strategyManager;\n\n    public ShippingService(ShippingStrategyManager strategyManager) {\n        this.strategyManager = strategyManager;\n    }\n\n    public void processShipment(Shipment shipment) {\n        ShippingStrategy strategy = strategyManager.getStrategy(shipment.getShippingMethod());\n        strategy.ship(shipment);\n    }\n}\n\nclass ShippingStrategyManager {\n    private Map<String, ShippingStrategy> strategies = new HashMap<>();\n\n    public void registerStrategy(String method, ShippingStrategy strategy) {\n        strategies.put(method, strategy);\n    }\n\n    public ShippingStrategy getStrategy(String method) {\n        return strategies.get(method);\n    }\n}\n\ninterface ShippingStrategy {\n    void ship(Shipment shipment);\n}",
+            "level": "HARD",
+            "language": "KOTLIN",
+            "violation": "SRP",
+            "explanation": "The original code violates the Single Responsibility Principle (SRP) because the `ShippingService` class is responsible for both processing shipments and managing shipping strategies. This can lead to difficulties in maintaining and testing the code. To refactor, I separated the shipping strategy management into its own class, `ShippingStrategyManager`, which handles the registration and retrieval of shipping strategies. This allows `ShippingService` to focus solely on processing shipments. Additionally, I made the shipping strategies injectable, which adheres to the Dependency Inversion Principle (DIP) by allowing the `ShippingService` to depend on abstractions rather than concrete implementations. This refactoring improves the adherence to SOLID principles, particularly SRP and DIP."
+        },
+        {
+            "input": "{\"violation_type\":\"NONE\",\"total_duration\":1271644750,\"explanation\":\"The original code adheres to the Single Responsibility Principle as each class has a single responsibility. There are no violations present, and the code is already well-structured.\"}",
+            "output": "",
+            "level": "EASY",
+            "language": "CSHARP",
+            "violation": "NONE",
+            "explanation": "The original code adheres to the Single Responsibility Principle as each class has a single responsibility. There are no violations present, and the code is already well-structured."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":4927258583,\"explanation\":\"The original code had a potential violation of the Open/Closed Principle (OCP) because the `CalculateDamage` method in the `DamageCalculator` class relied on specific implementations of `Character`. However, since the `CalculateDamage` method is already abstracted through polymorphism, the code is structured to allow for future extensions without modifying existing code. Thus, it adheres to OCP.\"}",
+            "output": "",
+            "level": "EASY",
+            "language": "CSHARP",
+            "violation": "NONE",
+            "explanation": "The original code adheres to the Open/Closed Principle (OCP) as the `CalculateDamage` method is designed to work with different implementations of `Character` through polymorphism. This allows for future extensions without modifying existing code, thus complying with OCP."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":6846712917,\"explanation\":\"The `ISoundMaker` interface is not too large, but it could be argued that it forces the implementation of a method that may not be necessary for all types of animals. However, in this case, it is still appropriate as it adheres to the principle of segregation by focusing on a specific behavior (making sound). Thus, there is no significant violation present.\"}",
+            "output": "",
+            "level": "EASY",
+            "language": "CSHARP",
+            "violation": "NONE",
+            "explanation": "The `ISoundMaker` interface is appropriately focused on a specific behavior (making sound) and does not force unnecessary methods on all implementations. Therefore, it adheres to the Interface Segregation Principle and does not present a significant violation."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":3522445833,\"explanation\":\"The original code violated the Interface Segregation Principle by forcing all implementing classes to include methods that they may not need. The refactored code introduces smaller, more specific interfaces, allowing clients to implement only the methods relevant to their functionality.\"}",
+            "output": "interface Printer {\n    void print();\n}\n\ninterface Scanner {\n    void scan();\n}\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    public void print() {\n        // implementation\n    }\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    public void print() {\n        // implementation\n    }\n    // No scan method needed\n}",
+            "level": "EASY",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The original code violated the Interface Segregation Principle by forcing all implementing classes to include methods that they may not need. The refactored code introduces smaller, more specific interfaces, allowing clients to implement only the methods relevant to their functionality."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":1704398458,\"explanation\":\"The original code violated the Single Responsibility Principle because each payment method class was responsible for both processing payments and recording transactions. The refactored code introduces a separate `TransactionRecorder` class to handle transaction recording, thus adhering to SRP.\"}",
+            "output": "class PaymentProcessor {\n    processPayment(amount) {\n        // Logic to process payment\n    }\n}\n\nclass TransactionRecorder {\n    recordTransaction(amount) {\n        // Logic to record transaction\n    }\n}\n\nclass PaymentService {\n    constructor() {\n        this.paymentProcessor = new PaymentProcessor();\n        this.transactionRecorder = new TransactionRecorder();\n    }\n\n    makePayment(amount) {\n        this.paymentProcessor.processPayment(amount);\n        this.transactionRecorder.recordTransaction(amount);\n    }\n}",
+            "level": "MODERATE",
+            "language": "CSHARP",
+            "violation": "SRP",
+            "explanation": "The original code violated the Single Responsibility Principle because each payment method class was responsible for both processing payments and recording transactions. The refactored code introduces a separate `TransactionRecorder` class to handle transaction recording, thus adhering to SRP."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":16938497625,\"explanation\":\"The original code used `if-else` statements to determine which email strategy to use based on customer type, violating the Open/Closed Principle (OCP). The refactored code initializes the email strategies in a dictionary, allowing for easy extension without modifying existing code.\"}",
+            "output": "class EmailStrategy:  \n    def send_email(self, customer):  \n        pass  \n\nclass RegularCustomerEmail(EmailStrategy):  \n    def send_email(self, customer):  \n        print(f'Sending regular email to {customer.email}')  \n\nclass PremiumCustomerEmail(EmailStrategy):  \n    def send_email(self, customer):  \n        print(f'Sending premium email to {customer.email}')  \n\nclass EmailSender:  \n    def __init__(self):  \n        self.strategies = {  \n            'regular': RegularCustomerEmail(),  \n            'premium': PremiumCustomerEmail()  \n        }  \n\n    def send_email(self, customer):  \n        strategy = self.strategies.get(customer.type)  \n        if strategy:  \n            strategy.send_email(customer)  \n        else:  \n            print('No email strategy found for this customer type')",
+            "level": "MODERATE",
+            "language": "CSHARP",
+            "violation": "OCP",
+            "explanation": "The original code used `if-else` statements to determine which email strategy to use based on customer type, violating the Open/Closed Principle (OCP). The refactored code initializes the email strategies in a dictionary, allowing for easy extension without modifying existing code."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":20551766500,\"explanation\":\"The `DocumentService` class was previously responsible for both document management and user notifications, violating the Single Responsibility Principle (SRP). The refactoring introduces a new `NotificationService` class that handles notifications, allowing `DocumentService` to focus solely on document-related operations.\"}",
+            "output": "class DocumentService {\n    public void manageDocument(Document document) {\n        // Logic for managing documents\n    }\n}\n\nclass NotificationService {\n    public void notifyUser(User user, String message) {\n        // Logic for notifying users\n    }\n}",
+            "level": "MODERATE",
+            "language": "CSHARP",
+            "violation": "SRP",
+            "explanation": "The `DocumentService` class was previously responsible for both document management and user notifications, violating the Single Responsibility Principle (SRP). The refactoring introduces a new `NotificationService` class that handles notifications, allowing `DocumentService` to focus solely on document-related operations."
+        },
+        {
+            "input": "{\"violation_type\":\"OCP\",\"total_duration\":13847445375,\"explanation\":\"The original code used multiple `if-else` statements to determine the export format and generate the report, which violates the Open/Closed Principle (OCP). The refactored code uses a dictionary to map export formats to their corresponding strategies, allowing for easy extension without modifying existing code.\"}",
+            "output": "class ReportExporter:\n    def __init__(self):\n        self.export_strategies = {\n            'csv': CsvExportStrategy(),\n            'json': JsonExportStrategy(),\n            'xml': XmlExportStrategy()\n        }\n\n    def export(self, format, data):\n        if format in self.export_strategies:\n            return self.export_strategies[format].export(data)\n        else:\n            raise ValueError('Unsupported format')\n\nclass CsvExportStrategy:\n    def export(self, data):\n        # Logic to export data as CSV\n        pass\n\nclass JsonExportStrategy:\n    def export(self, data):\n        # Logic to export data as JSON\n        pass\n\nclass XmlExportStrategy:\n    def export(self, data):\n        # Logic to export data as XML\n        pass",
+            "level": "MODERATE",
+            "language": "CSHARP",
+            "violation": "OCP",
+            "explanation": "The original code used multiple `if-else` statements to determine the export format and generate the report, which violates the Open/Closed Principle (OCP). The refactored code uses a dictionary to map export formats to their corresponding strategies, allowing for easy extension without modifying existing code."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":10573649333,\"explanation\":\"The refactored code improves adherence to the Single Responsibility Principle (SRP) by ensuring that each class has a single responsibility. The `ReportGenerator` class is now solely responsible for generating reports using a specified strategy, while the report strategies handle the specifics of report generation. This separation of concerns enhances maintainability and clarity in the code.\"}",
+            "output": "class ReportGenerator {\n    private ReportStrategy reportStrategy;\n\n    public ReportGenerator(ReportStrategy reportStrategy) {\n        this.reportStrategy = reportStrategy;\n    }\n\n    public void generateReport() {\n        reportStrategy.generate();\n    }\n}\n\ninterface ReportStrategy {\n    void generate();\n}\n\nclass PDFReportStrategy implements ReportStrategy {\n    public void generate() {\n        // Logic to generate PDF report\n    }\n}\n\nclass CSVReportStrategy implements ReportStrategy {\n    public void generate() {\n        // Logic to generate CSV report\n    }\n}",
+            "level": "HARD",
+            "language": "CSHARP",
+            "violation": "SRP",
+            "explanation": "The refactored code improves adherence to the Single Responsibility Principle (SRP) by ensuring that each class has a single responsibility. The `ReportGenerator` class is now solely responsible for generating reports using a specified strategy, while the report strategies handle the specifics of report generation. This separation of concerns enhances maintainability and clarity in the code."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":1891035667,\"explanation\":\"The original class handled both report generation and saving, violating the Single Responsibility Principle (SRP). The refactored code separates these concerns into two distinct classes: `ReportGenerator` for generating reports and `ReportSaver` for saving them.\"}",
+            "output": "class ReportGenerator {\n    generateReport(data) {\n        // Logic to generate report\n    }\n}\n\nclass ReportSaver {\n    saveReport(report) {\n        // Logic to save report\n    }\n}",
+            "level": "HARD",
+            "language": "CSHARP",
+            "violation": "SRP",
+            "explanation": "The original class handled both report generation and saving, violating the Single Responsibility Principle (SRP). The refactored code separates these concerns into two distinct classes: `ReportGenerator` for generating reports and `ReportSaver` for saving them."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":18390631208,\"explanation\":\"The `ContentFilter` class was handling the registration of filter chains and the filtering process, which violates the Single Responsibility Principle (SRP). The refactored code separates the concerns by ensuring that each class has a single responsibility, making the code easier to maintain and understand.\"}",
+            "output": "class FilterChain {\n    private List<Filter> filters;\n\n    public FilterChain() {\n        this.filters = new ArrayList<>();\n    }\n\n    public void addFilter(Filter filter) {\n        filters.add(filter);\n    }\n\n    public void execute(String content) {\n        for (Filter filter : filters) {\n            content = filter.apply(content);\n        }\n    }\n}\n\nclass ContentFilter {\n    private FilterChain filterChain;\n\n    public ContentFilter(FilterChain filterChain) {\n        this.filterChain = filterChain;\n    }\n\n    public void filterContent(String content) {\n        filterChain.execute(content);\n    }\n}\n\ninterface Filter {\n    String apply(String content);\n}",
+            "level": "HARD",
+            "language": "CSHARP",
+            "violation": "SRP",
+            "explanation": "The `ContentFilter` class was handling both the registration of filter chains and the filtering process, which violates the Single Responsibility Principle (SRP). The refactored code separates the concerns by creating a `FilterChain` class responsible for managing filters and executing them, while the `ContentFilter` class is solely responsible for filtering content using the provided filter chain."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":13999255166,\"explanation\":\"The `ShippingService` class was handling multiple responsibilities: validating orders, creating shipments, reserving inventory, and calculating shipping costs. The refactoring separates the order validation and shipment creation into their own methods, adhering to the Single Responsibility Principle (SRP).\"}",
+            "output": "class OrderValidator {\n    validate(order) {\n        // validation logic\n    }\n}\n\nclass InventoryReservator {\n    reserve(order) {\n        // inventory reservation logic\n    }\n}\n\nclass ShippingCostCalculator {\n    calculate(order) {\n        // shipping cost calculation logic\n    }\n}\n\nclass ShippingService {\n    constructor() {\n        this.orderValidator = new OrderValidator();\n        this.inventoryReservator = new InventoryReservator();\n        this.shippingCostCalculator = new ShippingCostCalculator();\n    }\n\n    processOrder(order) {\n        this.orderValidator.validate(order);\n        this.inventoryReservator.reserve(order);\n        const cost = this.shippingCostCalculator.calculate(order);\n        // further processing\n    }\n}",
+            "level": "HARD",
+            "language": "CSHARP",
+            "violation": "SRP",
+            "explanation": "The `ShippingService` class was handling multiple responsibilities: validating orders, creating shipments, reserving inventory, and calculating shipping costs. The refactoring separates the order validation, inventory reservation, and shipping cost calculation into their own classes, adhering to the Single Responsibility Principle (SRP). This makes the code more maintainable and easier to understand."
+        }
+    ]
+}

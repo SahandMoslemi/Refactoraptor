@@ -1,0 +1,388 @@
+{
+    "code_examples": [
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":7368717791,\"explanation\":\"The interfaces IPrint, IScanner, and IFax are too large and force classes to implement methods they may not need. The refactoring maintains smaller, more focused interfaces, adhering to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface IPrint { void Print(Document doc); }\ninterface IScanner { void Scan(Document doc); }\ninterface IFax { void Fax(Document doc); }\n\nclass MultiFunctionPrinter : IPrint, IScanner, IFax {\n    public void Print(Document doc) { / implementation / }\n    public void Scan(Document doc) { / implementation / }\n    public void Fax(Document doc) { / implementation / }\n}\n\nclass SimplePrinter : IPrint {\n    public void Print(Document doc) { / implementation / }\n}\n\nclass SimpleScanner : IScanner {\n    public void Scan(Document doc) { / implementation / }\n}\n\nclass SimpleFax : IFax {\n    public void Fax(Document doc) { / implementation / }\n}",
+            "level": "EASY",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The original code had large interfaces that forced classes to implement methods they did not need, violating the Interface Segregation Principle (ISP). The refactored code introduces smaller, more focused interfaces (IPrint, IScanner, IFax) that allow classes to implement only the methods relevant to their functionality."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":2254247250,\"explanation\":\"The `IJobSeekerExtended` interface was too large, forcing implementations to include methods that were not relevant to all job seekers. By splitting it into smaller interfaces, we adhere to the Interface Segregation Principle, allowing classes to implement only the methods they need.\"}",
+            "output": "public interface IJobSeeker { void SearchJob(); }\npublic interface IJobSeekerProfile { void UpdateProfile(); }\npublic class JobSeeker : IJobSeeker, IJobSeekerProfile {\n    public void SearchJob() { / implementation / }\n    public void UpdateProfile() { / implementation / }\n}",
+            "level": "EASY",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The `IJobSeekerExtended` interface was too large, forcing implementations to include methods that were not relevant to all job seekers. By splitting it into smaller interfaces, we adhere to the Interface Segregation Principle, allowing classes to implement only the methods they need."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":5326001750,\"explanation\":\"The interfaces were too large, forcing classes to implement methods they do not use. Now, `IAnalogueOperations` and `IDigitalOperations` are separate interfaces, adhering to the ISP.\"}",
+            "output": "public interface IAnalogueOperations {\n    void performAnalogueOperation();\n}\n\npublic interface IDigitalOperations {\n    void performDigitalOperation();\n}\n\npublic class AnalogueDevice : IAnalogueOperations {\n    public void performAnalogueOperation() {\n        // Implementation for analogue operation\n    }\n}\n\npublic class DigitalDevice : IDigitalOperations {\n    public void performDigitalOperation() {\n        // Implementation for digital operation\n    }\n}",
+            "level": "EASY",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The interfaces were too large, forcing classes to implement methods they do not use. Now, `IAnalogueOperations` and `IDigitalOperations` are separate interfaces, adhering to the ISP."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":5426558958,\"explanation\":\"The interfaces are too large and force classes to implement methods that are not relevant to them. By separating the interfaces into smaller, more specific ones, we adhere to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface Printer {\n    void print();\n}\n\ninterface Scanner {\n    void scan();\n}\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    @Override\n    public void print() {\n        // implementation\n    }\n\n    @Override\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    @Override\n    public void print() {\n        // implementation\n    }\n}",
+            "level": "EASY",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The original code likely had a large interface that combined printing and scanning functionalities, forcing classes to implement methods they do not need. By creating smaller, more specific interfaces for each functionality, we allow classes to implement only what is necessary, thus adhering to the Interface Segregation Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":4197446000,\"explanation\":\"The refactoring separates the audio functionality from the electronic control functionality, allowing audio devices to implement only the necessary interfaces, thus adhering to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface AudioDevice {\n    void playAudio();\n}\n\ninterface ElectronicControl {\n    void turnOn();\n    void turnOff();\n}\n\nclass Speaker implements AudioDevice {\n    public void playAudio() {\n        // Implementation for playing audio\n    }\n}\n\nclass SmartSpeaker implements AudioDevice, ElectronicControl {\n    public void playAudio() {\n        // Implementation for playing audio\n    }\n    public void turnOn() {\n        // Implementation for turning on\n    }\n    public void turnOff() {\n        // Implementation for turning off\n    }\n}",
+            "level": "MODERATE",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The refactoring separates the audio functionality from the electronic control functionality, allowing audio devices to implement only the necessary interfaces, thus adhering to the Interface Segregation Principle (ISP)."
+        },
+        {
+            "input": "{\"violation_type\":\"DIP\",\"total_duration\":10441006167,\"explanation\":\"The original code had the `Mage`, `Fighter`, and `Ranger` classes directly instantiating their movement and attack strategies, which created a tight coupling between high-level and low-level classes. The refactored code allows for the injection of `MoveStrategy` and `AttackStrategy` into the character classes, adhering to the Dependency Inversion Principle (DIP).\"}",
+            "output": "",
+            "level": "MODERATE",
+            "language": "JAVA",
+            "violation": "NONE",
+            "explanation": ""
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":2148660375,\"explanation\":\"The refactoring separates the responsibilities into distinct interfaces, allowing the Chef class to focus solely on cooking, thus adhering to the Interface Segregation Principle.\"}",
+            "output": "interface Cookable {\n    void cook();\n}\n\ninterface Cleanable {\n    void clean();\n}\n\nclass Chef implements Cookable {\n    @Override\n    public void cook() {\n        // cooking logic\n    }\n}\n\nclass KitchenHelper implements Cleanable {\n    @Override\n    public void clean() {\n        // cleaning logic\n    }\n}",
+            "level": "MODERATE",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The refactoring separates the responsibilities into distinct interfaces, allowing the Chef class to focus solely on cooking, thus adhering to the Interface Segregation Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":2763104084,\"explanation\":\"The original code violated the Interface Segregation Principle (ISP) because the `IShape` interface forced classes to implement methods that were not relevant to their specific shape type. The refactored code separates the interfaces for 1D, 2D, and 3D shapes, ensuring that classes only implement the methods that are applicable to them.\"}",
+            "output": "interface IShape { }\n\ninterface I2DShape : IShape {\n    double Area();\n    double Perimeter();\n}\n\ninterface I3DShape : IShape {\n    double Volume();\n    double SurfaceArea();\n}\n\nclass Circle : I2DShape {\n    public double Radius { get; set; }\n    public double Area() => Math.PI  Radius  Radius;\n    public double Perimeter() => 2  Math.PI  Radius;\n}\n\nclass Cube : I3DShape {\n    public double Side { get; set; }\n    public double Volume() => Side  Side  Side;\n    public double SurfaceArea() => 6  Side  Side;\n}",
+            "level": "MODERATE",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The original code violated the Interface Segregation Principle (ISP) because the `IShape` interface forced classes to implement methods that were not relevant to their specific shape type. The refactored code separates the interfaces for 1D, 2D, and 3D shapes, ensuring that classes only implement the methods that are applicable to them."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":17509603875,\"explanation\":\"The interfaces are too large and force classes to implement methods that are not relevant to them, violating the Interface Segregation Principle (ISP). The refactoring maintains smaller, more focused interfaces that allow classes to implement only the methods they need.\"}",
+            "output": "interface Printer {\n    void print();\n}\n\ninterface Scanner {\n    void scan();\n}\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    @Override\n    public void print() {\n        // implementation\n    }\n\n    @Override\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    @Override\n    public void print() {\n        // implementation\n    }\n}",
+            "level": "HARD",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The original code likely had a large interface that combined printing and scanning functionalities, forcing classes to implement methods they did not need. By refactoring into smaller, focused interfaces (Printer and Scanner), we adhere to the Interface Segregation Principle, allowing classes to implement only the methods relevant to them."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":24165998542,\"explanation\":\"The interfaces are too large and force classes to implement methods that may not be relevant to them, violating the Interface Segregation Principle (ISP). The refactoring separates the interfaces into smaller, more specific ones, allowing classes to implement only the methods they need.\"}",
+            "output": "interface Printer {\n    void print();\n}\n\ninterface Scanner {\n    void scan();\n}\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    @Override\n    public void print() {\n        // implementation\n    }\n\n    @Override\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    @Override\n    public void print() {\n        // implementation\n    }\n}",
+            "level": "HARD",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The original code likely had a large interface that combined printing and scanning functionalities, forcing classes to implement methods they didn't need. The refactored code separates the functionalities into two smaller interfaces: Printer and Scanner. This allows classes to implement only the methods relevant to them, adhering to the Interface Segregation Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":3583601959,\"explanation\":\"The original code violated the Interface Segregation Principle because the `SlackService` and `PushNotificationService` classes implemented both `MessageSender` and `MessageReceiver` interfaces, which may not be necessary for all implementations. The refactored code separates the interfaces to ensure that classes only implement the methods they actually use.\"}",
+            "output": "interface MessageSender {\n    void sendMessage(String message);\n}\n\ninterface MessageReceiver {\n    String receiveMessage();\n}\n\nclass SlackService implements MessageSender {\n    @Override\n    public void sendMessage(String message) {\n        // Implementation for sending message via Slack\n    }\n}\n\nclass PushNotificationService implements MessageSender {\n    @Override\n    public void sendMessage(String message) {\n        // Implementation for sending message via Push Notification\n    }\n}",
+            "level": "HARD",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The original code violated the Interface Segregation Principle because the `SlackService` and `PushNotificationService` classes implemented both `MessageSender` and `MessageReceiver` interfaces, which may not be necessary for all implementations. The refactored code separates the interfaces to ensure that classes only implement the methods they actually use."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":25393164000,\"explanation\":\"The `CustomerBookingSystem` class previously implemented multiple interfaces, including `EmailNotifier`, which led to it having too many responsibilities. Now, the email notification methods are included in the `CustomerBookingSystem`, ensuring that the class adheres to the Interface Segregation Principle (ISP) by not forcing it to implement methods that are not relevant to its core functionality.\"}",
+            "output": "class CustomerBookingSystem {\n    private EmailNotifier emailNotifier;\n\n    public CustomerBookingSystem(EmailNotifier emailNotifier) {\n        this.emailNotifier = emailNotifier;\n    }\n\n    public void bookCustomer(Customer customer) {\n        // Booking logic\n        emailNotifier.sendBookingConfirmation(customer);\n    }\n}\n\ninterface EmailNotifier {\n    void sendBookingConfirmation(Customer customer);\n}\n\nclass SimpleEmailNotifier implements EmailNotifier {\n    public void sendBookingConfirmation(Customer customer) {\n        // Implementation for sending email\n    }\n}",
+            "level": "HARD",
+            "language": "JAVA",
+            "violation": "ISP",
+            "explanation": "The `CustomerBookingSystem` class previously implemented multiple interfaces, including `EmailNotifier`, which led to it having too many responsibilities. Now, the email notification methods are included in the `CustomerBookingSystem`, ensuring that the class adheres to the Interface Segregation Principle (ISP) by not forcing it to implement methods that are not relevant to its core functionality."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":5733239750,\"explanation\":\"The original `MultiFunctionDevice` class implemented all methods from the interfaces, violating the Interface Segregation Principle (ISP) by forcing it to implement methods that may not be relevant for all devices. The refactored code separates the functionalities into distinct classes (`Scanner` and `Fax`) and composes them in `MultiFunctionDevice`, allowing for more flexible and specific implementations.\"}",
+            "output": "interface Printer {\n    void print(Document document);\n}\n\ninterface Scanner {\n    void scan(Document document);\n}\n\ninterface Fax {\n    void fax(Document document);\n}\n\nclass MultiFunctionDevice implements Printer, Scanner, Fax {\n    private Printer printer;\n    private Scanner scanner;\n    private Fax fax;\n\n    public MultiFunctionDevice(Printer printer, Scanner scanner, Fax fax) {\n        this.printer = printer;\n        this.scanner = scanner;\n        this.fax = fax;\n    }\n\n    @Override\n    public void print(Document document) {\n        printer.print(document);\n    }\n\n    @Override\n    public void scan(Document document) {\n        scanner.scan(document);\n    }\n\n    @Override\n    public void fax(Document document) {\n        fax.fax(document);\n    }\n}",
+            "level": "EASY",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The original `MultiFunctionDevice` class implemented all methods from the interfaces, violating the Interface Segregation Principle (ISP) by forcing it to implement methods that may not be relevant for all devices. The refactored code separates the functionalities into distinct classes (`Printer`, `Scanner`, and `Fax`) and composes them in `MultiFunctionDevice`, allowing for more flexible and specific implementations."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":5117643708,\"explanation\":\"The interfaces `IJobSeeker`, `IJobApplication`, `IRecruiter`, and `IApplicantReview` are too large as they force classes to implement methods that may not be relevant to them. By separating the responsibilities into more focused interfaces, we adhere to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface IJobSeeker { void searchJobs(); }\ninterface IJobApplication { void applyForJob(); }\ninterface IRecruiter { void postJob(); }\ninterface IApplicantReview { void reviewApplication(); }\n\nclass JobSeeker implements IJobSeeker {\n    public void searchJobs() {\n        // Implementation\n    }\n}\n\nclass JobApplication implements IJobApplication {\n    public void applyForJob() {\n        // Implementation\n    }\n}\n\nclass Recruiter implements IRecruiter {\n    public void postJob() {\n        // Implementation\n    }\n}\n\nclass ApplicantReview implements IApplicantReview {\n    public void reviewApplication() {\n        // Implementation\n    }\n}",
+            "level": "EASY",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The original interfaces were too large and forced classes to implement methods that were not relevant to them. By creating smaller, more focused interfaces, we ensure that classes only implement the methods they need, thus adhering to the Interface Segregation Principle (ISP)."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":6040703541,\"explanation\":\"The `VinylPlayer` class was previously forced to implement methods related to digital operations, which it does not need. By creating a separate `IAnalogOperations` interface, we adhere to the ISP, ensuring that classes only implement methods relevant to their functionality.\"}",
+            "output": "interface IAnalogOperations {\n    void playVinyl();\n    void stopVinyl();\n}\n\nclass VinylPlayer implements IAnalogOperations {\n    @Override\n    public void playVinyl() {\n        // Implementation for playing vinyl\n    }\n\n    @Override\n    public void stopVinyl() {\n        // Implementation for stopping vinyl\n    }\n}\n\ninterface IDigitalOperations {\n    void playDigital();\n    void stopDigital();\n}\n\nclass DigitalPlayer implements IDigitalOperations {\n    @Override\n    public void playDigital() {\n        // Implementation for playing digital\n    }\n\n    @Override\n    public void stopDigital() {\n        // Implementation for stopping digital\n    }\n}",
+            "level": "EASY",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The `VinylPlayer` class was previously forced to implement methods related to digital operations, which it does not need. By creating a separate `IAnalogOperations` interface, we adhere to the ISP, ensuring that classes only implement methods relevant to their functionality."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":4504410458,\"explanation\":\"The interfaces were too large, forcing classes to implement methods that were not relevant to their functionality. By separating the interfaces into specific capabilities (drive, fly, dive), we adhere to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface Drivable { void drive(); }\ninterface Flyable { void fly(); }\ninterface Divable { void dive(); }\n\nclass Car implements Drivable {\n    public void drive() {\n        // implementation\n    }\n}\n\nclass Airplane implements Drivable, Flyable {\n    public void drive() {\n        // implementation\n    }\n    public void fly() {\n        // implementation\n    }\n}\n\nclass Submarine implements Drivable, Divable {\n    public void drive() {\n        // implementation\n    }\n    public void dive() {\n        // implementation\n    }\n}",
+            "level": "EASY",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The original code had large interfaces that forced classes to implement methods irrelevant to their functionality. By creating smaller, more specific interfaces (Drivable, Flyable, Divable), we ensure that classes only implement the methods they actually use, thus adhering to the Interface Segregation Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":9419249416,\"explanation\":\"The `AudioDevice` class implements both `IElectronicControl` and `IVolumeControl`, which violates the Interface Segregation Principle (ISP) as it forces the implementation of methods that may not be relevant for all electronic devices. The refactoring maintains separate interfaces for electronic control and volume control, allowing classes to implement only the interfaces they need.\"}",
+            "output": "public interface IElectronicControl {\n    void turnOn();\n    void turnOff();\n}\n\npublic interface IVolumeControl {\n    void increaseVolume();\n    void decreaseVolume();\n}\n\npublic class AudioDevice implements IElectronicControl, IVolumeControl {\n    @Override\n    public void turnOn() {\n        // Implementation to turn on the audio device\n    }\n\n    @Override\n    public void turnOff() {\n        // Implementation to turn off the audio device\n    }\n\n    @Override\n    public void increaseVolume() {\n        // Implementation to increase volume\n    }\n\n    @Override\n    public void decreaseVolume() {\n        // Implementation to decrease volume\n    }\n}",
+            "level": "MODERATE",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The `AudioDevice` class implements both `IElectronicControl` and `IVolumeControl`, which violates the Interface Segregation Principle (ISP) as it forces the implementation of methods that may not be relevant for all electronic devices. The refactoring maintains separate interfaces for electronic control and volume control, allowing classes to implement only the interfaces they need."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":8497837875,\"explanation\":\"The original code had a potential ISP violation as the `Character` class was tightly coupled with specific movement and attack strategies, which could lead to unnecessary methods being implemented for characters that do not require them. The refactored code maintains the same structure but emphasizes the separation of concerns, ensuring that each character only implements the strategies relevant to them.\"}",
+            "output": "interface Movable {\n    void move();\n}\n\ninterface Attackable {\n    void attack();\n}\n\nclass Character implements Movable {\n    private Movable movementStrategy;\n\n    public Character(Movable movementStrategy) {\n        this.movementStrategy = movementStrategy;\n    }\n\n    public void move() {\n        movementStrategy.move();\n    }\n}\n\nclass Warrior extends Character implements Attackable {\n    public Warrior(Movable movementStrategy) {\n        super(movementStrategy);\n    }\n\n    public void attack() {\n        // Warrior attack implementation\n    }\n}\n\nclass Mage extends Character implements Attackable {\n    public Mage(Movable movementStrategy) {\n        super(movementStrategy);\n    }\n\n    public void attack() {\n        // Mage attack implementation\n    }\n}\n\nclass NoMovement implements Movable {\n    public void move() {\n        // No movement\n    }\n}",
+            "level": "MODERATE",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The original code had a potential ISP violation as the `Character` class was tightly coupled with specific movement and attack strategies, which could lead to unnecessary methods being implemented for characters that do not require them. The refactored code maintains the same structure but emphasizes the separation of concerns, ensuring that each character only implements the strategies relevant to them."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":2353763000,\"explanation\":\"The original code violated the Interface Segregation Principle (ISP) because the `Chef` class implemented multiple interfaces that it did not fully utilize, leading to unnecessary dependencies. The refactored code separates the responsibilities into specific classes like `PastryChef` and `Bartender`, allowing each class to implement only the interfaces relevant to their responsibilities.\"}",
+            "output": "interface ICook { void cook(); }\ninterface IDrinkMaker { void makeDrink(); }\n\nclass PastryChef implements ICook {\n    @Override\n    public void cook() {\n        // Implementation for cooking pastries\n    }\n}\n\nclass Bartender implements IDrinkMaker {\n    @Override\n    public void makeDrink() {\n        // Implementation for making drinks\n    }\n}",
+            "level": "MODERATE",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The original code violated the Interface Segregation Principle (ISP) because the `Chef` class implemented multiple interfaces that it did not fully utilize, leading to unnecessary dependencies. The refactored code separates the responsibilities into specific classes like `PastryChef` and `Bartender`, allowing each class to implement only the interfaces relevant to their responsibilities."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":2456210958,\"explanation\":\"The original code violated the Interface Segregation Principle (ISP) because the `Cube` class implemented both `IShapeThreeD` and `IShapeTwoD`, but it did not need to implement the `calculate_area` method from `IShapeTwoD`. The refactored code removes the unnecessary interface implementation for `Cube`, adhering to ISP by ensuring that classes only implement the methods they actually use.\"}",
+            "output": "interface IShapeThreeD {\n    double calculate_volume();\n}\n\ninterface IShapeTwoD {\n    double calculate_area();\n}\n\nclass Cube implements IShapeThreeD {\n    private double side;\n\n    public Cube(double side) {\n        this.side = side;\n    }\n\n    @Override\n    public double calculate_volume() {\n        return Math.pow(side, 3);\n    }\n}",
+            "level": "MODERATE",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The original code violated the Interface Segregation Principle (ISP) because the `Cube` class implemented both `IShapeThreeD` and `IShapeTwoD`, but it did not need to implement the `calculate_area` method from `IShapeTwoD`. The refactored code removes the unnecessary interface implementation for `Cube`, adhering to ISP by ensuring that classes only implement the methods they actually use."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":16586584292,\"explanation\":\"The interfaces are too large, forcing classes to implement methods that are not relevant to them. The refactoring separates the interfaces into smaller, more specific ones, adhering to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface Printer {\n    void print();\n}\n\ninterface Scanner {\n    void scan();\n}\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    @Override\n    public void print() {\n        // implementation\n    }\n\n    @Override\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    @Override\n    public void print() {\n        // implementation\n    }\n}",
+            "level": "HARD",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The original code had a large interface that combined printing and scanning functionalities, forcing classes to implement methods that were not relevant to them. The refactored code separates these functionalities into two smaller interfaces: Printer and Scanner. This adheres to the Interface Segregation Principle (ISP) by allowing classes to implement only the methods that are relevant to their specific functionality."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":24680070667,\"explanation\":\"The classes implement multiple interfaces, leading to a violation of the Interface Segregation Principle (ISP). By separating the interfaces into smaller, more specific ones, we ensure that classes only implement the methods they actually need, thus adhering to ISP.\"}",
+            "output": "interface Printer {\n    void print();\n}\n\ninterface Scanner {\n    void scan();\n}\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    @Override\n    public void print() {\n        // implementation\n    }\n\n    @Override\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    @Override\n    public void print() {\n        // implementation\n    }\n}",
+            "level": "HARD",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The original code likely had a single interface that combined printing and scanning functionalities, forcing classes to implement methods they did not need. By separating the functionalities into distinct interfaces (Printer and Scanner), we ensure that classes only implement the methods relevant to them, thus adhering to the Interface Segregation Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":3479944875,\"explanation\":\"The original code violated the Interface Segregation Principle (ISP) because the `SlackService` and `PushNotificationService` classes implemented both sending and receiving messages, which may not be necessary for all message types. The refactored code separates the sending functionality into its own interface, allowing classes to implement only the methods they need.\"}",
+            "output": "interface MessageSender { void sendMessage(String message); }\n\nclass SlackService implements MessageSender {\n    @Override\n    public void sendMessage(String message) {\n        // Implementation for sending a message via Slack\n    }\n}\n\nclass PushNotificationService implements MessageSender {\n    @Override\n    public void sendMessage(String message) {\n        // Implementation for sending a push notification\n    }\n}\n\nclass MessageReceiver {\n    void receiveMessage(String message) {\n        // Implementation for receiving messages\n    }\n}",
+            "level": "HARD",
+            "language": "PYTHON",
+            "violation": "ISP",
+            "explanation": "The original code violated the Interface Segregation Principle (ISP) because the `SlackService` and `PushNotificationService` classes implemented both sending and receiving messages, which may not be necessary for all message types. The refactored code separates the sending functionality into its own interface, allowing classes to implement only the methods they need."
+        },
+        {
+            "input": "{\"violation_type\":\"SRP\",\"total_duration\":6350425542,\"explanation\":\"The original `FlightBookingSystem` class handled multiple responsibilities, including booking, cancellation, flight management, and reporting, violating the Single Responsibility Principle (SRP). The refactored code separates these concerns into distinct classes: `FlightBookingSystem`, `FlightAdminSystem`, and `ReportingSystem`, each responsible for a single aspect of the flight booking system.\"}",
+            "output": "class FlightBookingSystem {\n    public void bookFlight(Flight flight) {\n        // booking logic\n    }\n    public void cancelFlight(Flight flight) {\n        // cancellation logic\n    }\n}\n\nclass FlightAdminSystem {\n    public void manageFlights(List<Flight> flights) {\n        // flight management logic\n    }\n}\n\nclass ReportingSystem {\n    public void generateReport() {\n        // reporting logic\n    }\n}",
+            "level": "HARD",
+            "language": "PYTHON",
+            "violation": "SRP",
+            "explanation": "The original `FlightBookingSystem` class handled multiple responsibilities, including booking, cancellation, flight management, and reporting, violating the Single Responsibility Principle (SRP). The refactored code separates these concerns into distinct classes: `FlightBookingSystem`, `FlightAdminSystem`, and `ReportingSystem`, each responsible for a single aspect of the flight booking system."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":6040040375,\"explanation\":\"The original code violates the Interface Segregation Principle (ISP) because the SmartPhone class implements multiple interfaces (IPrint, IScanner, IFax) but may not need all functionalities. This can lead to unnecessary dependencies and bloated interfaces. In the refactored code, I introduced a MultiFunctionPrinter class that combines all functionalities, allowing for a more cohesive design while keeping the interfaces clean and focused. Each class now adheres to the principle of having only the methods it needs.\"}",
+            "output": "interface IPrint { void print(Document doc); }\ninterface IScanner { void scan(Document doc); }\ninterface IFax { void fax(Document doc); }\n\nclass MultiFunctionPrinter implements IPrint, IScanner, IFax {\n    public void print(Document doc) { / implementation / }\n    public void scan(Document doc) { / implementation / }\n    public void fax(Document doc) { / implementation / }\n}\n\nclass SmartPrinter implements IPrint {\n    public void print(Document doc) { / implementation / }\n}\n\nclass SmartScanner implements IScanner {\n    public void scan(Document doc) { / implementation / }\n}\n\nclass SmartFax implements IFax {\n    public void fax(Document doc) { / implementation / }\n}",
+            "level": "EASY",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The original code violates the Interface Segregation Principle (ISP) because the SmartPhone class implements multiple interfaces (IPrint, IScanner, IFax) but may not need all functionalities. This can lead to unnecessary dependencies and bloated interfaces. In the refactored code, I introduced a MultiFunctionPrinter class that combines all functionalities, allowing for a more cohesive design while keeping the interfaces clean and focused. Each class now adheres to the principle of having only the methods it needs."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":4095190625,\"explanation\":\"The original code violated the Interface Segregation Principle (ISP) by combining unrelated interfaces into a single interface (IJobManagement), forcing classes to implement methods they did not need. The refactored code separates the responsibilities into distinct interfaces (IJobSeeker and IRecruiter), allowing classes to implement only the methods relevant to their functionality.\"}",
+            "output": "interface IJobSeeker {\n    void searchJob();\n    void applyForJob();\n}\n\ninterface IRecruiter {\n    void postJob();\n    void reviewApplications();\n}\n\nclass JobSeeker implements IJobSeeker {\n    public void searchJob() {\n        // Implementation for searching jobs\n    }\n    public void applyForJob() {\n        // Implementation for applying to jobs\n    }\n}\n\nclass Recruiter implements IRecruiter {\n    public void postJob() {\n        // Implementation for posting jobs\n    }\n    public void reviewApplications() {\n        // Implementation for reviewing applications\n    }\n}",
+            "level": "EASY",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The original code violated the Interface Segregation Principle (ISP) by combining unrelated interfaces into a single interface (IJobManagement), forcing classes to implement methods they did not need. The refactored code separates the responsibilities into distinct interfaces (IJobSeeker and IRecruiter), allowing classes to implement only the methods relevant to their functionality."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":4196963041,\"explanation\":\"The `CDPlayer` class was forced to implement methods from `IDigitalOperations`, which it does not use, violating the ISP. The refactoring separates the interfaces, allowing `VinylPlayer` to implement only the methods it needs.\"}",
+            "output": "interface IAudioPlayer {\n    void play();\n    void pause();\n}\n\ninterface IDigitalOperations {\n    void skipTrack();\n    void rewind();\n}\n\nclass CDPlayer implements IAudioPlayer {\n    public void play() {\n        // Implementation for playing CD\n    }\n    public void pause() {\n        // Implementation for pausing CD\n    }\n}\n\nclass VinylPlayer implements IAudioPlayer {\n    public void play() {\n        // Implementation for playing Vinyl\n    }\n    public void pause() {\n        // Implementation for pausing Vinyl\n    }\n}\n\nclass DigitalPlayer implements IAudioPlayer, IDigitalOperations {\n    public void play() {\n        // Implementation for playing Digital\n    }\n    public void pause() {\n        // Implementation for pausing Digital\n    }\n    public void skipTrack() {\n        // Implementation for skipping track\n    }\n    public void rewind() {\n        // Implementation for rewinding\n    }\n}",
+            "level": "EASY",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The `CDPlayer` class was forced to implement methods from `IDigitalOperations`, which it does not use, violating the ISP. The refactoring separates the interfaces, allowing `VinylPlayer` to implement only the methods it needs."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":4914292916,\"explanation\":\"The interfaces for flying, driving, and diving are separate, ensuring that classes only implement the methods they need, adhering to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface Flyable {\n    void fly();\n}\n\ninterface Drivable {\n    void drive();\n}\n\ninterface Diveable {\n    void dive();\n}\n\nclass Bird implements Flyable {\n    public void fly() {\n        // Implementation for flying\n    }\n}\n\nclass Car implements Drivable {\n    public void drive() {\n        // Implementation for driving\n    }\n}\n\nclass Fish implements Diveable {\n    public void dive() {\n        // Implementation for diving\n    }\n}",
+            "level": "EASY",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The interfaces for flying, driving, and diving are separate, ensuring that classes only implement the methods they need, adhering to the Interface Segregation Principle (ISP)."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":9321172791,\"explanation\":\"The original code violates the Interface Segregation Principle (ISP) because the `DeviceControl` interface includes methods that are not applicable to all implementing classes, such as `volumeUp`, `volumeDown`, and `lock`. This leads to classes like `RegularLightBulb` and `RGBLightBulb` implementing methods that they do not support. The refactored code separates the interfaces into `DeviceControl`, `VolumeControl`, and `Lockable`, allowing classes to implement only the interfaces relevant to their functionality. This adheres to the ISP and improves code clarity and maintainability.\"}",
+            "output": "interface DeviceControl {\n    void turnOn();\n    void turnOff();\n}\n\ninterface VolumeControl {\n    void volumeUp();\n    void volumeDown();\n}\n\ninterface Lockable {\n    void lock();\n    void unlock();\n}\n\nclass RegularLightBulb implements DeviceControl {\n    public void turnOn() {\n        // implementation\n    }\n    public void turnOff() {\n        // implementation\n    }\n}\n\nclass RGBLightBulb implements DeviceControl, VolumeControl {\n    public void turnOn() {\n        // implementation\n    }\n    public void turnOff() {\n        // implementation\n    }\n    public void volumeUp() {\n        // implementation\n    }\n    public void volumeDown() {\n        // implementation\n    }\n}\n\nclass SmartLock implements DeviceControl, Lockable {\n    public void turnOn() {\n        // implementation\n    }\n    public void turnOff() {\n        // implementation\n    }\n    public void lock() {\n        // implementation\n    }\n    public void unlock() {\n        // implementation\n    }\n}",
+            "level": "MODERATE",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The original code violates the Interface Segregation Principle (ISP) because the `DeviceControl` interface includes methods that are not applicable to all implementing classes, such as `volumeUp`, `volumeDown`, and `lock`. This leads to classes like `RegularLightBulb` and `RGBLightBulb` implementing methods that they do not support. The refactored code separates the interfaces into `DeviceControl`, `VolumeControl`, and `Lockable`, allowing classes to implement only the interfaces relevant to their functionality. This adheres to the ISP and improves code clarity and maintainability."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":8394898917,\"explanation\":\"The original code had multiple character classes (Mage, Fighter, Ranger) that duplicated the implementation of `performMove`, `performAttack`, and `displayRole`. By introducing an abstract class `BaseCharacter`, we adhere to the Interface Segregation Principle (ISP) by reducing redundancy and ensuring that each character class only implements the necessary methods.\"}",
+            "output": "abstract class BaseCharacter {\n    abstract performMove();\n    abstract performAttack();\n    abstract displayRole();\n}\n\nclass Mage extends BaseCharacter {\n    performMove() {\n        // Mage specific move logic\n    }\n    performAttack() {\n        // Mage specific attack logic\n    }\n    displayRole() {\n        // Display Mage role\n    }\n}\n\nclass Fighter extends BaseCharacter {\n    performMove() {\n        // Fighter specific move logic\n    }\n    performAttack() {\n        // Fighter specific attack logic\n    }\n    displayRole() {\n        // Display Fighter role\n    }\n}\n\nclass Ranger extends BaseCharacter {\n    performMove() {\n        // Ranger specific move logic\n    }\n    performAttack() {\n        // Ranger specific attack logic\n    }\n    displayRole() {\n        // Display Ranger role\n    }\n}",
+            "level": "MODERATE",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The original code had multiple character classes (Mage, Fighter, Ranger) that duplicated the implementation of `performMove`, `performAttack`, and `displayRole`. By introducing an abstract class `BaseCharacter`, we adhere to the Interface Segregation Principle (ISP) by reducing redundancy and ensuring that each character class only implements the necessary methods."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":4606858000,\"explanation\":\"The `Chef` class implements multiple interfaces, which may lead to it being forced to implement methods that are not relevant to its primary responsibility. This violates the Interface Segregation Principle (ISP). The refactoring maintains separate interfaces for distinct responsibilities, ensuring that classes only implement methods that are relevant to them.\"}",
+            "output": "interface Cook {\n    void cook();\n}\n\ninterface Baker {\n    void bake();\n}\n\nclass Chef implements Cook {\n    @Override\n    public void cook() {\n        // cooking implementation\n    }\n}\n\nclass PastryChef implements Cook, Baker {\n    @Override\n    public void cook() {\n        // cooking implementation\n    }\n\n    @Override\n    public void bake() {\n        // baking implementation\n    }\n}",
+            "level": "MODERATE",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The `Chef` class was implementing multiple interfaces, which could lead to it being forced to implement methods that are not relevant to its primary responsibility. By creating separate interfaces for cooking and baking, we ensure that classes only implement methods that are relevant to them, thus adhering to the Interface Segregation Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":5937874917,\"explanation\":\"The interfaces were too large, forcing classes to implement methods that were not relevant to them. The refactoring separates the interfaces more clearly, ensuring that each shape only implements the methods that are applicable to its dimensionality, adhering to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface Shape {\n    double area();\n}\n\ninterface ThreeDimensionalShape extends Shape {\n    double volume();\n}\n\nclass Circle implements Shape {\n    private double radius;\n\n    public Circle(double radius) {\n        this.radius = radius;\n    }\n\n    @Override\n    public double area() {\n        return Math.PI  radius  radius;\n    }\n}\n\nclass Cube implements ThreeDimensionalShape {\n    private double side;\n\n    public Cube(double side) {\n        this.side = side;\n    }\n\n    @Override\n    public double area() {\n        return 6  side  side;\n    }\n\n    @Override\n    public double volume() {\n        return side  side  side;\n    }\n}",
+            "level": "MODERATE",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The original code had a large interface that forced all shapes to implement methods that were not relevant to them. By creating separate interfaces for 2D and 3D shapes, we ensure that each shape only implements the methods that are applicable to its dimensionality, thus adhering to the Interface Segregation Principle (ISP)."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":17406920667,\"explanation\":\"The interfaces are too large and force classes to implement methods that are not relevant to them, violating the Interface Segregation Principle (ISP). The refactoring maintains smaller, more focused interfaces that allow classes to implement only the methods they need.\"}",
+            "output": "interface Printer {\n    void print();\n}\n\ninterface Scanner {\n    void scan();\n}\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    @Override\n    public void print() {\n        // implementation\n    }\n\n    @Override\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    @Override\n    public void print() {\n        // implementation\n    }\n}",
+            "level": "HARD",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The original code likely had a large interface that combined printing and scanning functionalities, forcing classes to implement methods they did not need. By refactoring into smaller, focused interfaces (Printer and Scanner), we adhere to the Interface Segregation Principle, allowing classes to implement only the methods relevant to their functionality."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":21091941250,\"explanation\":\"The original code violates the Interface Segregation Principle (ISP) as many classes implement multiple interfaces that may not be relevant to their core functionality. This can lead to unnecessary dependencies and changes in classes for reasons unrelated to their primary purpose. The refactored code separates interfaces into smaller, more specific ones, allowing classes to implement only the interfaces they need. This enhances maintainability and adheres to the ISP.\"}",
+            "output": "interface Printer { void print(); }\ninterface Scanner { void scan(); }\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    public void print() {\n        // implementation\n    }\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    public void print() {\n        // implementation\n    }\n}\n\nclass SimpleScanner implements Scanner {\n    public void scan() {\n        // implementation\n    }\n}",
+            "level": "HARD",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The original code violates the Interface Segregation Principle (ISP) as many classes implement multiple interfaces that may not be relevant to their core functionality. This can lead to unnecessary dependencies and changes in classes for reasons unrelated to their primary purpose. The refactored code separates interfaces into smaller, more specific ones, allowing classes to implement only the interfaces they need. This enhances maintainability and adheres to the ISP."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":3275623250,\"explanation\":\"The original code had multiple interfaces for different message types, violating the Interface Segregation Principle (ISP). The refactored code consolidates the functionalities into a single `MessageService` interface, allowing each service to implement both sending and receiving methods, thus simplifying the design and improving maintainability.\"}",
+            "output": "interface MessageService {\n    void sendMessage(String message);\n    String receiveMessage();\n}\n\nclass EmailService implements MessageService {\n    @Override\n    public void sendMessage(String message) {\n        // Implementation for sending email\n    }\n\n    @Override\n    public String receiveMessage() {\n        // Implementation for receiving email\n        return \"Email received\";\n    }\n}\n\nclass SmsService implements MessageService {\n    @Override\n    public void sendMessage(String message) {\n        // Implementation for sending SMS\n    }\n\n    @Override\n    public String receiveMessage() {\n        // Implementation for receiving SMS\n        return \"SMS received\";\n    }\n}",
+            "level": "HARD",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The original code had multiple interfaces for different message types, violating the Interface Segregation Principle (ISP). The refactored code consolidates the functionalities into a single `MessageService` interface, allowing each service to implement both sending and receiving methods, thus simplifying the design and improving maintainability."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":16484559417,\"explanation\":\"The original code had interfaces that were too large, forcing classes to implement methods that were not relevant to their functionality. The refactored code separates concerns by allowing classes to implement only the interfaces they need, adhering to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface Printer { void print(); }\ninterface Scanner { void scan(); }\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    public void print() {\n        // implementation\n    }\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    public void print() {\n        // implementation\n    }\n}\n\nclass SimpleScanner implements Scanner {\n    public void scan() {\n        // implementation\n    }\n}",
+            "level": "HARD",
+            "language": "KOTLIN",
+            "violation": "ISP",
+            "explanation": "The original code had interfaces that were too large, forcing classes to implement methods that were not relevant to their functionality. The refactored code separates concerns by allowing classes to implement only the interfaces they need, adhering to the Interface Segregation Principle (ISP)."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":4197746083,\"explanation\":\"The original code had interfaces that were too large, forcing classes to implement methods they did not need. By separating the `IPrint` and `IScan` interfaces, we adhere to the Interface Segregation Principle (ISP), allowing classes to implement only the methods relevant to them.\"}",
+            "output": "interface IPrint {\n    void Print();\n}\n\ninterface IScan {\n    void Scan();\n}\n\nclass Printer : IPrint {\n    public void Print() {\n        // Implementation of print\n    }\n}\n\nclass Scanner : IScan {\n    public void Scan() {\n        // Implementation of scan\n    }\n}\n\nclass MultiFunctionPrinter : IPrint, IScan {\n    public void Print() {\n        // Implementation of print\n    }\n    public void Scan() {\n        // Implementation of scan\n    }\n}",
+            "level": "EASY",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The original code had interfaces that were too large, forcing classes to implement methods they did not need. By separating the `IPrint` and `IScan` interfaces, we adhere to the Interface Segregation Principle (ISP), allowing classes to implement only the methods relevant to them."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":4197173958,\"explanation\":\"The interfaces were too large and forced classes to implement methods that were not relevant to their responsibilities. By separating the interfaces, we ensure that classes only implement the methods they need, adhering to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface Printer {\n    void print();\n}\n\ninterface Scanner {\n    void scan();\n}\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    @Override\n    public void print() {\n        // implementation\n    }\n\n    @Override\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    @Override\n    public void print() {\n        // implementation\n    }\n}",
+            "level": "EASY",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The original code had a large interface that combined printing and scanning functionalities, forcing classes to implement methods they did not need. By separating the interfaces into Printer and Scanner, we ensure that classes only implement the methods relevant to their responsibilities, thus adhering to the Interface Segregation Principle (ISP)."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":5220901792,\"explanation\":\"The `CDPlayer` class implements both `IPlayer` and `IDigitalOperations`, which leads to an interface segregation violation since it forces the `CDPlayer` to implement methods that are not relevant to it. The refactoring maintains separate interfaces for analogue and digital operations, ensuring that classes only implement the methods they need.\"}",
+            "output": "interface IPlayer {\n    void play();\n    void pause();\n}\n\ninterface IDigitalOperations {\n    void skipTrack();\n    void rewind();\n}\n\nclass CDPlayer implements IPlayer {\n    @Override\n    public void play() {\n        // Implementation for playing CD\n    }\n\n    @Override\n    public void pause() {\n        // Implementation for pausing CD\n    }\n}\n\nclass DigitalPlayer implements IPlayer, IDigitalOperations {\n    @Override\n    public void play() {\n        // Implementation for playing digital media\n    }\n\n    @Override\n    public void pause() {\n        // Implementation for pausing digital media\n    }\n\n    @Override\n    public void skipTrack() {\n        // Implementation for skipping track\n    }\n\n    @Override\n    public void rewind() {\n        // Implementation for rewinding track\n    }\n}",
+            "level": "EASY",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The `CDPlayer` class implements both `IPlayer` and `IDigitalOperations`, which leads to an interface segregation violation since it forces the `CDPlayer` to implement methods that are not relevant to it. The refactoring maintains separate interfaces for analogue and digital operations, ensuring that classes only implement the methods they need."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":6345175834,\"explanation\":\"The original code had a single `IVehicle` interface that combined engine operations with vehicle-specific operations, violating the Interface Segregation Principle (ISP). The refactored code separates the interfaces for each vehicle type, ensuring that classes only implement the methods they need.\"}",
+            "output": "public interface IEngineOperations {\n    void StartEngine();\n    void StopEngine();\n}\n\npublic interface IVehicleOperations {\n    void Drive();\n    void Park();\n}\n\npublic class Car : IEngineOperations, IVehicleOperations {\n    public void StartEngine() { / implementation / }\n    public void StopEngine() { / implementation / }\n    public void Drive() { / implementation / }\n    public void Park() { / implementation / }\n}\n\npublic class Bicycle : IVehicleOperations {\n    public void Drive() { / implementation / }\n    public void Park() { / implementation / }\n}",
+            "level": "EASY",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The original code had a single `IVehicle` interface that combined engine operations with vehicle-specific operations, violating the Interface Segregation Principle (ISP). The refactored code separates the interfaces for engine operations and vehicle operations, ensuring that classes only implement the methods they need."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":11467837291,\"explanation\":\"The interfaces `IElectronicControl`, `IVolumeControl`, and `ILockMechanism` are separate and specific, but the `AudioDevice` class implements both `IElectronicControl` and `IVolumeControl`, which may not be necessary for all audio devices. This could lead to classes implementing methods they do not need. The refactoring maintains the interfaces but ensures that classes only implement the interfaces relevant to their functionality, adhering to the Interface Segregation Principle (ISP).\"}",
+            "output": "interface IElectronicControl {\n    void turnOn();\n    void turnOff();\n}\n\ninterface IVolumeControl {\n    void increaseVolume();\n    void decreaseVolume();\n}\n\ninterface ILockMechanism {\n    void lock();\n    void unlock();\n}\n\nclass BasicAudioDevice implements IElectronicControl, IVolumeControl {\n    public void turnOn() {\n        // Implementation\n    }\n    public void turnOff() {\n        // Implementation\n    }\n    public void increaseVolume() {\n        // Implementation\n    }\n    public void decreaseVolume() {\n        // Implementation\n    }\n}\n\nclass LockedAudioDevice implements IElectronicControl, IVolumeControl, ILockMechanism {\n    public void turnOn() {\n        // Implementation\n    }\n    public void turnOff() {\n        // Implementation\n    }\n    public void increaseVolume() {\n        // Implementation\n    }\n    public void decreaseVolume() {\n        // Implementation\n    }\n    public void lock() {\n        // Implementation\n    }\n    public void unlock() {\n        // Implementation\n    }\n}",
+            "level": "MODERATE",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The interfaces `IElectronicControl`, `IVolumeControl`, and `ILockMechanism` are separate and specific, but the `AudioDevice` class implements both `IElectronicControl` and `IVolumeControl`, which may not be necessary for all audio devices. This could lead to classes implementing methods they do not need. The refactoring maintains the interfaces but ensures that classes only implement the interfaces relevant to their functionality, adhering to the Interface Segregation Principle (ISP)."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":14744707792,\"explanation\":\"The `ICharacter` interface forces all character types to implement both movement and attack methods, which may not be applicable for all character types. This violates the Interface Segregation Principle (ISP). The refactoring maintains the same interface but ensures that character types can implement only the methods relevant to them, allowing for more flexibility and adherence to ISP.\"}",
+            "output": "public interface IMovable {\n    void move();\n}\n\npublic interface IAttackable {\n    void attack();\n}\n\npublic class Warrior implements IMovable, IAttackable {\n    public void move() {\n        // Warrior movement logic\n    }\n    public void attack() {\n        // Warrior attack logic\n    }\n}\n\npublic class Ghost implements IMovable {\n    public void move() {\n        // Ghost movement logic\n    }\n    // No attack method implemented\n}",
+            "level": "MODERATE",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The `ICharacter` interface forced all character types to implement both movement and attack methods, which may not be applicable for all character types. By splitting the interface into `IMovable` and `IAttackable`, we allow character types to implement only the methods relevant to them, thus adhering to the Interface Segregation Principle (ISP)."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":8599722958,\"explanation\":\"The original `IFoodCooking` interface forced the implementation of multiple cooking methods in a single interface, violating the Interface Segregation Principle (ISP). The refactored code separates the cooking methods into distinct interfaces, allowing classes to implement only the methods they need.\"}",
+            "output": "interface IFryable {\n    void fry();\n}\n\ninterface IBakeable {\n    void bake();\n}\n\nclass Fryer implements IFryable {\n    public void fry() {\n        // Frying logic\n    }\n}\n\nclass Baker implements IBakeable {\n    public void bake() {\n        // Baking logic\n    }\n}",
+            "level": "MODERATE",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The original `IFoodCooking` interface forced the implementation of multiple cooking methods in a single interface, violating the Interface Segregation Principle (ISP). The refactored code separates the cooking methods into distinct interfaces, allowing classes to implement only the methods they need."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":13619247792,\"explanation\":\"The `CubeWithArea` class implements both `IShapeTwoD` and `IShapeThreeD`, which violates the Interface Segregation Principle (ISP) as it forces the class to implement methods that are not relevant to its primary purpose. The refactoring maintains separate interfaces for one-dimensional, two-dimensional, and three-dimensional shapes, ensuring that classes only implement the methods they need.\"}",
+            "output": "interface IShape2D {\n    double calculateArea();\n}\n\ninterface IShape3D {\n    double calculateVolume();\n}\n\nclass CubeWithArea implements IShape3D {\n    private double side;\n\n    public CubeWithArea(double side) {\n        this.side = side;\n    }\n\n    @Override\n    public double calculateVolume() {\n        return Math.pow(side, 3);\n    }\n}\n\nclass Square implements IShape2D {\n    private double side;\n\n    public Square(double side) {\n        this.side = side;\n    }\n\n    @Override\n    public double calculateArea() {\n        return Math.pow(side, 2);\n    }\n}",
+            "level": "MODERATE",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The `CubeWithArea` class previously implemented both `IShapeTwoD` and `IShapeThreeD`, which forced it to implement methods that were not relevant to its purpose as a three-dimensional shape. By separating the interfaces into `IShape2D` and `IShape3D`, we ensure that each class only implements the methods it needs, thus adhering to the Interface Segregation Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":20888267583,\"explanation\":\"The interfaces are too large and force classes to implement methods that are not relevant to them, violating the Interface Segregation Principle (ISP). The refactoring would involve creating smaller, more specific interfaces for each type of device functionality, allowing classes to implement only the interfaces they need.\"}",
+            "output": "interface Printer {\n    void print(Document document);\n}\n\ninterface Scanner {\n    void scan(Document document);\n}\n\ninterface MultiFunctionDevice extends Printer, Scanner {}\n\nclass SimplePrinter implements Printer {\n    @Override\n    public void print(Document document) {\n        // Implementation for printing\n    }\n}\n\nclass SimpleScanner implements Scanner {\n    @Override\n    public void scan(Document document) {\n        // Implementation for scanning\n    }\n}\n\nclass MultiFunctionPrinter implements MultiFunctionDevice {\n    @Override\n    public void print(Document document) {\n        // Implementation for printing\n    }\n\n    @Override\n    public void scan(Document document) {\n        // Implementation for scanning\n    }\n}",
+            "level": "HARD",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The original code likely had a large interface that combined multiple functionalities, forcing classes to implement methods that were not relevant to them. By refactoring into smaller, more specific interfaces (Printer and Scanner), we allow classes to implement only what they need, thus adhering to the Interface Segregation Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":31128457583,\"explanation\":\"The interfaces are too large and force classes to implement methods that are not relevant to them, violating the Interface Segregation Principle (ISP). The refactoring separates the interfaces into smaller, more specific ones, allowing classes to implement only the methods they need.\"}",
+            "output": "interface Printer {\n    void print();\n}\n\ninterface Scanner {\n    void scan();\n}\n\nclass MultiFunctionPrinter implements Printer, Scanner {\n    public void print() {\n        // implementation\n    }\n    public void scan() {\n        // implementation\n    }\n}\n\nclass SimplePrinter implements Printer {\n    public void print() {\n        // implementation\n    }\n}",
+            "level": "HARD",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The original code likely had a large interface that combined printing and scanning functionalities, forcing classes to implement methods they did not need. The refactored code separates the functionalities into two smaller interfaces: Printer and Scanner. This allows classes to implement only the methods relevant to them, adhering to the Interface Segregation Principle."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":4094958292,\"explanation\":\"The original `IMessageService` interface forced implementations to define both `SendMessage` and `ReceiveMessage`, which may not be applicable for all message types. The refactored code separates the sending functionality into its own interface, adhering to the Interface Segregation Principle (ISP).\"}",
+            "output": "public interface IMessageSender {\n    void SendMessage(string message);\n}\n\npublic interface IMessageReceiver {\n    string ReceiveMessage();\n}\n\npublic class EmailMessageService : IMessageSender {\n    public void SendMessage(string message) {\n        // Implementation for sending an email message\n    }\n}\n\npublic class SmsMessageService : IMessageSender {\n    public void SendMessage(string message) {\n        // Implementation for sending an SMS message\n    }\n}\n\npublic class NotificationService : IMessageReceiver {\n    public string ReceiveMessage() {\n        // Implementation for receiving notifications\n        return \"Notification received\";\n    }\n}",
+            "level": "HARD",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The original `IMessageService` interface forced implementations to define both `SendMessage` and `ReceiveMessage`, which may not be applicable for all message types. The refactored code separates the sending functionality into its own interface, adhering to the Interface Segregation Principle (ISP)."
+        },
+        {
+            "input": "{\"violation_type\":\"ISP\",\"total_duration\":29081252916,\"explanation\":\"The `CustomerBookingSystem` class implements multiple interfaces, leading to an interface segregation violation. It combines flight searching, booking creation, and payment processing, which should be separated into distinct classes to adhere to the ISP.\"}",
+            "output": "class FlightSearchService {\n    public void searchFlights(String origin, String destination) {\n        // Implementation for searching flights\n    }\n}\n\nclass BookingService {\n    public void createBooking(Flight flight, Customer customer) {\n        // Implementation for creating a booking\n    }\n}\n\nclass PaymentService {\n    public void processPayment(Booking booking, PaymentDetails paymentDetails) {\n        // Implementation for processing payment\n    }\n}",
+            "level": "HARD",
+            "language": "CSHARP",
+            "violation": "ISP",
+            "explanation": "The `CustomerBookingSystem` class was violating the Interface Segregation Principle (ISP) by implementing multiple interfaces that handled flight searching, booking creation, and payment processing. By refactoring the code into separate classes for each responsibility, we ensure that each class only implements the methods relevant to its specific function, adhering to the ISP."
+        }
+    ]
+}
