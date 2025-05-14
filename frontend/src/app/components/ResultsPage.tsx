@@ -1,10 +1,28 @@
-// ResultsPage.tsx
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import { RefactoredData } from "./LoadingScreen";
 import EditorWorkspace from "./EditorWorkspace";
 import { FileData } from "../page";
+
+// Add custom scrollbar styles 
+const scrollbarStyles = `
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #748569;
+    border-radius: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #5c6a54;
+  }
+`;
 
 interface ResultsPageProps {
   refactoredData: RefactoredData;
@@ -16,6 +34,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
   onClose,
 }) => {
   const [showExplanation, setShowExplanation] = useState(false);
+  const explanationRef = useRef<HTMLDivElement>(null);
   const monacoRef = useRef<any>(null);
 
   // State for file management
@@ -37,6 +56,8 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
     modelUsed,
     originalFileName,
     language,
+    explanation,
+    violation_type
   } = refactoredData;
 
   const languageExtensions: { [key: string]: string } = {
@@ -95,6 +116,35 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
     refactoredFileName,
     language,
   ]);
+
+  useEffect(() => {
+    if (showExplanation && explanationRef.current) {
+      // Reset scroll position when explanation is shown
+      explanationRef.current.scrollTop = 0;
+    }
+  }, [showExplanation]);
+
+  // Handle multiple violation types
+  const getViolationTypeTags = () => {
+    // Split violation types if they contain commas
+    const violationTypes = violation_type ? violation_type.split(',').map(type => type.trim()) : [];
+    
+    const violationMap: { [key: string]: { bg: string, text: string } } = {
+      "Performance": { bg: "bg-amber-100", text: "text-amber-800" },
+      "Security": { bg: "bg-red-100", text: "text-red-800" },
+      "Maintainability": { bg: "bg-blue-100", text: "text-blue-800" },
+      "Code Smell": { bg: "bg-purple-100", text: "text-purple-800" },
+      "Bug": { bg: "bg-orange-100", text: "text-orange-800" },
+      "Design": { bg: "bg-indigo-100", text: "text-indigo-800" },
+      "Complexity": { bg: "bg-emerald-100", text: "text-emerald-800" },
+    };
+
+    return violationTypes.map(type => {
+      // Default styling if violation type is not in our map
+      const style = violationMap[type] || { bg: "bg-gray-100", text: "text-gray-800" };
+      return { type, style };
+    });
+  };
 
   const handleSave = () => {
     // Find the active refactored file
@@ -196,6 +246,9 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
 
   return (
     <div className="h-screen flex flex-col bg-[#505a46] font-[family-name:var(--font-geist-sans)] overflow-hidden">
+      {/* Inject custom scrollbar styles */}
+      <style>{scrollbarStyles}</style>
+      
       {/* Header */}
       <header className="p-4 flex justify-between items-center">
         <div className="py-2 px-6">
@@ -250,37 +303,69 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
               actionButtons={refactoredEditorButtons}
             />
 
-            {/* Explanation overlay when showing */}
+            {/* Explanation overlay when showing - matching editor height exactly */}
             {showExplanation && (
-              <div className="absolute inset-0 bg-black/80 text-white p-6 overflow-auto z-30">
-                <h3 className="text-xl font-medium mb-4">
-                  Refactoring Explanation
-                </h3>
-
-                <div>
-                  <p className="mb-4">
-                    The following changes were made to improve the code:
-                  </p>
-                  <ul className="space-y-3">
-                    {codeChanges.map((change, index) => (
-                      <li key={index} className="p-2 rounded">
-                        <span className="text-yellow-300">
-                          Line {change.lineNumber}:
-                        </span>{" "}
-                        {change.explanation}
-                      </li>
+              <div className="absolute top-[37px] left-0 right-0 bottom-0 bg-black/80 text-white overflow-hidden z-30 flex flex-col">
+                <div className="flex justify-between items-center border-b border-gray-700 p-4">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-lg font-medium mr-2">Refactoring Explanation</h3>
+                    {getViolationTypeTags().map((violation, index) => (
+                      <span 
+                        key={index} 
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${violation.style.bg} ${violation.style.text} my-1`}
+                      >
+                        {violation.type}
+                      </span>
                     ))}
-                  </ul>
-                </div>
-
-                <div className="mt-4 flex gap-2">
+                  </div>
                   <button
                     onClick={toggleExplanation}
-                    className="bg-[#4d5c44] hover:bg-[#5c6b51] px-4 py-2 rounded-md"
+                    className="text-gray-400 hover:text-white"
                   >
-                    Close
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
                   </button>
                 </div>
+                
+                <div 
+                  ref={explanationRef}
+                  className="flex-grow p-4 overflow-y-auto custom-scrollbar"
+                >
+                  <div className="prose prose-invert max-w-none">
+                    <p className="mb-4 text-gray-200">
+                      {explanation}
+                    </p>
+                    
+                    {/* {codeChanges && codeChanges.length > 0 && (
+                      <div className="mt-6">
+                        <h4 className="text-md font-medium mb-3 text-gray-300">Changes Made:</h4>
+                        <ul className="space-y-3">
+                          {codeChanges.map((change, index) => (
+                            <li key={index} className="p-2 bg-gray-800/50 rounded">
+                              <span className="text-yellow-300 font-medium">
+                                Line {change.lineNumber}:
+                              </span>{" "}
+                              {change.explanation}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )} */}
+                  </div>
+                </div>
+                
+                {/* Custom scroll bar slider */}
+                {/* <div className="px-4 pb-3 pt-1 border-t border-gray-700">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={scrollPosition}
+                    onChange={handleScroll}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#748569]"
+                  />
+                </div> */}
               </div>
             )}
           </div>

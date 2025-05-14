@@ -14,6 +14,8 @@ export interface RefactoredData {
     executionTime?: string;
     modelUsed?: string;
     language: string | null;
+    explanation: string;
+    violation_type: string;
 }
 
 interface RefactorRequest {
@@ -86,6 +88,9 @@ export async function refactorCode(
     const refactoredCode = data.refactored_code || '';
 
 
+    let explanation = data.explanation || '';
+    let violation_type = data.violation_type || '';
+
     // Format execution time
     let executionTime = "N/A";
     if (data.total_duration) {
@@ -110,6 +115,8 @@ export async function refactorCode(
         originalFileName,
         executionTime,
         modelUsed: modelSelected,
-        language
+        language,
+        explanation,
+        violation_type
     };
 }
