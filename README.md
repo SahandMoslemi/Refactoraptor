@@ -37,4 +37,18 @@ The goal is to assess **LLM performance and limitations** in **automated code qu
     - **Liskov Substitution Principle (LSP)**: M. Buğra Kurnaz
     - **Interface Segregation Principle (ISP)**: Arçin Ülkü Ergüzen
 - Each member will be responsible for creating code snippets for their assigned principle.
-- Research of prompt engineering will be a collaborative effort. 
+- Research of prompt engineering will be a collaborative effort.
+
+## Tool Architechture
+
+## Introduced Dataset
+
+We have prepared multiple examples for each SOLI violation. Spefically, our dataset includes examples across difficulty levels (`EASY`, `MODERATE` and `HARD`) and programming languages (`Java`, `Python`, `Kotlin` and `C#`). For instance, for SRP, we have 48 examples (4 examples * 3 difficulties * 4 programming languages). In total, we have 192 examples.
+
+## Comparison of Local and Online Models
+
+## Comparison of Programming Languages
+
+## Comparison of Prompt Engineering Strategies
+
+
