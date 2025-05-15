@@ -55,8 +55,9 @@ def process_file(filepath):
             updated_data = {"code_examples": []}
             examples = data.get("code_examples", [])
             for example in tqdm(examples, desc=f"Examples ({model}/{strategy})", leave=False):
-                example["input"] = example["output"]
-                response = call_refactor_api(model, strategy, example["input"], example["language"])
+                new_input = str(example["output"])
+                example["input"] = str(new_input)
+                response = call_refactor_api(model, strategy, new_input, example["language"])
                 parsed = parse_response(response)
                 example["output"] = parsed["refactored_code"]
                 example["violation"] = parsed["type"]
