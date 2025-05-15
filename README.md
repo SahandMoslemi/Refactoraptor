@@ -88,6 +88,7 @@ cd dataset/
 You can change which models and strategies to test by editing the macros in the top of Python script. Install the dependencies via: 
 ```bash
 python3 -m pip install tqdm
+python3 -m pip install requests
 ```
 
 To run:
