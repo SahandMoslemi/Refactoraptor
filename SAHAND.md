@@ -5,4 +5,6 @@
 - `dataset/clean_code_pipeline.py` uses already clean code as input.
 - `dataset/processing_pipeline.py` uses violated code wwithour specifying ground truth violation. Generates files with the same names as those in `dataset/clean_code_pipeline.py`.
 - `dataset/known_violation_pipeline.py` uses violated code and includes the ground truth violation type in the prompt.
+
+- `sahand.py` contains disorganized code that I need to restructure.
  
