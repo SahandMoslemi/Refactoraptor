@@ -8,3 +8,10 @@
 
 - `sahand.py` contains disorganized code that I need to restructure.
  
+
+## TMP
+ 
+we already have Email Service Dependencies come up with another
+an we already have Database Connection Management
+and we have Payment Processing System already
+Document Processing System
