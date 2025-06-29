@@ -11,7 +11,14 @@
 
 ## TMP
  
+DIP
 we already have Email Service Dependencies come up with another
 an we already have Database Connection Management
 and we have Payment Processing System already
+Document Processing System
+
+LSP
+Vehicle Fuel System
+Payment Processing System
+Bird Flying Behavior 
 Document Processing System
