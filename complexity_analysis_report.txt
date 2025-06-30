@@ -4,29 +4,17 @@ CYCLOMATIC COMPLEXITY ANALYSIS REPORT
 OVERALL STATISTICS:
 Total examples: 240
 Total files: 5
-<<<<<<< HEAD
-Average input complexity: 10.11
-Average output complexity: 9.13
-Average complexity reduction: 0.98
-=======
-Average input complexity: 9.50
-Average output complexity: 9.28
-Average complexity reduction: 0.22
->>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
+Average input complexity: 11.00
+Average output complexity: 10.37
+Average complexity reduction: 0.63
 
 STATISTICS BY FILE:
 
-dip_violations.json:
+lsp_violations.json:
   Examples: 48
-<<<<<<< HEAD
   Avg input complexity: 7.12
   Avg output complexity: 7.25
   Avg complexity reduction: -0.12
-=======
-  Avg input complexity: 6.77
-  Avg output complexity: 5.94
-  Avg complexity reduction: 0.83
->>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
 
 isp_violations.json:
   Examples: 48
@@ -34,17 +22,11 @@ isp_violations.json:
   Avg output complexity: 18.21
   Avg complexity reduction: 0.06
 
-lsp_violations.json:
+dip_violations.json:
   Examples: 48
-<<<<<<< HEAD
   Avg input complexity: 6.77
   Avg output complexity: 5.94
   Avg complexity reduction: 0.83
-=======
-  Avg input complexity: 7.12
-  Avg output complexity: 7.25
-  Avg complexity reduction: -0.12
->>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
 
 ocp_violations.json:
   Examples: 48
@@ -60,17 +42,11 @@ srp_violations.json:
 
 STATISTICS BY VIOLATION TYPE:
 
-DIP:
+LSP:
   Examples: 48
-<<<<<<< HEAD
   Avg input complexity: 7.12
   Avg output complexity: 7.25
   Avg complexity reduction: -0.12
-=======
-  Avg input complexity: 6.77
-  Avg output complexity: 5.94
-  Avg complexity reduction: 0.83
->>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
 
 ISP:
   Examples: 48
@@ -78,17 +54,11 @@ ISP:
   Avg output complexity: 18.21
   Avg complexity reduction: 0.06
 
-LSP:
+DIP:
   Examples: 48
-<<<<<<< HEAD
   Avg input complexity: 6.77
   Avg output complexity: 5.94
   Avg complexity reduction: 0.83
-=======
-  Avg input complexity: 7.12
-  Avg output complexity: 7.25
-  Avg complexity reduction: -0.12
->>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
 
 OCP:
   Examples: 48
