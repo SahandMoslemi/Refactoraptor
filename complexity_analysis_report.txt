@@ -4,17 +4,29 @@ CYCLOMATIC COMPLEXITY ANALYSIS REPORT
 OVERALL STATISTICS:
 Total examples: 240
 Total files: 5
+<<<<<<< HEAD
 Average input complexity: 10.11
 Average output complexity: 9.13
 Average complexity reduction: 0.98
+=======
+Average input complexity: 9.50
+Average output complexity: 9.28
+Average complexity reduction: 0.22
+>>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
 
 STATISTICS BY FILE:
 
-lsp_violations.json:
+dip_violations.json:
   Examples: 48
+<<<<<<< HEAD
   Avg input complexity: 7.12
   Avg output complexity: 7.25
   Avg complexity reduction: -0.12
+=======
+  Avg input complexity: 6.77
+  Avg output complexity: 5.94
+  Avg complexity reduction: 0.83
+>>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
 
 isp_violations.json:
   Examples: 48
@@ -22,17 +34,23 @@ isp_violations.json:
   Avg output complexity: 18.21
   Avg complexity reduction: 0.06
 
-dip_violations.json:
+lsp_violations.json:
   Examples: 48
+<<<<<<< HEAD
   Avg input complexity: 6.77
   Avg output complexity: 5.94
   Avg complexity reduction: 0.83
+=======
+  Avg input complexity: 7.12
+  Avg output complexity: 7.25
+  Avg complexity reduction: -0.12
+>>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
 
 ocp_violations.json:
   Examples: 48
-  Avg input complexity: 7.15
-  Avg output complexity: 4.46
-  Avg complexity reduction: 2.69
+  Avg input complexity: 11.60
+  Avg output complexity: 10.67
+  Avg complexity reduction: 0.94
 
 srp_violations.json:
   Examples: 48
@@ -42,11 +60,17 @@ srp_violations.json:
 
 STATISTICS BY VIOLATION TYPE:
 
-LSP:
+DIP:
   Examples: 48
+<<<<<<< HEAD
   Avg input complexity: 7.12
   Avg output complexity: 7.25
   Avg complexity reduction: -0.12
+=======
+  Avg input complexity: 6.77
+  Avg output complexity: 5.94
+  Avg complexity reduction: 0.83
+>>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
 
 ISP:
   Examples: 48
@@ -54,17 +78,23 @@ ISP:
   Avg output complexity: 18.21
   Avg complexity reduction: 0.06
 
-DIP:
+LSP:
   Examples: 48
+<<<<<<< HEAD
   Avg input complexity: 6.77
   Avg output complexity: 5.94
   Avg complexity reduction: 0.83
+=======
+  Avg input complexity: 7.12
+  Avg output complexity: 7.25
+  Avg complexity reduction: -0.12
+>>>>>>> 7b6bb465575d8d0b3c7a92e535e8332a16e00545
 
 OCP:
   Examples: 48
-  Avg input complexity: 7.15
-  Avg output complexity: 4.46
-  Avg complexity reduction: 2.69
+  Avg input complexity: 11.60
+  Avg output complexity: 10.67
+  Avg complexity reduction: 0.94
 
 SRP:
   Examples: 48
