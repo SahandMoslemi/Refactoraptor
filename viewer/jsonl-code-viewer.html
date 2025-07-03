@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSONL Code Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #252525;
+            border-radius: 5px;
+        }
+
+        .navigation {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+            button:disabled {
+                background-color: #555555;
+                cursor: not-allowed;
+            }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            background-color: #444;
+        }
+
+        .copy-btn:active {
+            background-color: #555;
+        }
+
+        .entry-info {
+            font-size: 18px;
+        }
+
+        .file-selector {
+            margin-bottom: 20px;
+        }
+
+        .content-block {
+            background-color: #252525;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #61afef;
+        }
+
+        pre {
+            margin: 0;
+            border-radius: 5px;
+            background-color: #2d2d2d !important;
+        }
+
+        .language-label {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #61afef;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .metadata {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .metadata-item {
+            background-color: #343434;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .metadata-label {
+            color: #61afef;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .code-container {
+            position: relative;
+        }
+
+        .raw-response {
+            max-height: 400px;
+            overflow-y: auto;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="file-selector">
+            <input type="file" id="fileInput" accept=".jsonl">
+        </div>
+
+        <div class="header">
+            <div class="entry-info" id="entryInfo">Entry 1 of 0</div>
+            <div class="navigation">
+                <button id="prevBtn" onclick="changeEntry(-1)">← Previous</button>
+                <button id="nextBtn" onclick="changeEntry(1)">Next →</button>
+            </div>
+        </div>
+
+        <div class="content-block">
+            <div class="section-title">Basic Information</div>
+            <div class="metadata">
+                <div class="metadata-item">
+                    <div class="metadata-label">ID:</div>
+                    <div id="idValue"></div>
+                </div>
+                <div class="metadata-item">
+                    <div class="metadata-label">Language:</div>
+                    <div id="languageValue"></div>
+                </div>
+                <div class="metadata-item">
+                    <div class="metadata-label">Model:</div>
+                    <div id="modelValue"></div>
+                </div>
+                <div class="metadata-item">
+                    <div class="metadata-label">Strategy:</div>
+                    <div id="strategyValue"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-block">
+            <div class="section-title">Input</div>
+            <button class="copy-btn" onclick="copyCode('inputCodeContent')">Copy</button>
+            <pre id="inputCode"><code id="inputCodeContent" class="language-none"></code></pre>
+        </div>
+
+        <div class="content-block">
+            <div class="section-title">Prompt</div>
+            <button class="copy-btn" onclick="copyCode('promptCodeContent')">Copy</button>
+            <pre id="promptCode"><code id="promptCodeContent" class="language-none"></code></pre>
+        </div>
+
+        <div class="content-block">
+            <div class="section-title">Raw Response</div>
+            <button class="copy-btn" onclick="copyCode('rawResponseCodeContent')">Copy</button>
+            <div class="raw-response">
+                <pre id="rawResponseCode"><code id="rawResponseCodeContent" class="language-none"></code></pre>
+            </div>
+        </div>
+
+        <div class="content-block">
+            <div class="section-title">Violations</div>
+            <div class="metadata">
+                <div class="metadata-item">
+                    <div class="metadata-label">Violation Type:</div>
+                    <div id="violationTypeValue"></div>
+                </div>
+                <div class="metadata-item">
+                    <div class="metadata-label">Violation:</div>
+                    <div id="violationValue"></div>
+                </div>
+                <div class="metadata-item">
+                    <div class="metadata-label">Violation List:</div>
+                    <div id="violationListValue"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-block">
+            <div class="section-title">Explanation</div>
+            <button class="copy-btn" onclick="copyCode('explanationCodeContent')">Copy</button>
+            <pre id="explanationCode"><code id="explanationCodeContent" class="language-none"></code></pre>
+        </div>
+
+        <div class="content-block">
+            <div class="section-title">Solution Code</div>
+            <div class="code-container">
+                <button class="copy-btn" onclick="copyCode('solutionCodeContent')">Copy</button>
+                <pre id="solutionCode"><code id="solutionCodeContent" class="language-none"></code></pre>
+            </div>
+        </div>
+
+        <div class="content-block">
+            <div class="section-title">Performance Info</div>
+            <div class="metadata-item">
+                <div class="metadata-label">Duration (seconds):</div>
+                <div id="durationValue"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let entries = [];
+        let currentIndex = 0;
+
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const lines = e.target.result.split('\n');
+                entries = lines
+                    .filter(line => line.trim())
+                    .map(line => JSON.parse(line));
+
+                currentIndex = 0;
+                displayEntry();
+            };
+
+            reader.readAsText(file);
+        });
+
+        function changeEntry(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex >= entries.length) currentIndex = entries.length - 1;
+            displayEntry();
+        }
+
+        function displayEntry() {
+            if (entries.length === 0) return;
+
+            const entry = entries[currentIndex];
+
+            // Update navigation
+            document.getElementById('entryInfo').textContent = `Entry ${currentIndex + 1} of ${entries.length}`;
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === entries.length - 1;
+
+            // Update basic info
+            document.getElementById('idValue').textContent = entry.id;
+            document.getElementById('languageValue').textContent = entry.language || 'N/A';
+            document.getElementById('modelValue').textContent = entry.model || 'N/A';
+            document.getElementById('strategyValue').textContent = entry.strategy || 'N/A';
+
+            // Update input
+            document.getElementById('inputCodeContent').textContent = entry.input || '';
+            document.getElementById('inputCodeContent').className = `language-${getLanguageClass(entry.language)}`;
+
+            // Update prompt
+            document.getElementById('promptCodeContent').textContent = entry.prompt || '';
+            document.getElementById('promptCodeContent').className = 'language-none';
+
+            // Update raw response
+            document.getElementById('rawResponseCodeContent').textContent = entry.raw_response || '';
+            document.getElementById('rawResponseCodeContent').className = 'language-none';
+
+            // Update violations
+            document.getElementById('violationTypeValue').textContent = entry.violation_type || 'None';
+            document.getElementById('violationValue').textContent = entry.violation || 'None';
+            document.getElementById('violationListValue').textContent =
+                entry.violation_list ?
+                    (Array.isArray(entry.violation_list) ? entry.violation_list.join(', ') : entry.violation_list) :
+                    'None';
+
+            // Update explanation
+            document.getElementById('explanationCodeContent').textContent = entry.explanation || '';
+            document.getElementById('explanationCodeContent').className = 'language-none';
+
+            // Update solution code
+            const solutionCodeContent = document.getElementById('solutionCodeContent');
+            solutionCodeContent.textContent = entry.solution_code || '';
+            const lang = getLanguageClass(entry.language);
+            solutionCodeContent.className = `language-${lang}`;
+
+            // Add language label for solution code
+            const codeContainer = document.querySelector('.code-container');
+            const existingLabel = codeContainer.querySelector('.language-label');
+            if (existingLabel) {
+                existingLabel.remove();
+            }
+
+            if (entry.solution_code && entry.language) {
+                const languageLabel = document.createElement('div');
+                languageLabel.className = 'language-label';
+                languageLabel.textContent = entry.language;
+                codeContainer.appendChild(languageLabel);
+            }
+
+            // Update duration
+            document.getElementById('durationValue').textContent = entry.duration_seconds ? entry.duration_seconds.toFixed(2) : '0';
+
+            // Trigger Prism highlighting
+            Prism.highlightAll();
+        }
+
+        function copyCode(elementId) {
+            const element = document.getElementById(elementId);
+            const textToCopy = element.textContent;
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    // Find the copy button related to this element
+                    const parentBlock = element.closest('.content-block') || element.closest('.code-container').closest('.content-block');
+                    const copyBtn = parentBlock.querySelector('.copy-btn');
+                    
+                    // Store original text and update button state
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    copyBtn.style.backgroundColor = '#28a745';
+                    
+                    // Reset button state after 2 seconds
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.backgroundColor = '';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+        }
+
+        function getLanguageClass(language) {
+            if (!language) return 'none';
+            const lang = language.toLowerCase();
+            switch (lang) {
+                case 'python': return 'python';
+                case 'javascript': return 'javascript';
+                case 'java': return 'java';
+                case 'c': return 'c';
+                case 'c++': return 'cpp';
+                case 'cpp': return 'cpp';
+                default: return 'none';
+            }
+        }
+    </script>
+</body>
+</html>
