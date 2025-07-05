@@ -15,11 +15,20 @@ class SOLIDViolationComparator:
         self.prompt_types = ['default', 'ensemble', 'example', 'smell']
         self.results = []
         self.multiple_violations_cases = []  # Store cases with multiple violations
+        self.failed_extraction_cases = []  # Store cases where regex failed to extract
         self.extracted_patterns = {
             'violations': defaultdict(list),
             'code_structures': defaultdict(list),
             'language_patterns': defaultdict(list),
             'refactoring_patterns': defaultdict(list)
+        }
+        
+        # Strategy-specific regex patterns for violation extraction
+        self.strategy_regex_patterns = {
+            'ensemble': r"\*\*([A-Z]{2,3}|NONE)\*\*",
+            'example': r"\*\*([A-Z]{2,3}|NONE)\*\*", 
+            'smell': r"\*\*([A-Z]{2,3}|NONE)\*\*",
+            'default': r"\b(SRP|OCP|LSP|ISP|DIP|NONE)\b"
         }
         
         # Enhanced regex patterns for SOLID violations
@@ -105,49 +114,67 @@ class SOLIDViolationComparator:
             print(f"Error loading {file_path}: {e}")
             return []
     
-    def extract_all_violations(self, text: str) -> List[str]:
-        """Extract all violation types mentioned in the model response."""
+    def extract_violations_by_strategy(self, text: str, strategy: str) -> List[str]:
+        """Extract violations using strategy-specific regex patterns."""
         violations_found = []
         
-        # Look for **VIOLATION_TYPE** patterns (multiple possible)
-        matches = re.findall(self.regex_patterns['violation_extraction'], text, re.IGNORECASE)
+        # Get the appropriate regex pattern for the strategy
+        pattern = self.strategy_regex_patterns.get(strategy, self.strategy_regex_patterns['default'])
+        
+        # Find all matches
+        matches = re.findall(pattern, text, re.IGNORECASE)
+        
         for match in matches:
-            violations_found.append(match.upper())
-        
-        # Check for **NONE** response
-        if re.search(self.regex_patterns['none_response'], text, re.IGNORECASE):
-            violations_found.append('NONE')
-        
-        # Fallback: Look for violation type mentions without asterisks
-        fallback_patterns = [
-            r'violates?\s+the\s+[\w\s]*\s*\(([A-Z]{3})\)',  # "violates the Open-Closed Principle (OCP)"
-            r'\b([A-Z]{3})\s+states?\s+that',  # "OCP states that"
-            r'\b([A-Z]{3})\s+principle',  # "OCP principle"
-            r'violation.*?is\s+([A-Z]{3})',  # "violation is OCP"
-            r'\(([A-Z]{3})\)\s*[.:!]',  # "(OCP)." or "(OCP):"
-        ]
-        
-        for pattern in fallback_patterns:
-            matches = re.findall(pattern, text, re.IGNORECASE)
-            for match in matches:
-                violation = match.upper()
-                # Validate it's a known SOLID principle and not already found
-                if violation in ['SRP', 'OCP', 'LSP', 'ISP', 'DIP'] and violation not in violations_found:
-                    violations_found.append(violation)
+            violation = match.upper()
+            # Validate it's a known SOLID principle or NONE
+            if violation in ['SRP', 'OCP', 'LSP', 'ISP', 'DIP', 'NONE']:
+                violations_found.append(violation)
         
         return violations_found
 
-    def extract_violation_type(self, text: str) -> Optional[str]:
-        """Extract primary violation type from model response using regex."""
-        all_violations = self.extract_all_violations(text)
+    def extract_violation_type(self, text: str, strategy: str, output_item: Dict) -> Optional[str]:
+        """Extract violation type using strategy-specific patterns with strict validation."""
+        violations_found = self.extract_violations_by_strategy(text, strategy)
         
-        if all_violations:
-            # Store all violations found for analysis
-            self.extracted_patterns['violations']['detected'].extend(all_violations)
-            # Return the first one as primary
-            return all_violations[0]
+        # Case 1: No violations found - FAIL and extract for manual review
+        if not violations_found:
+            failed_case = {
+                'id': output_item.get('id'),
+                'model': output_item.get('model', 'UNKNOWN'),
+                'strategy': strategy,
+                'language': output_item.get('language', 'UNKNOWN'),
+                'expected_violation': output_item.get('violation_type', '').upper(),
+                'reason': 'NO_MATCH',
+                'pattern_used': self.strategy_regex_patterns.get(strategy),
+                'raw_response': text,
+                'input_code': output_item.get('input', ''),
+                'folder_source': f"{output_item.get('violation_type', 'unknown').lower()}--{output_item.get('model', 'unknown')}--{strategy}"
+            }
+            self.failed_extraction_cases.append(failed_case)
+            return None
         
-        return None
+        # Case 2: Multiple violations found - FAIL and extract for manual review
+        if len(violations_found) > 1:
+            multiple_violation_case = {
+                'id': output_item.get('id'),
+                'model': output_item.get('model', 'UNKNOWN'),
+                'strategy': strategy,
+                'language': output_item.get('language', 'UNKNOWN'),
+                'expected_violation': output_item.get('violation_type', '').upper(),
+                'all_violations_found': violations_found,
+                'reason': 'MULTIPLE_VIOLATIONS',
+                'pattern_used': self.strategy_regex_patterns.get(strategy),
+                'raw_response': text,
+                'input_code': output_item.get('input', ''),
+                'folder_source': f"{output_item.get('violation_type', 'unknown').lower()}--{output_item.get('model', 'unknown')}--{strategy}"
+            }
+            self.multiple_violations_cases.append(multiple_violation_case)
+            return None
+        
+        # Case 3: Exactly one violation found - SUCCESS
+        violation = violations_found[0]
+        self.extracted_patterns['violations']['detected'].append(violation)
+        return violation
     
     def extract_code_blocks_by_language(self, text: str) -> Dict[str, List[str]]:
         """Extract code blocks organized by programming language."""
@@ -319,7 +346,7 @@ class SOLIDViolationComparator:
         
         return analysis
     
-    def compare_single_output(self, output_item: Dict) -> Dict:
+    def compare_single_output(self, output_item: Dict, strategy: str) -> Dict:
         """Compare single output item using built-in ground truth."""
         output_id = output_item.get('id')
         raw_response = output_item.get('raw_response', '')
@@ -327,27 +354,26 @@ class SOLIDViolationComparator:
         expected_violation = output_item.get('violation_type', '').upper()
         language = output_item.get('language', 'UNKNOWN')
         
-        # Extract ALL violations from model response
-        all_violations = self.extract_all_violations(raw_response)
+        # Extract violation using strategy-specific pattern
+        extracted_violation = self.extract_violation_type(raw_response, strategy, output_item)
         
-        # Get primary violation (first one found)
-        extracted_violation = all_violations[0] if all_violations else None
-        
-        # Check for multiple violations
-        if len(all_violations) > 1:
-            multiple_violation_case = {
+        # If extraction failed (None returned), mark as FAIL
+        if extracted_violation is None:
+            return {
                 'id': output_id,
-                'model': output_item.get('model', 'UNKNOWN'),
-                'strategy': output_item.get('strategy', 'UNKNOWN'),
+                'status': 'FAIL',
                 'language': language,
                 'expected_violation': expected_violation,
-                'all_violations_found': all_violations,
-                'primary_violation_used': extracted_violation,
-                'raw_response': raw_response,
-                'input_code': output_item.get('input', ''),
-                'folder_source': f"{expected_violation.lower()}--{output_item.get('model', 'unknown')}--{output_item.get('strategy', 'unknown')}"
+                'detected_violation': None,
+                'failure_reason': 'EXTRACTION_FAILED',
+                'violation_match': False,
+                'code_blocks': {},
+                'language_analysis': {},
+                'violation_analysis': {},
+                'response_length': len(raw_response),
+                'model': output_item.get('model', 'UNKNOWN'),
+                'strategy': strategy
             }
-            self.multiple_violations_cases.append(multiple_violation_case)
         
         # Compare violation detection
         violation_match = extracted_violation == expected_violation
@@ -374,23 +400,22 @@ class SOLIDViolationComparator:
             'language': language,
             'expected_violation': expected_violation,
             'detected_violation': extracted_violation,
-            'all_violations_detected': all_violations,  # Include all violations found
-            'has_multiple_violations': len(all_violations) > 1,
             'violation_match': violation_match,
+            'failure_reason': None if violation_match else 'WRONG_VIOLATION',
             'code_blocks': code_blocks,
             'language_analysis': language_analysis,
             'violation_analysis': violation_analysis,
             'response_length': len(raw_response),
             'model': output_item.get('model', 'UNKNOWN'),
-            'strategy': output_item.get('strategy', 'UNKNOWN')
+            'strategy': strategy
         }
     
-    def process_violation_type(self, violation_type: str, violation_groups: Dict, results: Dict) -> None:
+    def process_violation_type(self, violation_type: str, violation_groups: Dict, results: Dict, strategy: str) -> None:
         """Process a single violation type and update results."""
         # Compare each output item (no need for separate ground truth)
         violation_results = []
         for output_item in violation_groups[violation_type]:
-            result = self.compare_single_output(output_item)
+            result = self.compare_single_output(output_item, strategy)
             violation_results.append(result)
             
             # Update overall stats
@@ -478,7 +503,7 @@ class SOLIDViolationComparator:
             if violation_type in self.violation_types:
                 print(f"  Processing {len(violation_groups[violation_type])} {violation_type} items")
                 # Process this violation type (no external ground truth needed)
-                self.process_violation_type(violation_type, violation_groups, results)
+                self.process_violation_type(violation_type, violation_groups, results, prompt_type)
             else:
                 print(f"  Skipping unknown violation type: {violation_type}")
         
@@ -772,23 +797,20 @@ class SOLIDViolationComparator:
         print(f"Worst Performing: {summary['worst_performing_violation']} (F1: {summary['worst_f1_score']:.3f})")
         
         return stats
-
-    def save_multiple_violation_cases(self, output_file: str = "multiple_violation_cases.json"):
+    def save_multiple_violation_cases(self, output_file: str):
         """Save cases where models detected multiple violations for manual review."""
         if not self.multiple_violations_cases:
             print("No multiple violation cases found.")
             return
-
-        from collections import defaultdict
-
+        
         # Organize by violation type and model for easier review
         organized_cases = defaultdict(lambda: defaultdict(list))
-
+        
         for case in self.multiple_violations_cases:
             expected_violation = case['expected_violation']
             model = case['model']
             organized_cases[expected_violation][model].append(case)
-
+        
         output_data = {
             'summary': {
                 'total_cases': len(self.multiple_violations_cases),
@@ -798,20 +820,20 @@ class SOLIDViolationComparator:
                 },
                 'by_model': defaultdict(int)
             },
-            'cases_by_violation_type': {k: dict(v) for k, v in organized_cases.items()},
+            'cases_by_violation_type': dict(organized_cases),
             'all_cases': self.multiple_violations_cases
         }
-
+        
         # Count by model
         for case in self.multiple_violations_cases:
             output_data['summary']['by_model'][case['model']] += 1
-
+        
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, indent=2, ensure_ascii=False)
-
+        
         print(f"✓ Found {len(self.multiple_violations_cases)} cases with multiple violations")
         print(f"✓ Multiple violations cases saved to '{output_file}'")
-
+        
         # Print summary
         print("\nMultiple Violations Summary:")
         for violation, models in organized_cases.items():
@@ -819,9 +841,9 @@ class SOLIDViolationComparator:
             print(f"  {violation}: {total_for_violation} cases")
             for model, cases in models.items():
                 print(f"    - {model}: {len(cases)} cases")
-
+        
         return output_data
-
+    
     def save_extracted_patterns(self, output_file: str = "extracted_regex_patterns.json"):
         """Save all extracted regex patterns to a separate file for later use."""
         patterns_data = {
@@ -957,49 +979,51 @@ class SOLIDViolationComparator:
         """Print formatted results to console."""
         summary = self.generate_summary_report(all_results)
         print(summary)
+    
+    def save_failed_extraction_cases(self, output_file: str):
+        """Save failed extraction cases for manual review."""
+        if not self.failed_extraction_cases:
+            print("No failed extraction cases found.")
+            return
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(self.failed_extraction_cases, f, indent=2, ensure_ascii=False)
+        
+        print(f"✓ Failed extraction cases saved to '{output_file}'")
+        print(f"  Total failed cases: {len(self.failed_extraction_cases)}")
 
 
 # Main execution
 if __name__ == "__main__":
+    # Configure your paths here
     OUTPUT_BASE_DIR = "dataset/completions/test"
-    GROUND_TRUTH_DIR = "dataset"
-
+    GROUND_TRUTH_DIR = "dataset"  # Not used anymore, but kept for compatibility
+    
     print("="*60)
     print("SOLID VIOLATION COMPARISON ANALYSIS")
     print("="*60)
-
+    print("Using built-in ground truth from violation_type field")
+    print(f"Output directory: {OUTPUT_BASE_DIR}")
+    print("="*60)
+    
+    # Initialize comparator
     comparator = SOLIDViolationComparator(
         output_base_dir=OUTPUT_BASE_DIR,
         ground_truth_dir=GROUND_TRUTH_DIR
     )
+    
+    # Save detailed comparison results
+    all_results = comparator.run_full_comparison()
+    comparator.save_detailed_results(all_results, "detailed_results_v4.json")
 
-    print("\nStarting comparison...")
-    results = comparator.run_full_comparison()
+    # Save multiple violations cases
+    comparator.save_multiple_violation_cases("multiple_violations_for_review_v4.json")
 
-    print("\n" + "="*60)
-    print("COMPARISON RESULTS")
-    print("="*60)
-    comparator.print_results(results)
+    # Save failed extraction cases
+    comparator.save_failed_extraction_cases("failed_extraction_for_review_v4.json")
 
-    print("\nSaving detailed results...")
-    comparator.save_detailed_results(results, "comparison_results_v3.json")
+    # Save performance metrics
+    comparator.save_detailed_statistics(all_results, "detailed_statistics_v4.json")
 
-    print("\nSaving detailed statistics...")
-    comparator.save_detailed_statistics(results, "detailed_statistics_v3.json")
-
-    print("\nSaving multiple violations cases...")
-    comparator.save_multiple_violation_cases("multiple_violation_cases_v3.json")
-
-    print(f"\n{'='*60}")
-    print("REGEX PATTERN EXTRACTION SUMMARY")
-    print(f"{'='*60}")
-    pattern_data = comparator.save_extracted_patterns("extracted_regex_patterns_v3.json")
-
-    print(f"\n{'='*60}")
-    print("ANALYSIS COMPLETE!")
-    print(f"{'='*60}")
-    print("Files generated:")
-    print("  - comparison_results_v3.json")
-    print("  - detailed_statistics_v3.json")
-    print("  - multiple_violation_cases_v3.json")
-    print("  - extracted_regex_patterns_v3.json")
+    # Optional: Print results to console
+    comparator.print_results(all_results)
