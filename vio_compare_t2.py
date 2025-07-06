@@ -25,7 +25,9 @@ class SOLIDViolationComparator:
         
         # Strategy-specific regex patterns for violation extraction
         self.strategy_regex_patterns = {
-            'ensemble': r"\*\*([A-Z]{2,3}|NONE)\*\*",
+            # For ensemble: Look for "MOST IMPACTFUL VIOLATION:" followed by the violation
+            # Also supports the original asterisks format as fallback
+            'ensemble': r"(?:MOST IMPACTFUL VIOLATION:\s*([A-Z]{2,3}|NONE)|\*\*([A-Z]{2,3}|NONE)\*\*)",
             'example': r"\*\*([A-Z]{2,3}|NONE)\*\*", 
             'smell': r"\*\*([A-Z]{2,3}|NONE)\*\*",
             'default': r"\b(SRP|OCP|LSP|ISP|DIP|NONE)\b"
@@ -116,19 +118,35 @@ class SOLIDViolationComparator:
     
     def extract_violations_by_strategy(self, text: str, strategy: str) -> List[str]:
         """Extract violations using strategy-specific regex patterns."""
-        violations_found = []
-        
         # Get the appropriate regex pattern for the strategy
         pattern = self.strategy_regex_patterns.get(strategy, self.strategy_regex_patterns['default'])
         
-        # Find all matches
-        matches = re.findall(pattern, text, re.IGNORECASE)
+        # Use a set to collect unique violations
+        unique_violations = set()
         
-        for match in matches:
-            violation = match.upper()
-            # Validate it's a known SOLID principle or NONE
-            if violation in ['SRP', 'OCP', 'LSP', 'ISP', 'DIP', 'NONE']:
-                violations_found.append(violation)
+        if strategy == 'ensemble':
+            # Special handling for ensemble pattern which has multiple capture groups
+            matches = re.finditer(pattern, text, re.IGNORECASE)
+            for match in matches:
+                # Group 1 is for "MOST IMPACTFUL VIOLATION:" format
+                # Group 2 is for "**VIOLATION**" format
+                violation = match.group(1) or match.group(2)
+                if violation:
+                    violation = violation.upper()
+                    # Validate it's a known SOLID principle or NONE
+                    if violation in ['SRP', 'OCP', 'LSP', 'ISP', 'DIP', 'NONE']:
+                        unique_violations.add(violation)
+        else:
+            # Standard handling for other strategies
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            for match in matches:
+                violation = match.upper()
+                # Validate it's a known SOLID principle or NONE
+                if violation in ['SRP', 'OCP', 'LSP', 'ISP', 'DIP', 'NONE']:
+                    unique_violations.add(violation)
+        
+        # Convert set back to list
+        violations_found = list(unique_violations)
         
         return violations_found
 
@@ -153,7 +171,7 @@ class SOLIDViolationComparator:
             self.failed_extraction_cases.append(failed_case)
             return None
         
-        # Case 2: Multiple violations found - FAIL and extract for manual review
+        # Case 2: Multiple UNIQUE violations found - FAIL and extract for manual review
         if len(violations_found) > 1:
             multiple_violation_case = {
                 'id': output_item.get('id'),
@@ -162,7 +180,7 @@ class SOLIDViolationComparator:
                 'language': output_item.get('language', 'UNKNOWN'),
                 'expected_violation': output_item.get('violation_type', '').upper(),
                 'all_violations_found': violations_found,
-                'reason': 'MULTIPLE_VIOLATIONS',
+                'reason': 'MULTIPLE_UNIQUE_VIOLATIONS',
                 'pattern_used': self.strategy_regex_patterns.get(strategy),
                 'raw_response': text,
                 'input_code': output_item.get('input', ''),
@@ -171,7 +189,7 @@ class SOLIDViolationComparator:
             self.multiple_violations_cases.append(multiple_violation_case)
             return None
         
-        # Case 3: Exactly one violation found - SUCCESS
+        # Case 3: Exactly one UNIQUE violation found - SUCCESS
         violation = violations_found[0]
         self.extracted_patterns['violations']['detected'].append(violation)
         return violation
@@ -797,6 +815,7 @@ class SOLIDViolationComparator:
         print(f"Worst Performing: {summary['worst_performing_violation']} (F1: {summary['worst_f1_score']:.3f})")
         
         return stats
+    
     def save_multiple_violation_cases(self, output_file: str):
         """Save cases where models detected multiple violations for manual review."""
         if not self.multiple_violations_cases:
@@ -1000,10 +1019,11 @@ if __name__ == "__main__":
     GROUND_TRUTH_DIR = "dataset"  # Not used anymore, but kept for compatibility
     
     print("="*60)
-    print("SOLID VIOLATION COMPARISON ANALYSIS")
+    print("SOLID VIOLATION COMPARISON ANALYSIS (REFACTORED)")
     print("="*60)
     print("Using built-in ground truth from violation_type field")
     print(f"Output directory: {OUTPUT_BASE_DIR}")
+    print("✓ Fixed: Multiple mentions of same violation now treated as single violation")
     print("="*60)
     
     # Initialize comparator
@@ -1014,16 +1034,16 @@ if __name__ == "__main__":
     
     # Save detailed comparison results
     all_results = comparator.run_full_comparison()
-    comparator.save_detailed_results(all_results, "detailed_results_v4.json")
+    comparator.save_detailed_results(all_results, "detailed_results_v5.json")
 
     # Save multiple violations cases
-    comparator.save_multiple_violation_cases("multiple_violations_for_review_v4.json")
+    comparator.save_multiple_violation_cases("multiple_violations_for_review_v5.json")
 
     # Save failed extraction cases
-    comparator.save_failed_extraction_cases("failed_extraction_for_review_v4.json")
+    comparator.save_failed_extraction_cases("failed_extraction_for_review_v5.json")
 
     # Save performance metrics
-    comparator.save_detailed_statistics(all_results, "detailed_statistics_v4.json")
+    comparator.save_detailed_statistics(all_results, "detailed_statistics_v5.json")
 
     # Optional: Print results to console
     comparator.print_results(all_results)
