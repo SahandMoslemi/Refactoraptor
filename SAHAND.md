@@ -12,10 +12,13 @@
 ## TMP
  
 DIP
-we already have Email Service Dependencies come up with another
-an we already have Database Connection Management
-and we have Payment Processing System already
-Document Processing System
+Email Service with Direct Database Dependency
+Payment Processing with Direct Payment Gateway Dependency
+File Processing with Direct File System Dependency\
+Notification System with Direct SMS Provider Dependency
+
+
+
 
 LSP
 Vehicle Fuel System
