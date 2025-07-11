@@ -3,10 +3,10 @@ import pandas as pd
 from collections import Counter
 
 # === CONFIG ===
-csv_path = 'SOLID_Violation_Cases_for_Manual_Review_complete.csv'
-json_path = 'detailed_results_v5.json'
-output_json_path = 'detailed_results_v5_updated.json'
-unmatched_log_path = 'unmatched_entries_log_final.csv'
+csv_path = 'reprocess_dip/dip_combined_manual_review_completed.csv'
+json_path = 'detailed_results_v5_updated.json'
+output_json_path = 'detailed_results_v6.json'
+unmatched_log_path = 'unmatched_entries_log_v6.csv'
 
 # === LANGUAGE NORMALIZATION MAP ===
 LANGUAGE_MAP = {
