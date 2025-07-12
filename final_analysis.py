@@ -200,125 +200,6 @@ def load_and_process_data(json_file_path):
     
     print(f"\nProcessed violations: {list(accuracy_results.keys())}")
     return accuracy_results, f1_results, language_results
-    """
-    Load JSON data and process it to extract violation detection accuracy and other metrics
-    """
-    with open(json_file_path, 'r') as f:
-        data = json.load(f)
-    
-    print(f"Found {len(data)} top-level keys in JSON data")
-    
-    # Initialize data structures for storing different types of results
-    accuracy_results = defaultdict(lambda: defaultdict(lambda: {'correct': 0, 'total': 0}))
-    f1_results = defaultdict(lambda: defaultdict(lambda: {'tp': 0, 'fp': 0, 'fn': 0}))
-    language_results = defaultdict(lambda: defaultdict(lambda: {'correct': 0, 'total': 0}))
-    
-    # Process each model's results
-    for json_key, model_data in data.items():
-        print(f"Processing key: {json_key}")
-        
-        # Extract information from the key
-        parts = json_key.split('--')
-        if len(parts) >= 3:
-            violation_from_key = parts[0].upper()
-            model_name = parts[1]
-            strategy = parts[2]
-        else:
-            continue
-        
-        # Process the nested structure
-        if isinstance(model_data, dict):
-            # Debug: show what we're looking for vs what we found
-            print(f"  Looking for '{violation_from_key.lower()}' in keys: {list(model_data.keys())}")
-            
-            # Look for the nested structure with violation type as key
-            if violation_from_key.lower() in model_data:
-                nested_data = model_data[violation_from_key.lower()]
-                print(f"  Found nested data for {violation_from_key}")
-                if isinstance(nested_data, dict) and 'violation_results' in nested_data:
-                    violation_results = nested_data['violation_results']
-                    print(f"  Found violation_results with keys: {list(violation_results.keys())}")
-                    
-                    for violation_name, violation_data in violation_results.items():
-                        if 'items' in violation_data:
-                            print(f"  Processing {len(violation_data['items'])} items for {violation_name}")
-                            
-                            for item in violation_data['items']:
-                                level = item.get('level', 'UNKNOWN')
-                                expected_violation = item.get('expected_violation', 'UNKNOWN')
-                                detected_violation = item.get('detected_violation', 'NONE')
-                                violation_match = item.get('violation_match', False)
-                                language = item.get('language', 'UNKNOWN')
-                                
-                                # Accuracy results by difficulty level
-                                accuracy_results[expected_violation][level]['total'] += 1
-                                if violation_match:
-                                    accuracy_results[expected_violation][level]['correct'] += 1
-                                
-                                # F1 results by strategy and model
-                                strategy_model_key = f"{strategy}_{model_name}"
-                                if violation_match:
-                                    f1_results[expected_violation][strategy_model_key]['tp'] += 1
-                                else:
-                                    if detected_violation != 'NONE' and detected_violation != expected_violation:
-                                        f1_results[expected_violation][strategy_model_key]['fp'] += 1
-                                    if detected_violation == 'NONE':
-                                        f1_results[expected_violation][strategy_model_key]['fn'] += 1
-                                
-                                # Language results
-                                language_results[language][expected_violation]['total'] += 1
-                                if violation_match:
-                                    language_results[language][expected_violation]['correct'] += 1
-            
-            # Also check other possible structures...
-            elif 'violation_results' in model_data:
-                print(f"  Found violation_results directly in model_data")
-                violation_results = model_data['violation_results']
-                
-                for violation_name, violation_data in violation_results.items():
-                    if 'items' in violation_data:
-                        print(f"  Processing {len(violation_data['items'])} items for {violation_name}")
-                        
-                        for item in violation_data['items']:
-                            level = item.get('level', 'UNKNOWN')
-                            expected_violation = item.get('expected_violation', 'UNKNOWN')
-                            detected_violation = item.get('detected_violation', 'NONE')
-                            violation_match = item.get('violation_match', False)
-                            language = item.get('language', 'UNKNOWN')
-                            
-                            # Accuracy results by difficulty level
-                            accuracy_results[expected_violation][level]['total'] += 1
-                            if violation_match:
-                                accuracy_results[expected_violation][level]['correct'] += 1
-                            
-                            # F1 results by strategy and model
-                            strategy_model_key = f"{strategy}_{model_name}"
-                            if violation_match:
-                                f1_results[expected_violation][strategy_model_key]['tp'] += 1
-                            else:
-                                if detected_violation != 'NONE' and detected_violation != expected_violation:
-                                    f1_results[expected_violation][strategy_model_key]['fp'] += 1
-                                if detected_violation == 'NONE':
-                                    f1_results[expected_violation][strategy_model_key]['fn'] += 1
-                            
-                            # Language results
-                            language_results[language][expected_violation]['total'] += 1
-                            if violation_match:
-                                language_results[language][expected_violation]['correct'] += 1
-            else:
-                print(f"  No violation_results found. Available keys: {list(model_data.keys())}")
-                # Let's look deeper into the structure
-                for key, value in list(model_data.items())[:3]:
-                    print(f"    {key}: {type(value)}")
-                    if isinstance(value, dict) and len(value) < 20:
-                        print(f"      Sub-keys: {list(value.keys())}")
-        
-        # Stop after first few entries if we're not finding data
-        if len(accuracy_results) == 0 and json_key.count('--') >= 2:
-            break
-    
-    print(f"\nProcessed violations: {list(accuracy_results.keys())}")
-    return accuracy_results, f1_results, language_results
 
 def calculate_accuracy_matrix(results):
     """
@@ -489,25 +370,25 @@ def calculate_language_matrix(language_results):
     
     print(f"Found languages: {languages}")
     
-    # Create accuracy matrix
+    # Filter out UNKNOWN languages
+    valid_languages = [lang for lang in languages if lang != 'UNKNOWN']
+    
+    # Create accuracy matrix with SOLID principles as rows and languages as columns
     accuracy_matrix = []
-    language_labels = []
     
-    for language in languages:
-        if language in language_results and language != 'UNKNOWN':
-            row = []
-            for violation in solid_principles:
-                if violation in language_results[language]:
-                    total = language_results[language][violation]['total']
-                    correct = language_results[language][violation]['correct']
-                    accuracy = (correct / total * 100) if total > 0 else 0
-                    row.append(accuracy)
-                else:
-                    row.append(0)
-            accuracy_matrix.append(row)
-            language_labels.append(language)
+    for violation in solid_principles:
+        row = []
+        for language in valid_languages:
+            if language in language_results and violation in language_results[language]:
+                total = language_results[language][violation]['total']
+                correct = language_results[language][violation]['correct']
+                accuracy = (correct / total * 100) if total > 0 else 0
+                row.append(accuracy)
+            else:
+                row.append(0)
+        accuracy_matrix.append(row)
     
-    return np.array(accuracy_matrix), language_labels, solid_principles
+    return np.array(accuracy_matrix), solid_principles, valid_languages
 
 def create_heatmap(accuracy_matrix, row_labels, col_labels, 
                   ylabel="Row Labels", xlabel="Column Labels",
@@ -515,32 +396,52 @@ def create_heatmap(accuracy_matrix, row_labels, col_labels,
                   save_path=None, metric_label="Accuracy (%)",
                   cmap='RdYlGn'):
     """
-    Create and display the heatmap
+    Create and display the heatmap with improved font sizes and spacing
     """
     # Check if we have valid data
     if accuracy_matrix.size == 0 or len(row_labels) == 0:
         print("No data available for heatmap generation.")
         return
     
+    # Set font sizes for better readability in 2-column format
+    plt.rcParams.update({
+        'font.size': 14,           # Base font size
+        'axes.titlesize': 16,      # Title font size
+        'axes.labelsize': 14,      # Axis label font size
+        'xtick.labelsize': 12,     # X-axis tick label font size
+        'ytick.labelsize': 12,     # Y-axis tick label font size
+        'legend.fontsize': 12,     # Legend font size
+        'figure.titlesize': 16     # Figure title font size
+    })
+    
     plt.figure(figsize=figsize)
     
-    # Create heatmap
-    sns.heatmap(accuracy_matrix, 
-                annot=True, 
-                fmt='.1f', 
-                cmap=cmap,
-                xticklabels=col_labels,
-                yticklabels=row_labels,
-                cbar_kws={'label': metric_label},
-                vmin=0, 
-                vmax=100)
+    # Create heatmap with adjusted parameters
+    ax = sns.heatmap(accuracy_matrix, 
+                     annot=True, 
+                     fmt='.1f', 
+                     cmap=cmap,
+                     xticklabels=col_labels,
+                     yticklabels=row_labels,
+                     cbar_kws={'label': metric_label, 'shrink': 0.8, 'pad': 0.02},  # Reduced pad to decrease space
+                     vmin=0, 
+                     vmax=100,
+                     annot_kws={'size': 11})  # Font size for annotations in cells
     
-    # plt.title(title, fontsize=16, fontweight='bold')  # Commented out to remove title
-    plt.xlabel(xlabel, fontsize=12)
-    plt.ylabel(ylabel, fontsize=12)
+    # Set labels with increased font size
+    plt.xlabel(xlabel, fontsize=14, fontweight='bold')
+    plt.ylabel(ylabel, fontsize=14, fontweight='bold')
+    
+    # Adjust colorbar font size
+    cbar = ax.collections[0].colorbar
+    cbar.ax.tick_params(labelsize=12)
+    cbar.set_label(metric_label, fontsize=12)
     
     # Rotate x-axis labels if they are long
-    plt.xticks(rotation=45, ha='right')
+    plt.xticks(rotation=45, ha='right', fontsize=12)
+    plt.yticks(rotation=0, fontsize=12)
+    
+    # Adjust layout to prevent clipping
     plt.tight_layout()
     
     if save_path:
@@ -642,20 +543,20 @@ def main():
         
         # 3. Generate accuracy heatmap by programming language
         print("\n=== Generating Accuracy Heatmap by Programming Language ===")
-        lang_matrix, language_labels, principles = calculate_language_matrix(language_results)
+        lang_matrix, principles, language_labels = calculate_language_matrix(language_results)
         
         if lang_matrix.size > 0:
-            create_heatmap(lang_matrix, language_labels, principles,
-                          ylabel="Programming Language", 
-                          xlabel="SOLID Principle",
+            create_heatmap(lang_matrix, principles, language_labels,
+                          ylabel="SOLID Principle", 
+                          xlabel="Programming Language",
                           figsize=(8, 6),
                           save_path="solid_violations_accuracy_by_language.png",
                           metric_label="Accuracy (%)")
             
             # Save to CSV
             df_language = pd.DataFrame(lang_matrix, 
-                                     index=language_labels, 
-                                     columns=principles)
+                                     index=principles, 
+                                     columns=language_labels)
             df_language.to_csv("solid_violations_accuracy_by_language.csv")
             print("Language results saved to 'solid_violations_accuracy_by_language.csv'")
         
