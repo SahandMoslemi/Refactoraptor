@@ -9,19 +9,3 @@
 - `sahand.py` contains disorganized code that I need to restructure.
  
 
-## TMP
- 
-DIP
-Email Service with Direct Database Dependency
-Payment Processing with Direct Payment Gateway Dependency
-File Processing with Direct File System Dependency\
-Notification System with Direct SMS Provider Dependency
-
-
-
-
-LSP
-Vehicle Fuel System
-Payment Processing System
-Bird Flying Behavior 
-Document Processing System
