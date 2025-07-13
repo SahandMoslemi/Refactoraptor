@@ -466,3 +466,755 @@ if __name__ == "__main__":
         file_path=INPUT_FILE,
         save_plot=True
     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import os
+
+
+"""
+Individual Input Distribution Analysis for SOLID Principles Dataset
+
+This script creates individual plots for:
+1. Input complexity distribution
+2. Input code length distribution
+
+Required libraries: pandas, matplotlib, seaborn, numpy
+Input file: cyclomatic_complexity_results.csv
+"""
+
+# Configuration
+INPUT_FILE = 'cyclomatic_complexity_results.csv'
+COLORS = {'EASY': '#2E8B57', 'MODERATE': '#FF8C00', 'HARD': '#DC143C'}
+PLOTS_DIR = 'plots'
+
+
+def load_data(file_path):
+    """Load and validate the CSV data."""
+    try:
+        df = pd.read_csv(file_path)
+        print(f"Successfully loaded {len(df)} records from {file_path}")
+        return df
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found!")
+        return None
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        return None
+
+
+def plot_input_complexity_distribution(df, save_plot=False):
+    """Create comprehensive input complexity distribution plot."""
+    
+    # Create figure with subplots
+    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+    fig.suptitle('Input Complexity Distribution Analysis', fontsize=16, fontweight='bold')
+    
+    violation_types = df['violation'].unique()
+    
+    # Plot 1: Scatter plot by violation type and level
+    ax1 = axes[0, 0]
+    for i, violation in enumerate(violation_types):
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_complexity']
+            if not data.empty:
+                ax1.scatter([i] * len(data), data, alpha=0.6, color=COLORS[level], 
+                          label=level if i == 0 else "", s=40)
+    
+    ax1.set_xlabel('Violation Type')
+    ax1.set_ylabel('Input Complexity')
+    # ax1.set_title('Input Complexity by Violation Type and Level')
+    ax1.set_xticks(range(len(violation_types)))
+    ax1.set_xticklabels(violation_types)
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+    
+    # Plot 2: Box plot with scatter overlay
+    ax2 = axes[0, 1]
+    complexity_data = []
+    labels = []
+    positions = []
+    pos = 1
+    
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_complexity']
+            if not data.empty:
+                complexity_data.append(data)
+                labels.append(f'{violation}\n{level}')
+                positions.append(pos)
+                pos += 1
+    
+    # Create box plot
+    bp = ax2.boxplot(complexity_data, positions=positions, patch_artist=True, widths=0.6)
+    
+    # Color the boxes and add scatter points
+    pos = 1
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_complexity']
+            if not data.empty:
+                # Color the box
+                if pos <= len(bp['boxes']):
+                    bp['boxes'][pos-1].set_facecolor(COLORS[level])
+                    bp['boxes'][pos-1].set_alpha(0.7)
+                
+                # Add scatter points with jitter
+                jitter = np.random.normal(0, 0.1, len(data))
+                ax2.scatter([pos] * len(data) + jitter, data, 
+                           alpha=0.6, color=COLORS[level], s=20, zorder=3)
+                pos += 1
+    
+    ax2.set_title('Input Complexity Distribution (Box + Scatter)')
+    ax2.set_ylabel('Input Complexity')
+    ax2.set_xticks(positions)
+    ax2.set_xticklabels(labels)
+    plt.setp(ax2.get_xticklabels(), rotation=45, ha='right')
+    
+    # Plot 3: Heatmap of average input complexity
+    ax3 = axes[1, 0]
+    pivot_input_complexity = df.groupby(['violation', 'level'])['input_complexity'].mean().reset_index()
+    pivot_input_complexity = pivot_input_complexity.pivot(index='violation', columns='level', values='input_complexity')
+    
+    sns.heatmap(pivot_input_complexity, annot=True, fmt='.1f', cmap='Reds', ax=ax3, 
+                cbar_kws={'label': 'Average Complexity'})
+    ax3.set_title('Average Input Complexity Heatmap')
+    ax3.set_xlabel('Difficulty Level')
+    ax3.set_ylabel('Violation Type')
+    
+    # Plot 4: Histogram/Distribution by level
+    ax4 = axes[1, 1]
+    for level in ['EASY', 'MODERATE', 'HARD']:
+        data = df[df['level'] == level]['input_complexity']
+        if not data.empty:
+            ax4.hist(data, alpha=0.6, color=COLORS[level], label=level, bins=20)
+    
+    ax4.set_xlabel('Input Complexity')
+    ax4.set_ylabel('Frequency')
+    ax4.set_title('Input Complexity Distribution by Difficulty Level')
+    ax4.legend()
+    ax4.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    
+    if save_plot:
+        os.makedirs(PLOTS_DIR, exist_ok=True)
+        output_file = os.path.join(PLOTS_DIR, 'input_complexity_distribution.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Input complexity distribution plot saved as {output_file}")
+    
+    plt.show()
+
+
+def plot_input_code_length_distribution(df, save_plot=False):
+    """Create comprehensive input code length distribution plot."""
+    
+    # Create figure with subplots
+    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+    fig.suptitle('Input Code Length Distribution Analysis', fontsize=16, fontweight='bold')
+    
+    violation_types = df['violation'].unique()
+    
+    # Plot 1: Scatter plot by violation type and level
+    ax1 = axes[0, 0]
+    for i, violation in enumerate(violation_types):
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_code_length']
+            if not data.empty:
+                ax1.scatter([i] * len(data), data, alpha=0.6, color=COLORS[level], 
+                          label=level if i == 0 else "", s=40)
+    
+    ax1.set_xlabel('Violation Type')
+    ax1.set_ylabel('Input Code Length')
+    # ax1.set_title('Input Code Length by Violation Type and Level')
+    ax1.set_xticks(range(len(violation_types)))
+    ax1.set_xticklabels(violation_types)
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+    
+    # Plot 2: Box plot with scatter overlay
+    ax2 = axes[0, 1]
+    length_data = []
+    labels = []
+    positions = []
+    pos = 1
+    
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_code_length']
+            if not data.empty:
+                length_data.append(data)
+                labels.append(f'{violation}\n{level}')
+                positions.append(pos)
+                pos += 1
+    
+    # Create box plot
+    bp = ax2.boxplot(length_data, positions=positions, patch_artist=True, widths=0.6)
+    
+    # Color the boxes and add scatter points
+    pos = 1
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_code_length']
+            if not data.empty:
+                # Color the box
+                if pos <= len(bp['boxes']):
+                    bp['boxes'][pos-1].set_facecolor(COLORS[level])
+                    bp['boxes'][pos-1].set_alpha(0.7)
+                
+                # Add scatter points with jitter
+                jitter = np.random.normal(0, 0.1, len(data))
+                ax2.scatter([pos] * len(data) + jitter, data, 
+                           alpha=0.6, color=COLORS[level], s=20, zorder=3)
+                pos += 1
+    
+    ax2.set_title('Input Code Length Distribution (Box + Scatter)')
+    ax2.set_ylabel('Input Code Length')
+    ax2.set_xticks(positions)
+    ax2.set_xticklabels(labels)
+    plt.setp(ax2.get_xticklabels(), rotation=45, ha='right')
+    
+    # Plot 3: Heatmap of average input code length
+    ax3 = axes[1, 0]
+    pivot_input_length = df.groupby(['violation', 'level'])['input_code_length'].mean().reset_index()
+    pivot_input_length = pivot_input_length.pivot(index='violation', columns='level', values='input_code_length')
+    
+    sns.heatmap(pivot_input_length, annot=True, fmt='.0f', cmap='Blues', ax=ax3, 
+                cbar_kws={'label': 'Average Code Length'})
+    ax3.set_title('Average Input Code Length Heatmap')
+    ax3.set_xlabel('Difficulty Level')
+    ax3.set_ylabel('Violation Type')
+    
+    # Plot 4: Histogram/Distribution by level
+    ax4 = axes[1, 1]
+    for level in ['EASY', 'MODERATE', 'HARD']:
+        data = df[df['level'] == level]['input_code_length']
+        if not data.empty:
+            ax4.hist(data, alpha=0.6, color=COLORS[level], label=level, bins=20)
+    
+    ax4.set_xlabel('Input Code Length')
+    ax4.set_ylabel('Frequency')
+    ax4.set_title('Input Code Length Distribution by Difficulty Level')
+    ax4.legend()
+    ax4.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    
+    if save_plot:
+        os.makedirs(PLOTS_DIR, exist_ok=True)
+        output_file = os.path.join(PLOTS_DIR, 'input_code_length_distribution.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Input code length distribution plot saved as {output_file}")
+    
+    plt.show()
+
+
+def print_input_statistics(df):
+    """Print statistics for input complexity and code length."""
+    print("\n" + "="*60)
+    print("INPUT DISTRIBUTION STATISTICS")
+    print("="*60)
+    
+    print(f"Total records: {len(df)}")
+    print(f"Violation types: {list(df['violation'].unique())}")
+    print(f"Difficulty levels: {list(df['level'].unique())}")
+    
+    # Input complexity statistics
+    print("\n" + "="*60)
+    print("INPUT COMPLEXITY STATISTICS")
+    print("="*60)
+    print(f"Mean: {df['input_complexity'].mean():.2f}")
+    print(f"Median: {df['input_complexity'].median():.2f}")
+    print(f"Standard deviation: {df['input_complexity'].std():.2f}")
+    print(f"Min: {df['input_complexity'].min()}")
+    print(f"Max: {df['input_complexity'].max()}")
+    
+    # Find highest complexity case
+    max_complexity = df.loc[df['input_complexity'].idxmax()]
+    print(f"\nHighest complexity case: {max_complexity['input_complexity']}")
+    print(f"  - Violation: {max_complexity['violation']}")
+    print(f"  - Level: {max_complexity['level']}")
+    print(f"  - Language: {max_complexity['language']}")
+    
+    # Complexity by level
+    print("\nComplexity by difficulty level:")
+    complexity_by_level = df.groupby('level')['input_complexity'].agg(['mean', 'median', 'std', 'min', 'max'])
+    print(complexity_by_level.round(2))
+    
+    # Complexity by violation type
+    print("\nComplexity by violation type:")
+    complexity_by_violation = df.groupby('violation')['input_complexity'].agg(['mean', 'median', 'std', 'min', 'max'])
+    print(complexity_by_violation.round(2))
+    
+    # Input code length statistics
+    print("\n" + "="*60)
+    print("INPUT CODE LENGTH STATISTICS")
+    print("="*60)
+    print(f"Mean: {df['input_code_length'].mean():.2f}")
+    print(f"Median: {df['input_code_length'].median():.2f}")
+    print(f"Standard deviation: {df['input_code_length'].std():.2f}")
+    print(f"Min: {df['input_code_length'].min()}")
+    print(f"Max: {df['input_code_length'].max()}")
+    
+    # Find longest code case
+    max_length = df.loc[df['input_code_length'].idxmax()]
+    print(f"\nLongest code case: {max_length['input_code_length']} characters")
+    print(f"  - Violation: {max_length['violation']}")
+    print(f"  - Level: {max_length['level']}")
+    print(f"  - Language: {max_length['language']}")
+    
+    # Code length by level
+    print("\nCode length by difficulty level:")
+    length_by_level = df.groupby('level')['input_code_length'].agg(['mean', 'median', 'std', 'min', 'max'])
+    print(length_by_level.round(2))
+    
+    # Code length by violation type
+    print("\nCode length by violation type:")
+    length_by_violation = df.groupby('violation')['input_code_length'].agg(['mean', 'median', 'std', 'min', 'max'])
+    print(length_by_violation.round(2))
+
+
+def analyze_input_distributions(file_path=INPUT_FILE, save_plots=False):
+    """Main function to analyze input distributions."""
+    # Load data
+    df = load_data(file_path)
+    if df is None:
+        return
+    
+    # Create input complexity distribution plot
+    plot_input_complexity_distribution(df, save_plots)
+    
+    # Create input code length distribution plot
+    plot_input_code_length_distribution(df, save_plots)
+    
+    # Print statistics
+    print_input_statistics(df)
+
+
+if __name__ == "__main__":
+    # Run the input distribution analysis
+    analyze_input_distributions(
+        file_path=INPUT_FILE,
+        save_plots=True
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import os
+
+
+"""
+Box Plot Distribution Analysis for SOLID Principles Dataset
+
+This script creates individual box plot visualizations for:
+1. Input complexity distribution (box plot with scatter overlay)
+2. Input code length distribution (box plot with scatter overlay)
+
+Required libraries: pandas, matplotlib, seaborn, numpy
+Input file: cyclomatic_complexity_results.csv
+"""
+
+# Configuration
+INPUT_FILE = 'cyclomatic_complexity_results.csv'
+COLORS = {'EASY': '#2E8B57', 'MODERATE': '#FF8C00', 'HARD': '#DC143C'}
+PLOTS_DIR = 'plots'
+
+
+def load_data(file_path):
+    """Load and validate the CSV data."""
+    try:
+        df = pd.read_csv(file_path)
+        print(f"Successfully loaded {len(df)} records from {file_path}")
+        return df
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found!")
+        return None
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        return None
+
+
+def plot_input_complexity_boxplot(df, save_plot=False):
+    """Create box plot with scatter overlay for input complexity distribution."""
+    
+    # Create figure
+    plt.figure(figsize=(14, 8))
+    
+    violation_types = df['violation'].unique()
+    
+    # Prepare data for box plot
+    complexity_data = []
+    labels = []
+    positions = []
+    pos = 1
+    
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_complexity']
+            if not data.empty:
+                complexity_data.append(data)
+                labels.append(f'{violation} {level}')  # Single line format
+                positions.append(pos)
+                pos += 1
+    
+    # Create box plot
+    bp = plt.boxplot(complexity_data, positions=positions, patch_artist=True, widths=0.6)
+    
+    # Color the boxes and add scatter points
+    pos = 1
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_complexity']
+            if not data.empty:
+                # Color the box
+                if pos <= len(bp['boxes']):
+                    bp['boxes'][pos-1].set_facecolor(COLORS[level])
+                    bp['boxes'][pos-1].set_alpha(0.7)
+                
+                # Add scatter points with jitter
+                jitter = np.random.normal(0, 0.1, len(data))
+                plt.scatter([pos] * len(data) + jitter, data, 
+                           alpha=0.6, color=COLORS[level], s=30, zorder=3)
+                pos += 1
+    
+    plt.title('Input Complexity Distribution (Box Plot with Scatter)', fontsize=14, fontweight='bold')
+    plt.ylabel('Input Complexity', fontsize=12)
+    plt.xlabel('Violation Type and Difficulty Level', fontsize=12)
+    plt.xticks(positions, labels)
+    plt.setp(plt.gca().get_xticklabels(), rotation=45, ha='right')
+    
+    # Remove top and right spines
+    ax = plt.gca()
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    
+    # Add legend
+    legend_elements = [plt.Line2D([0], [0], marker='o', color='w', 
+                                 markerfacecolor=COLORS[level], markersize=8, label=level)
+                      for level in ['EASY', 'MODERATE', 'HARD']]
+    plt.legend(handles=legend_elements, title='Difficulty Level', loc='upper right')
+    
+    plt.tight_layout()
+    
+    if save_plot:
+        os.makedirs(PLOTS_DIR, exist_ok=True)
+        output_file = os.path.join(PLOTS_DIR, 'input_complexity_boxplot.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Input complexity box plot saved as {output_file}")
+    
+    plt.show()
+
+
+def plot_input_code_length_boxplot(df, save_plot=False):
+    """Create box plot with scatter overlay for input code length distribution."""
+    
+    # Create figure
+    plt.figure(figsize=(14, 8))
+    
+    violation_types = df['violation'].unique()
+    
+    # Prepare data for box plot
+    length_data = []
+    labels = []
+    positions = []
+    pos = 1
+    
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_code_length']
+            if not data.empty:
+                length_data.append(data)
+                labels.append(f'{violation}\n{level}')
+                positions.append(pos)
+                pos += 1
+    
+    # Create box plot
+    bp = plt.boxplot(length_data, positions=positions, patch_artist=True, widths=0.6)
+    
+    # Color the boxes and add scatter points
+    pos = 1
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_code_length']
+            if not data.empty:
+                # Color the box
+                if pos <= len(bp['boxes']):
+                    bp['boxes'][pos-1].set_facecolor(COLORS[level])
+                    bp['boxes'][pos-1].set_alpha(0.7)
+                
+                # Add scatter points with jitter
+                jitter = np.random.normal(0, 0.1, len(data))
+                plt.scatter([pos] * len(data) + jitter, data, 
+                           alpha=0.6, color=COLORS[level], s=30, zorder=3)
+                pos += 1
+    
+    plt.title('Input Code Length Distribution (Box Plot with Scatter)', fontsize=14, fontweight='bold')
+    plt.ylabel('Input Code Length', fontsize=12)
+    plt.xlabel('Violation Type and Difficulty Level', fontsize=12)
+    plt.xticks(positions, labels)
+    plt.setp(plt.gca().get_xticklabels(), rotation=45, ha='right')
+    
+    # Remove top and right spines
+    ax = plt.gca()
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    
+    # Add legend
+    legend_elements = [plt.Line2D([0], [0], marker='o', color='w', 
+                                 markerfacecolor=COLORS[level], markersize=8, label=level)
+                      for level in ['EASY', 'MODERATE', 'HARD']]
+    plt.legend(handles=legend_elements, title='Difficulty Level', loc='upper right')
+    
+    plt.tight_layout()
+    
+    if save_plot:
+        os.makedirs(PLOTS_DIR, exist_ok=True)
+        output_file = os.path.join(PLOTS_DIR, 'input_code_length_boxplot.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Input code length box plot saved as {output_file}")
+    
+    plt.show()
+
+
+def print_boxplot_statistics(df):
+    """Print summary statistics for the box plot visualizations."""
+    print("\n" + "="*60)
+    print("BOX PLOT DISTRIBUTION STATISTICS")
+    print("="*60)
+    
+    print(f"Total records: {len(df)}")
+    print(f"Violation types: {list(df['violation'].unique())}")
+    print(f"Difficulty levels: {list(df['level'].unique())}")
+    
+    # Input complexity quartile statistics
+    print("\n" + "="*60)
+    print("INPUT COMPLEXITY - QUARTILE STATISTICS BY GROUP")
+    print("="*60)
+    
+    for violation in df['violation'].unique():
+        print(f"\n{violation}:")
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_complexity']
+            if not data.empty:
+                q1 = data.quantile(0.25)
+                median = data.median()
+                q3 = data.quantile(0.75)
+                iqr = q3 - q1
+                print(f"  {level:8}: Q1={q1:5.1f}, Median={median:5.1f}, Q3={q3:5.1f}, IQR={iqr:5.1f}, n={len(data)}")
+    
+    # Input code length quartile statistics
+    print("\n" + "="*60)
+    print("INPUT CODE LENGTH - QUARTILE STATISTICS BY GROUP")
+    print("="*60)
+    
+    for violation in df['violation'].unique():
+        print(f"\n{violation}:")
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_code_length']
+            if not data.empty:
+                q1 = data.quantile(0.25)
+                median = data.median()
+                q3 = data.quantile(0.75)
+                iqr = q3 - q1
+                print(f"  {level:8}: Q1={q1:6.0f}, Median={median:6.0f}, Q3={q3:6.0f}, IQR={iqr:6.0f}, n={len(data)}")
+
+
+def plot_combined_input_boxplots(df, save_plot=False):
+    """Create combined box plots for both input complexity and code length distributions."""
+    
+    # Create figure with subplots
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 12))
+    
+    violation_types = df['violation'].unique()
+    
+    # Plot 1: Input Complexity
+    complexity_data = []
+    labels = []
+    positions = []
+    pos = 1
+    
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_complexity']
+            if not data.empty:
+                complexity_data.append(data)
+                labels.append(f'{violation}\n{level}')
+                positions.append(pos)
+                pos += 1
+    
+    # Create box plot for complexity
+    bp1 = ax1.boxplot(complexity_data, positions=positions, patch_artist=True, widths=0.6)
+    
+    # Color the boxes and add scatter points for complexity
+    pos = 1
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_complexity']
+            if not data.empty:
+                # Color the box
+                if pos <= len(bp1['boxes']):
+                    bp1['boxes'][pos-1].set_facecolor(COLORS[level])
+                    bp1['boxes'][pos-1].set_alpha(0.7)
+                
+                # Add scatter points with jitter
+                jitter = np.random.normal(0, 0.1, len(data))
+                ax1.scatter([pos] * len(data) + jitter, data, 
+                           alpha=0.6, color=COLORS[level], s=30, zorder=3)
+                pos += 1
+    
+    ax1.set_ylabel('Input Complexity', fontsize=20)
+    ax1.set_xticks(positions)
+    ax1.set_xticklabels([])  # Remove x-axis labels for upper plot
+    
+    # Remove top and right spines for complexity plot
+    ax1.spines['top'].set_visible(False)
+    ax1.spines['right'].set_visible(False)
+    
+    # Plot 2: Input Code Length
+    length_data = []
+    length_labels = []
+    length_positions = []
+    pos = 1
+    
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_code_length']
+            if not data.empty:
+                length_data.append(data)
+                length_labels.append(f'{violation} {level}')  # Single line format
+                length_positions.append(pos)
+                pos += 1
+    
+    # Create box plot for code length
+    bp2 = ax2.boxplot(length_data, positions=length_positions, patch_artist=True, widths=0.6)
+    
+    # Color the boxes and add scatter points for code length
+    pos = 1
+    for violation in violation_types:
+        for level in ['EASY', 'MODERATE', 'HARD']:
+            data = df[(df['violation'] == violation) & (df['level'] == level)]['input_code_length']
+            if not data.empty:
+                # Color the box
+                if pos <= len(bp2['boxes']):
+                    bp2['boxes'][pos-1].set_facecolor(COLORS[level])
+                    bp2['boxes'][pos-1].set_alpha(0.7)
+                
+                # Add scatter points with jitter
+                jitter = np.random.normal(0, 0.1, len(data))
+                ax2.scatter([pos] * len(data) + jitter, data, 
+                           alpha=0.6, color=COLORS[level], s=30, zorder=3)
+                pos += 1
+    
+    ax2.set_ylabel('Input Code Length', fontsize=20)
+    ax2.set_xticks(length_positions)
+    ax2.set_xticklabels(length_labels)
+    plt.setp(ax2.get_xticklabels(), rotation=45, ha='right', fontsize=18)
+    
+    # Remove top and right spines for code length plot
+    ax2.spines['top'].set_visible(False)
+    ax2.spines['right'].set_visible(False)
+    
+    # Add legend to the first subplot
+    legend_elements = [plt.Line2D([0], [0], marker='o', color='w', 
+                                 markerfacecolor=COLORS[level], markersize=12, label=level)
+                      for level in ['EASY', 'MODERATE', 'HARD']]
+    ax1.legend(handles=legend_elements, title='Difficulty Level', loc='upper right', 
+               fontsize=16, title_fontsize=18)
+    
+    plt.tight_layout()
+    
+    if save_plot:
+        os.makedirs(PLOTS_DIR, exist_ok=True)
+        output_file = os.path.join(PLOTS_DIR, 'combined_input_boxplots.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Combined input box plots saved as {output_file}")
+    
+    plt.show()
+
+
+def analyze_input_boxplots(file_path=INPUT_FILE, save_plots=False):
+    """Main function to create box plot visualizations for input distributions."""
+    # Load data
+    df = load_data(file_path)
+    if df is None:
+        return
+    
+    # Create combined box plots
+    plot_combined_input_boxplots(df, save_plots)
+    
+    # Create individual box plots (optional)
+    # plot_input_complexity_boxplot(df, save_plots)
+    # plot_input_code_length_boxplot(df, save_plots)
+    
+    # Print box plot specific statistics
+    print_boxplot_statistics(df)
+
+
+if __name__ == "__main__":
+    # Run the box plot analysis
+    analyze_input_boxplots(
+        file_path=INPUT_FILE,
+        save_plots=True
+    )
