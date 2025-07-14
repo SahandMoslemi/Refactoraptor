@@ -4,9 +4,9 @@ CYCLOMATIC COMPLEXITY ANALYSIS REPORT
 OVERALL STATISTICS:
 Total examples: 240
 Total files: 5
-Average input complexity: 11.00
-Average output complexity: 10.37
-Average complexity reduction: 0.63
+Average input complexity: 10.78
+Average output complexity: 9.38
+Average complexity reduction: 1.40
 
 STATISTICS BY FILE:
 
@@ -24,9 +24,9 @@ isp_violations.json:
 
 dip_violations.json:
   Examples: 48
-  Avg input complexity: 6.77
-  Avg output complexity: 5.94
-  Avg complexity reduction: 0.83
+  Avg input complexity: 5.67
+  Avg output complexity: 1.00
+  Avg complexity reduction: 4.67
 
 ocp_violations.json:
   Examples: 48
@@ -56,9 +56,9 @@ ISP:
 
 DIP:
   Examples: 48
-  Avg input complexity: 6.77
-  Avg output complexity: 5.94
-  Avg complexity reduction: 0.83
+  Avg input complexity: 5.67
+  Avg output complexity: 1.00
+  Avg complexity reduction: 4.67
 
 OCP:
   Examples: 48
