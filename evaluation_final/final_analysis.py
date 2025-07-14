@@ -449,6 +449,156 @@ def create_heatmap(accuracy_matrix, row_labels, col_labels,
     
     plt.show()
 
+def create_combined_f1_heatmap(f1_model_matrix, f1_strategy_matrix, 
+                              model_labels, strategy_labels, violation_labels,
+                              save_path=None, figsize=(16, 6)):
+    """
+    Create a combined heatmap figure with F1 scores by model and strategy side by side
+    """
+    # Check if we have valid data
+    if f1_model_matrix.size == 0 or f1_strategy_matrix.size == 0:
+        print("No data available for combined heatmap generation.")
+        return
+    
+    # Set font sizes for better readability
+    plt.rcParams.update({
+        'font.size': 14,
+        'axes.titlesize': 16,
+        'axes.labelsize': 14,
+        'xtick.labelsize': 12,
+        'ytick.labelsize': 12,
+        'legend.fontsize': 12,
+        'figure.titlesize': 16
+    })
+    
+    # Create figure with two subplots and extra bottom margin
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
+    
+    # First heatmap: F1 by Model
+    sns.heatmap(f1_model_matrix, 
+                annot=True, 
+                fmt='.1f', 
+                cmap='RdYlGn',
+                xticklabels=model_labels,
+                yticklabels=violation_labels,
+                vmin=0, 
+                vmax=100,
+                annot_kws={'size': 11},
+                cbar=False,  # No colorbar for first plot
+                ax=ax1)
+    
+    ax1.set_xlabel('Model', fontsize=14, fontweight='bold')
+    ax1.set_ylabel('SOLID Violation Type', fontsize=14, fontweight='bold')
+    ax1.tick_params(axis='x', rotation=45, labelsize=12)
+    ax1.tick_params(axis='y', rotation=0, labelsize=12)
+    
+    # Second heatmap: F1 by Strategy
+    im = sns.heatmap(f1_strategy_matrix, 
+                     annot=True, 
+                     fmt='.1f', 
+                     cmap='RdYlGn',
+                     xticklabels=strategy_labels,
+                     yticklabels=violation_labels,
+                     vmin=0, 
+                     vmax=100,
+                     annot_kws={'size': 11},
+                     cbar_kws={'label': 'F1 Score (%)', 'shrink': 0.8, 'pad': 0.02},
+                     ax=ax2)
+    
+    ax2.set_xlabel('Prompt Strategy', fontsize=14, fontweight='bold')
+    ax2.set_ylabel('', fontsize=14)  # Empty ylabel for second plot
+    ax2.tick_params(axis='x', rotation=45, labelsize=12)
+    ax2.tick_params(axis='y', rotation=0, labelsize=12)
+    
+    # Adjust colorbar font size
+    cbar = im.collections[0].colorbar
+    cbar.ax.tick_params(labelsize=12)
+    cbar.set_label('F1 Score (%)', fontsize=12)
+    
+    # Adjust layout with more bottom space for rotated labels
+    plt.subplots_adjust(bottom=0.2)
+    plt.tight_layout()
+    
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    
+    plt.show()
+
+def create_combined_accuracy_heatmap(accuracy_matrix, language_matrix, 
+                                   difficulty_labels, language_labels, 
+                                   violation_labels_difficulty, violation_labels_language,
+                                   save_path=None, figsize=(16, 6)):
+    """
+    Create a combined heatmap figure with accuracy by difficulty level and programming language side by side
+    """
+    # Check if we have valid data
+    if accuracy_matrix.size == 0 or language_matrix.size == 0:
+        print("No data available for combined accuracy heatmap generation.")
+        return
+    
+    # Set font sizes for better readability
+    plt.rcParams.update({
+        'font.size': 14,
+        'axes.titlesize': 16,
+        'axes.labelsize': 14,
+        'xtick.labelsize': 12,
+        'ytick.labelsize': 12,
+        'legend.fontsize': 12,
+        'figure.titlesize': 16
+    })
+    
+    # Create figure with two subplots (back to equal widths)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
+    
+    # First heatmap: Accuracy by Difficulty Level
+    sns.heatmap(accuracy_matrix, 
+                annot=True, 
+                fmt='.1f', 
+                cmap='RdYlGn',
+                xticklabels=difficulty_labels,
+                yticklabels=violation_labels_difficulty,
+                vmin=0, 
+                vmax=100,
+                annot_kws={'size': 11},
+                cbar=False,  # No colorbar for first plot
+                ax=ax1)
+    
+    ax1.set_xlabel('Difficulty Level', fontsize=14, fontweight='bold', ha='center')
+    ax1.set_ylabel('SOLID Violation Type', fontsize=14, fontweight='bold')
+    ax1.tick_params(axis='x', rotation=45, labelsize=12)
+    ax1.tick_params(axis='y', rotation=0, labelsize=12)
+    
+    # Second heatmap: Accuracy by Programming Language
+    im = sns.heatmap(language_matrix, 
+                     annot=True, 
+                     fmt='.1f', 
+                     cmap='RdYlGn',
+                     xticklabels=language_labels,
+                     yticklabels=violation_labels_language,
+                     vmin=0, 
+                     vmax=100,
+                     annot_kws={'size': 11},
+                     cbar_kws={'label': 'Accuracy (%)', 'shrink': 0.8, 'pad': 0.02},
+                     ax=ax2)
+    
+    ax2.set_xlabel('Programming Language', fontsize=14, fontweight='bold', ha='center')
+    ax2.set_ylabel('', fontsize=14)  # Empty ylabel for second plot
+    ax2.tick_params(axis='x', rotation=45, labelsize=12)
+    ax2.tick_params(axis='y', rotation=0, labelsize=12)
+    
+    # Adjust colorbar font size
+    cbar = im.collections[0].colorbar
+    cbar.ax.tick_params(labelsize=12)
+    cbar.set_label('Accuracy (%)', fontsize=12)
+    
+    # Adjust layout
+    plt.tight_layout()
+    
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    
+    plt.show()
+
 def generate_detailed_report(results):
     """
     Generate a detailed text report of the results
@@ -482,90 +632,84 @@ def main():
         print("\n=== Loading and processing data ===")
         accuracy_results, f1_results, language_results = load_and_process_data(json_file_path)
         
-        # 1. Generate accuracy heatmap by difficulty level
-        print("\n=== Generating Accuracy Heatmap by Difficulty Level ===")
+        # 1. Generate combined accuracy heatmap (difficulty level and programming language)
+        print("\n=== Generating Combined Accuracy Heatmap ===")
         accuracy_matrix, violation_labels, difficulty_levels = calculate_accuracy_matrix(accuracy_results)
+        lang_matrix, principles, language_labels = calculate_language_matrix(language_results)
         
-        if accuracy_matrix.size > 0:
+        if accuracy_matrix.size > 0 and lang_matrix.size > 0:
             generate_detailed_report(accuracy_results)
             
-            create_heatmap(accuracy_matrix, violation_labels, difficulty_levels,
-                          ylabel="SOLID Violation Type", 
-                          xlabel="Difficulty Level",
-                          figsize=(8, 6),
-                          save_path="solid_violations_accuracy_by_level.png",
-                          metric_label="Accuracy (%)")
+            create_combined_accuracy_heatmap(accuracy_matrix, lang_matrix,
+                                           difficulty_levels, language_labels,
+                                           violation_labels, principles,
+                                           save_path="solid_violations_accuracy_combined.png",
+                                           figsize=(16, 6))
             
-            # Save to CSV
+            # Save individual CSVs
             df_accuracy = pd.DataFrame(accuracy_matrix, 
                                      index=violation_labels, 
                                      columns=difficulty_levels)
             df_accuracy.to_csv("solid_violations_accuracy_by_level.csv")
-            print("Accuracy results saved to 'solid_violations_accuracy_by_level.csv'")
-        
-        # 2a. Generate F1 score heatmap by strategy (averaged across models)
-        print("\n=== Generating F1 Score Heatmap by Strategy ===")
-        f1_strategy_matrix, f1_violation_labels, strategies = calculate_f1_by_strategy(f1_results)
-        
-        if f1_strategy_matrix.size > 0:
-            create_heatmap(f1_strategy_matrix, f1_violation_labels, strategies,
-                          ylabel="SOLID Violation Type", 
-                          xlabel="Prompt Strategy",
-                          figsize=(8, 6),
-                          save_path="solid_violations_f1_by_strategy.png",
-                          metric_label="F1 Score (%)")
             
-            # Save to CSV
-            df_f1_strategy = pd.DataFrame(f1_strategy_matrix, 
-                                        index=f1_violation_labels, 
-                                        columns=strategies)
-            df_f1_strategy.to_csv("solid_violations_f1_by_strategy.csv")
-            print("F1 by strategy results saved to 'solid_violations_f1_by_strategy.csv'")
-        
-        # 2b. Generate F1 score heatmap by model (averaged across strategies)  
-        print("\n=== Generating F1 Score Heatmap by Model ===")
-        f1_model_matrix, f1_violation_labels_model, models = calculate_f1_by_model(f1_results)
-        
-        if f1_model_matrix.size > 0:
-            create_heatmap(f1_model_matrix, f1_violation_labels_model, models,
-                          ylabel="SOLID Violation Type", 
-                          xlabel="Model",
-                          figsize=(8, 6),
-                          save_path="solid_violations_f1_by_model.png",
-                          metric_label="F1 Score (%)")
-            
-            # Save to CSV
-            df_f1_model = pd.DataFrame(f1_model_matrix, 
-                                     index=f1_violation_labels_model, 
-                                     columns=models)
-            df_f1_model.to_csv("solid_violations_f1_by_model.csv")
-            print("F1 by model results saved to 'solid_violations_f1_by_model.csv'")
-        
-        # 3. Generate accuracy heatmap by programming language
-        print("\n=== Generating Accuracy Heatmap by Programming Language ===")
-        lang_matrix, principles, language_labels = calculate_language_matrix(language_results)
-        
-        if lang_matrix.size > 0:
-            create_heatmap(lang_matrix, principles, language_labels,
-                          ylabel="SOLID Principle", 
-                          xlabel="Programming Language",
-                          figsize=(8, 6),
-                          save_path="solid_violations_accuracy_by_language.png",
-                          metric_label="Accuracy (%)")
-            
-            # Save to CSV
             df_language = pd.DataFrame(lang_matrix, 
                                      index=principles, 
                                      columns=language_labels)
             df_language.to_csv("solid_violations_accuracy_by_language.csv")
-            print("Language results saved to 'solid_violations_accuracy_by_language.csv'")
+            print("Combined accuracy results saved to 'solid_violations_accuracy_combined.png'")
+            print("Individual CSV files saved for difficulty and language accuracy")
+        else:
+            print("Could not generate combined accuracy heatmap - missing data")
+            print(f"Accuracy matrix size: {accuracy_matrix.size}")
+            print(f"Language matrix size: {lang_matrix.size}")
+            
+            # Generate individual heatmaps as fallback
+            if accuracy_matrix.size > 0:
+                create_heatmap(accuracy_matrix, violation_labels, difficulty_levels,
+                              ylabel="SOLID Violation Type", 
+                              xlabel="Difficulty Level",
+                              figsize=(8, 6),
+                              save_path="solid_violations_accuracy_by_level.png",
+                              metric_label="Accuracy (%)")
+            
+            if lang_matrix.size > 0:
+                create_heatmap(lang_matrix, principles, language_labels,
+                              ylabel="SOLID Principle", 
+                              xlabel="Programming Language",
+                              figsize=(8, 6),
+                              save_path="solid_violations_accuracy_by_language.png",
+                              metric_label="Accuracy (%)")
+        
+        # 2. Generate combined F1 score heatmap (both model and strategy in one figure)
+        print("\n=== Generating Combined F1 Score Heatmap ===")
+        f1_model_matrix, f1_violation_labels_model, models = calculate_f1_by_model(f1_results)
+        f1_strategy_matrix, f1_violation_labels, strategies = calculate_f1_by_strategy(f1_results)
+        
+        if f1_model_matrix.size > 0 and f1_strategy_matrix.size > 0:
+            create_combined_f1_heatmap(f1_model_matrix, f1_strategy_matrix,
+                                     models, strategies, f1_violation_labels,
+                                     save_path="solid_violations_f1_combined.png",
+                                     figsize=(16, 6))
+            
+            # Save individual CSVs
+            df_f1_model = pd.DataFrame(f1_model_matrix, 
+                                     index=f1_violation_labels_model, 
+                                     columns=models)
+            df_f1_model.to_csv("solid_violations_f1_by_model.csv")
+            
+            df_f1_strategy = pd.DataFrame(f1_strategy_matrix, 
+                                        index=f1_violation_labels, 
+                                        columns=strategies)
+            df_f1_strategy.to_csv("solid_violations_f1_by_strategy.csv")
+            print("Combined F1 results saved to 'solid_violations_f1_combined.png'")
+            print("Individual CSV files saved for model and strategy F1 scores")
+        
+        # Note: This section was removed since language is now part of the combined accuracy heatmap above
         
         print("\n=== Summary ===")
-        print("Generated 4 heatmaps:")
-        print("1. Accuracy by Difficulty Level")
-        print("2a. F1 Scores by Strategy (averaged across models)")
-        print("2b. F1 Scores by Model (averaged across strategies)")
-        print("3. Accuracy by Programming Language")
+        print("Generated 2 combined heatmaps:")
+        print("1. Combined Accuracy by Difficulty Level and Programming Language")
+        print("2. Combined F1 Scores by Model and Strategy")
         
     except FileNotFoundError:
         print(f"Error: Could not find file '{json_file_path}'")
