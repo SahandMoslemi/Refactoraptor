@@ -25,7 +25,13 @@ We provide 240 synthetic examples covering all five SOLID principles, across:
 
 ### Dataset Location
 
-- `dataset/creation_scenarios.md`: Describes the violation scenarios.
+- Replication package of research part is located in `dataset/`
+- Each `.json` file in `dataset/` includes 48 (4 Languages * 3 Difficulties * 4) records. Each record has only 1 violation and comes with its non violating version. These files are the manually prepared ground truth.
+- `dataset/clean_code_pipeline.py`, `dataset/processing_pipeline.py` and `dataset/known_violation_pipeline.py` generates the files in `dataset/output/` using Refactoraptor API (with the server running locally) for all strategies. 
+- `dataset/clean_code_pipeline.py` uses already clean code as input.
+- `dataset/processing_pipeline.py` uses violated code without specifying ground truth violation. Generates files with the same names as those in `dataset/clean_code_pipeline.py`.
+- `dataset/known_violation_pipeline.py` uses violated code and includes the ground truth violation type in the prompt.
+- `dataset/creation_scenarios.md`: Describes the violation scenarios used to create the dataset.
 - `dataset/groundtruth/`: Ground-truth labeled samples.
 - `dataset/completions/test/`: LLM outputs on test examples.
 
@@ -39,6 +45,14 @@ We provide 240 synthetic examples covering all five SOLID principles, across:
 
 - `evaluation_final/`: Contains all accuracy/F1 plots and CSVs by model, strategy, language, and level.
 - `detailed_results_final.json`: Full sample-level results including model, strategy, expected/detected violations, language, and difficulty level.
+
+## Steps to Reproduce:
+- `dataset/clean_code_pipeline.py`, `dataset/processing_pipeline.py` and `dataset/known_violation_pipeline.py` generates the files in `dataset/output/` using Refactoraptor API (with the server running locally) for all strategies. 
+- Then, run `manual_evaluation/violation_comparison.py` to search through the raw response of the models using our specified regex. This will produce a json file `detailed_results.json` for all the results, as well as `failed_extraction_for_review.json` and `multiple_violations_for_review.json` for manual review.
+- After manual review, update the json file with the new violation_match entries by running `match_dataset.json`. This will result in the final json file ready for evaluation `detailed_results_final.json`.
+- For evaluation, simple run `evaluation_final/final_analysis.py`. To trace every step of evaluation, you can also run `evaluation_final/evaluation_traceable/final_analysis_traceability.py`.
+
+
 
 ## Tool Installation
 
