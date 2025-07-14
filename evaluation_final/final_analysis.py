@@ -621,7 +621,7 @@ def main():
     Main function to run the heatmap generation
     """
     # Configuration
-    json_file_path = "detailed_results_with_levels_all_mapped.json"  # Updated to correct filename
+    json_file_path = "detailed_results_final.json"
     
     try:
         # First, debug the JSON structure
