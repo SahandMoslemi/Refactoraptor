@@ -1,4 +1,4 @@
-# Refactoraptor 🦖
+# Replication Package for 'Are We SOLID Yet? An Empirical Study on Prompting LLMs to Detect Design Principle Violations'
 
 ## Background & Motivation
 Developers often overlook **SOLID principles**, leading to **maintainability** and **scalability** issues. While **LLMs** show promise in **code analysis**, their effectiveness in detecting and refactoring **OOP violations** remains unclear.
@@ -10,40 +10,51 @@ This project aims to develop a **locally deployable LLM-based tool** that detect
 - **Open-Closed Principle (OCP)**
 - **Liskov Substitution Principle (LSP)**
 - **Interface Segregation Principle (ISP)**
+- **Dependency Inversion Principle**
 
-The goal is to assess **LLM performance and limitations** in **automated code quality improvements**.
+Our goal is to systematically evaluate LLM performance across principles, programming languages, and prompt strategies.
 
-## Methodology
-1. Users will **input a code snippet** or a **set of files**.
-2. The UI will allow the selection of a **locally installed LLM**, automatically listed via **Ollama CLI/API**.
-3. A **prompt engineering strategy** will be chosen to guide the analysis.
-4. The tool will **identify violations** and suggest **refactoring solutions**, displaying results interactively.
 
-## Expected Outcomes
-- A **functional and locally runnable tool** capable of detecting **SOLID principle violations**.
-- **Comparative analysis** of different **prompt strategies** and **small LLMs**.
+## Dataset
+
+We provide 240 synthetic examples covering all five SOLID principles, across:
+
+- **4 programming languages**: Java, Python, Kotlin, and C#
+- **3 difficulty levels**: Easy, Moderate, Hard
+- **4 examples per principle × 3 levels × 4 languages**
+
+### Dataset Location
+
+- Replication package of research part is located in `dataset/`
+- Each `.json` file in `dataset/` includes 48 (4 Languages * 3 Difficulties * 4) records. Each record has only 1 violation and comes with its non violating version. These files are the manually prepared ground truth.
+- `dataset/clean_code_pipeline.py`, `dataset/processing_pipeline.py` and `dataset/known_violation_pipeline.py` generates the files in `dataset/output/` using Refactoraptor API (with the server running locally) for all strategies. 
+- `dataset/clean_code_pipeline.py` uses already clean code as input.
+- `dataset/processing_pipeline.py` uses violated code without specifying ground truth violation. Generates files with the same names as those in `dataset/clean_code_pipeline.py`.
+- `dataset/known_violation_pipeline.py` uses violated code and includes the ground truth violation type in the prompt.
+- `dataset/creation_scenarios.md`: Describes the violation scenarios used to create the dataset.
+- `dataset/groundtruth/`: Ground-truth labeled samples.
+- `dataset/completions/test/`: LLM outputs on test examples.
+
 
 ## Evaluation Methodology
-- We will generate synthetic Java, C#, C++ and Python code snippets as evaluation data. These code snippets will be labeled with corresponding SOLI violations. These will serve as ground truth for classification.
-- Initially, the detection will be checked against the ground truth. If the detection is true positive, original code snippet and refactored code will be provided to **ChatGPT-4o** with appropriate prompts, to assess the correctness of detection and quality of refactoring.
-- We will conduct a user survey on the accuracy of the refactoring tool, if time permits.
 
-## Team Work Distribution
-- Backend development will be done by: M. Buğra Kurnaz & Rafi Çoktalaş
-- Frontend development will be done by: Arçin Ülkü Ergüzen & Fatih Pehlivan
-- We will split SOLI principles as follows: 
-    - **Single Responsibility Principle (SRP)**: Rafi Çoktalaş
-    - **Open-Closed Principle (OCP)**: Fatih Pehlivan
-    - **Liskov Substitution Principle (LSP)**: M. Buğra Kurnaz
-    - **Interface Segregation Principle (ISP)**: Arçin Ülkü Ergüzen
-- Each member will be responsible for creating code snippets for their assigned principle.
-- Research of prompt engineering will be a collaborative effort.
+- Each sample’s detected violation is compared against its ground truth label.
+- Performance metrics include **accuracy** and **F1-score**, broken down by model, principle, language, and difficulty.
 
-## Introduced Dataset
+### Evaluation Artifacts
 
-We have prepared multiple examples for each SOLI violation. Spefically, our dataset includes examples across difficulty levels (`EASY`, `MODERATE` and `HARD`) and programming languages (`Java`, `Python`, `Kotlin` and `C#`). For instance, for SRP, we have 48 examples (4 examples * 3 difficulties * 4 programming languages). In total, we have 192 examples.
+- `evaluation_final/`: Contains all accuracy/F1 plots and CSVs by model, strategy, language, and level.
+- `detailed_results_final.json`: Full sample-level results including model, strategy, expected/detected violations, language, and difficulty level.
 
-## Installation
+## Steps to Reproduce:
+- `dataset/clean_code_pipeline.py`, `dataset/processing_pipeline.py` and `dataset/known_violation_pipeline.py` generates the files in `dataset/output/` using Refactoraptor API (with the server running locally) for all strategies. 
+- Then, run `manual_evaluation/violation_comparison.py` to search through the raw response of the models using our specified regex. This will produce a json file `detailed_results.json` for all the results, as well as `failed_extraction_for_review.json` and `multiple_violations_for_review.json` for manual review.
+- After manual review, update the json file with the new violation_match entries by running `match_dataset.json`. This will result in the final json file ready for evaluation `detailed_results_final.json`.
+- For evaluation, simple run `evaluation_final/final_analysis.py`. To trace every step of evaluation, you can also run `evaluation_final/evaluation_traceable/final_analysis_traceability.py`.
+
+
+
+## Tool Installation
 
 ### Frontend
 
@@ -98,3 +109,6 @@ python processing_pipeline.py
 ```
 
 Python pipeline connects to the backend application, so make sure you run it concurrently. 
+
+
+

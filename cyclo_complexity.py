@@ -118,6 +118,7 @@ class CyclomaticComplexityCalculator:
         # Find all *_violations.json files
         violation_files = []
         for file in os.listdir(dataset_path):
+            print(file)
             if file.endswith('_violations.json'):
                 violation_files.append(os.path.join(dataset_path, file))
         
@@ -212,7 +213,7 @@ def main():
     calculator = CyclomaticComplexityCalculator()
     
     # Set dataset path (modify this to match your folder structure)
-    dataset_path = "dataset" 
+    dataset_path = "dataset/groundtruth" 
     
     try:
         # Process all violation files
