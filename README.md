@@ -23,6 +23,8 @@ We provide 240 synthetic examples covering all five SOLID principles, across:
 - **3 difficulty levels**: Easy, Moderate, Hard
 - **4 examples per principle × 3 levels × 4 languages**
 
+![SOLID Scenarios](dataset/creation_scenarios.png)
+
 ### Dataset Location
 
 - Replication package of research part is located in `dataset/`
