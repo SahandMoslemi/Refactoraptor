@@ -1,4 +1,4 @@
-# Replication Package for 'Are We SOLID Yet? An Empirical Study on Prompting LLMs to Detect Design Principle Violations'
+# Replication Package for 'Are We SOLID Yet?,' Submitted for ASE 2025 NIER
 
 ## Background & Motivation
 Developers often overlook **SOLID principles**, leading to **maintainability** and **scalability** issues. While **LLMs** show promise in **code analysis**, their effectiveness in detecting and refactoring **OOP violations** remains unclear.
@@ -53,62 +53,40 @@ We provide 240 synthetic examples covering all five SOLID principles, across:
 - For evaluation, simple run `evaluation_final/final_analysis.py`. To trace every step of evaluation, you can also run `evaluation_final/evaluation_traceable/final_analysis_traceability.py`.
 
 
+## Structure of the Project
 
-## Tool Installation
-
-### Frontend
-
-Inside `frontend` directory, run the following commands: 
-
-```bash
-npm install
-npm run dev
-```
-
-### Backend
-
-Change to `backend` directory.
-
-```bash
-cd backend/
-```
-
-Build the project using Maven: This will compile the code, run tests, and package the application into a JAR file.  
-
-```bash
-mvn clean package
-```
-Run the Spring Boot application: After the build is successful, you can run the generated JAR file (usually located in the target directory).  
-
-```bash
-java -jar target/BackendApplication.jar
-```
-Access the application: By default, Spring Boot applications run on http://localhost:8080. You can access the endpoints defined in your Controller class.
-
-To use OpenAI, you have to set a valid api key in the resources. Change the `api.key` field to the actual api key inside `backend/src/main/resources/application.yml". 
-After restart, you can use the OpenAI controller endpoints in Refactoraptor backend.
-
-### Python Pipeline
-
-A python script can be used to generate output using different prompt strategies. Change into `dataset` directory. 
-
-```bash
-cd dataset/
-```
-
-You can change which models and strategies to test by editing the macros in the top of Python script. Install the dependencies via: 
-```bash
-python3 -m pip install tqdm
-python3 -m pip install requests
-```
-
-To run:
-
-```bash
-python processing_pipeline.py
-```
-
-Python pipeline connects to the backend application, so make sure you run it concurrently. 
-
+REFACTORAPTOR/
+├── __pycache__/                    # Python cache files
+├── .idea/                          # IDE configuration files
+├── analytic_reports_trials/        # Trials for output analysis (not used for final evaluation)
+├── dataset/                        # Core dataset and processing scripts
+│   ├── groundtruth/               # Ground-truth labeled samples
+│   ├── completions/test/          # LLM outputs on test examples
+│       ├── output/                    # Generated outputs from pipelines
+│   ├── clean_code_pipeline.py     # Pipeline for clean code processing
+│   ├── processing_pipeline.py     # Main processing pipeline
+│   ├── known_violation_pipeline.py # Pipeline with known violations
+│   └── creation_scenarios.md      # Violation scenarios documentation
+├── evaluation_final/               # Evaluation results and analysis
+│   ├── evaluation_traceable/      # Traceable evaluation scripts
+│   ├── final_analysis.py          # Main evaluation script
+│   └── [accuracy/F1 plots and CSVs by model, strategy, language, level]
+├── manual_evaluation/              # Manual evaluation tools
+│   └── violation_comparison.py    # Regex-based violation detection
+│   └── failed_extraction_for_review_v5.json   # Outputs to be manually reviewed for failed extraction
+│   └── multiple_violations_for_review_v5.json   # Outputs to be manually reviewed for multiple violations
+│   └── SOLID_Violation_Cases_for_Manual_Review_complete.csv   # Completed manual review
+├── plots/                          # Generated visualization plots
+├── viewer/                         # Data visualization tools
+├── calculate_metrics.py            # Metrics calculation script
+├── complexity_analysis_report.txt  # Complexity analysis results
+├── cyclo_complexity.py            # Cyclomatic complexity analysis
+├── cyclomatic_complexity_results.csv # Complexity results data
+├── detailed_results_final.json    # Final output results after manual evaluation
+├── llm-request.py                  # LLM API request handler
+├── match_dataset.py               # Dataset matching utilities
+├── plot_dataset_analytics.py      # Dataset analytics plotting
+├── sequence.diagram.md            # System sequence diagrams
+└── README.md                      # Project documentation
 
 
