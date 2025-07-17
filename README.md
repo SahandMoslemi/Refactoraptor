@@ -55,38 +55,41 @@ We provide 240 synthetic examples covering all five SOLID principles, across:
 
 ## Structure of the Project
 
+```plaintext
 REFACTORAPTOR/
-├── __pycache__/                    # Python cache files
-├── .idea/                          # IDE configuration files
-├── analytic_reports_trials/        # Trials for output analysis (not used for final evaluation)
-├── dataset/                        # Core dataset and processing scripts
-│   ├── groundtruth/               # Ground-truth labeled samples
-│   ├── completions/test/          # LLM outputs on test examples
-│       ├── output/                    # Generated outputs from pipelines
-│   ├── clean_code_pipeline.py     # Pipeline for clean code processing
-│   ├── processing_pipeline.py     # Main processing pipeline
-│   ├── known_violation_pipeline.py # Pipeline with known violations
-│   └── creation_scenarios.md      # Violation scenarios documentation
-├── evaluation_final/               # Evaluation results and analysis
-│   ├── evaluation_traceable/      # Traceable evaluation scripts
-│   ├── final_analysis.py          # Main evaluation script
+├── __pycache__/                              # Python cache files
+├── .idea/                                    # IDE configuration files
+├── analytic_reports_trials/                  # Trials for output analysis (not used for final evaluation)
+├── dataset/                                  # Core dataset and processing scripts
+│   ├── groundtruth/                          # Ground-truth labeled samples
+│   ├── completions/test/                     # LLM outputs on test examples
+│   │   └── output/                           # Generated outputs from pipelines
+│   ├── clean_code_pipeline.py                # Pipeline for clean code processing
+│   ├── processing_pipeline.py                # Main processing pipeline
+│   ├── known_violation_pipeline.py           # Pipeline with known violations
+│   └── creation_scenarios.md                 # Violation scenarios documentation
+├── evaluation_final/                         # Evaluation results and analysis
+│   ├── evaluation_traceable/                 # Traceable evaluation scripts
+│   ├── final_analysis.py                     # Main evaluation script
 │   └── [accuracy/F1 plots and CSVs by model, strategy, language, level]
-├── manual_evaluation/              # Manual evaluation tools
-│   └── violation_comparison.py    # Regex-based violation detection
-│   └── failed_extraction_for_review_v5.json   # Outputs to be manually reviewed for failed extraction
-│   └── multiple_violations_for_review_v5.json   # Outputs to be manually reviewed for multiple violations
-│   └── SOLID_Violation_Cases_for_Manual_Review_complete.csv   # Completed manual review
-├── plots/                          # Generated visualization plots
-├── viewer/                         # Data visualization tools
-├── calculate_metrics.py            # Metrics calculation script
-├── complexity_analysis_report.txt  # Complexity analysis results
-├── cyclo_complexity.py            # Cyclomatic complexity analysis
-├── cyclomatic_complexity_results.csv # Complexity results data
-├── detailed_results_final.json    # Final output results after manual evaluation
-├── llm-request.py                  # LLM API request handler
-├── match_dataset.py               # Dataset matching utilities
-├── plot_dataset_analytics.py      # Dataset analytics plotting
-├── sequence.diagram.md            # System sequence diagrams
-└── README.md                      # Project documentation
+├── manual_evaluation/                        # Manual evaluation tools
+│   ├── violation_comparison.py               # Regex-based violation detection
+│   ├── failed_extraction_for_review_v5.json  # Outputs to be manually reviewed for failed extraction
+│   ├── multiple_violations_for_review_v5.json # Outputs to be manually reviewed for multiple violations
+│   └── SOLID_Violation_Cases_for_Manual_Review_complete.csv  # Completed manual review
+├── plots/                                    # Generated visualization plots
+├── viewer/                                   # Data visualization tools
+├── calculate_metrics.py                      # Metrics calculation script
+├── complexity_analysis_report.txt            # Complexity analysis results
+├── cyclo_complexity.py                       # Cyclomatic complexity analysis
+├── cyclomatic_complexity_results.csv         # Complexity results data
+├── detailed_results_final.json               # Final output results after manual evaluation
+├── llm-request.py                            # LLM API request handler
+├── match_dataset.py                          # Dataset matching utilities
+├── plot_dataset_analytics.py                 # Dataset analytics plotting
+├── sequence.diagram.md                       # System sequence diagrams
+└── README.md                                 # Project documentation
+```
+
 
 
