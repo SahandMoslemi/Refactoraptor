@@ -23,7 +23,24 @@ We provide 240 synthetic examples covering all five SOLID principles, across:
 - **3 difficulty levels**: Easy, Moderate, Hard
 - **4 examples per principle × 3 levels × 4 languages**
 
-![SOLID Scenarios](dataset/creation_scenarios.png)
+### Table: Representative Scenarios Used to Generate SOLID Violation Examples in the Dataset
+
+| **Principle** | **Violation Scenarios** |
+|---------------|--------------------------|
+| **SRP**       | *User Database:* A class handling both user persistence and email notifications. <br> *Salary Payslip:* An employee class calculating salary and printing pay slips. <br> *File Archiving:* A processor handling file content, archiving, and history tracking. <br> *Product Discount:* A product class applying discounts and managing display logic. |
+| **OCP**       | *Payment Processing:* A processor requiring modification to add new payment methods. <br> *Customer Registration:* A service requiring changes to support new customer types. <br> *Document Notification:* A service requiring modification for new notification channels. <br> *Report Exporting:* An exporter requiring modification to add new export formats. |
+| **DIP**       | *Email Service:* A service with a direct, hardcoded dependency on a `MySQLDatabase` class. <br> *Payment Processing:* A system tightly coupled to a specific `PayPalGateway`. <br> *File Processing:* A processor with hardcoded dependencies on file system operations. <br> *Notification System:* A service with a direct dependency on a `TwilioSMS` provider. |
+| **LSP**       | *Vehicle Fuel System:* An `ElectricVehicle` subclass violating the expected `refuel()` behavior. <br> *Payment Processing:* A `CashProcessor` subclass improperly restricting valid payment amounts. <br> *Bird Flying Behavior:* A `Penguin` subclass breaking the inherited `fly()` contract. <br> *Document Processing:* A `ReadOnlyDocument` subclass breaking the inherited `save()` contract. |
+| **ISP**       | *Game Development:* A mage class forced to implement an unused `meleeAttack()` method. <br> *Restaurant Management:* A waiter class forced to implement an irrelevant `cookFood()` method. <br> *Vehicle Control System:* A car class forced to implement an irrelevant `fly()` method. <br> *Music Player System:* A `CDPlayer` implementing a "fat" interface with unnecessary methods. |
+
+### Methodology Overview
+
+![Methodology Overview](dataset/methodology_overview.png)
+
+### Results
+
+![Results1](evaluation_final/solid_violations_accuracy_combined.png)
+![Results2](evaluation_final/solid_violations_f1_combined.png)
 
 ### Dataset Location
 
