@@ -10,7 +10,7 @@ This project aims to develop a **locally deployable LLM-based tool** that detect
 - **Open-Closed Principle (OCP)**
 - **Liskov Substitution Principle (LSP)**
 - **Interface Segregation Principle (ISP)**
-- **Dependency Inversion Principle**
+- **Dependency Inversion Principle (DIP)**
 
 Our goal is to systematically evaluate LLM performance across principles, programming languages, and prompt strategies.
 
